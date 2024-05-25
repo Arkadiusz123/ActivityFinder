@@ -1,0 +1,6 @@
+@ActivityFinder.Server_HostAddress = http://localhost:5245
+
+GET {{ActivityFinder.Server_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
