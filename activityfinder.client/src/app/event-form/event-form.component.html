@@ -1,0 +1,16 @@
+<mat-card>
+  <form [formGroup]="activityForm" (ngSubmit)="onSubmit()">
+
+    <mat-form-field appearance="fill">
+      <mat-label>Data</mat-label>
+      <input matInput formControlName="date" type="datetime-local" placeholder="start date">
+    </mat-form-field>
+
+    <mat-form-field appearance="fill">
+      <mat-label>Opis wydarzenia</mat-label>
+      <textarea matInput formControlName="description" required></textarea>
+    </mat-form-field>
+
+    <button mat-raised-button color="primary" type="submit">Dodaj nowe wydarzenie</button>
+  </form>
+</mat-card>

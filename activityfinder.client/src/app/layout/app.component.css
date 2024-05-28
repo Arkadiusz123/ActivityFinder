@@ -1,4 +1,4 @@
-﻿:host {
+:host {
     max-width: 1280px;
     padding: 2rem;
     text-align: center;
@@ -11,4 +11,21 @@ th, td {
 
 table {
     margin: 0 auto;
+}
+
+.spacer {
+  flex: 1 1 auto;
+}
+
+:host {
+  margin: 0;
+  padding: 0;
+}
+
+a.title:hover{
+    cursor: pointer;
+}
+
+.white-text{
+    color: white;
 }
