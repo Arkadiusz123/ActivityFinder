@@ -13,6 +13,9 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
+import { MatAutocompleteModule } from '@angular/material/autocomplete';
+import { HTTP_INTERCEPTORS } from '@angular/common/http';
+import { HttpErrorInterceptor } from './http-error.interceptor';
 
 const routes: Routes = [
   { path: '', component: EventsListComponent },
@@ -34,9 +37,15 @@ const routes: Routes = [
     NoopAnimationsModule,
     MatIconModule,
     MatTabsModule,
-    ReactiveFormsModule, MatInputModule, MatButtonModule, MatCardModule
+    ReactiveFormsModule, MatInputModule, MatButtonModule, MatCardModule, MatAutocompleteModule
   ],
-  providers: [],
+  providers: [
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: HttpErrorInterceptor,
+      multi: true
+    }
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

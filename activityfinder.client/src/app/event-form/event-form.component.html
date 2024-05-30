@@ -4,13 +4,44 @@
     <mat-form-field appearance="fill">
       <mat-label>Data</mat-label>
       <input matInput formControlName="date" type="datetime-local" placeholder="start date">
+      <mat-error *ngIf="activityForm.get('date')!.invalid">{{ errorMessageService.getErrorMessage(activityForm, 'date') }}</mat-error>
     </mat-form-field>
 
     <mat-form-field appearance="fill">
       <mat-label>Opis wydarzenia</mat-label>
       <textarea matInput formControlName="description" required></textarea>
+      <mat-error *ngIf="activityForm.get('description')!.invalid">{{ errorMessageService.getErrorMessage(activityForm, 'description') }}</mat-error>
     </mat-form-field>
 
-    <button mat-raised-button color="primary" type="submit">Dodaj nowe wydarzenie</button>
+    <div formGroupName="address">
+      <h3>Adres</h3>
+
+      <mat-form-field appearance="fill">
+        <mat-label>Numer domu</mat-label>
+        <input matInput formControlName="houseNumber" required>
+        <mat-error *ngIf="activityForm.get('address.houseNumber')!.invalid">{{ errorMessageService.getErrorMessage(activityForm, 'address.houseNumber') }}</mat-error>
+      </mat-form-field>
+
+      <mat-form-field appearance="fill">
+        <mat-label>Ulica</mat-label>
+        <input matInput formControlName="road">
+        <mat-error *ngIf="activityForm.get('address.road')!.invalid">{{ errorMessageService.getErrorMessage(activityForm, 'address.road') }}</mat-error>
+      </mat-form-field>
+
+      <mat-form-field appearance="fill">
+        <mat-label>Województwo</mat-label>
+        <input matInput formControlName="state" required>
+        <mat-error *ngIf="activityForm.get('address.state')!.invalid">{{ errorMessageService.getErrorMessage(activityForm, 'address.state') }}</mat-error>
+      </mat-form-field>
+
+      <mat-form-field appearance="fill">
+        <mat-label>Kod pocztowy</mat-label>
+        <input matInput formControlName="postcode" required>
+        <mat-error *ngIf="activityForm.get('address.postcode')!.invalid">{{ errorMessageService.getErrorMessage(activityForm, 'address.postcode') }}</mat-error>
+      </mat-form-field>
+
+    </div>
+
+      <button mat-raised-button color="primary" type="submit">Dodaj nowe wydarzenie</button>
   </form>
 </mat-card>
