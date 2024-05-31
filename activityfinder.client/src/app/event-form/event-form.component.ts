@@ -26,6 +26,7 @@ export class EventFormComponent implements OnInit {
         road: [''],
         state: ['', Validators.required],
         postcode: ['', [Validators.required, Validators.pattern('^[0-9]{2}-[0-9]{3}$')]],
+        city: ['', Validators.required],
       }),
     });
   }

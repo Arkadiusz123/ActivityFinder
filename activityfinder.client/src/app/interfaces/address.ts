@@ -3,4 +3,5 @@ export interface Address {
   road: string;
   state: string;
   postcode: string;
+  city: string;
 }

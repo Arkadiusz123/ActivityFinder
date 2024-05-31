@@ -40,6 +40,12 @@
         <mat-error *ngIf="activityForm.get('address.postcode')!.invalid">{{ errorMessageService.getErrorMessage(activityForm, 'address.postcode') }}</mat-error>
       </mat-form-field>
 
+      <mat-form-field appearance="fill">
+        <mat-label>Miejscowość</mat-label>
+        <input matInput formControlName="city" required>
+        <mat-error *ngIf="activityForm.get('address.city')!.invalid">{{ errorMessageService.getErrorMessage(activityForm, 'address.city') }}</mat-error>
+      </mat-form-field>
+
     </div>
 
       <button mat-raised-button color="primary" type="submit">Dodaj nowe wydarzenie</button>

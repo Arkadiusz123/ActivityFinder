@@ -1,4 +1,4 @@
-﻿using ActivityFinder.Server.DTOs;
+﻿using ActivityFinder.Server.Models;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ActivityFinder.Server.Controllers
@@ -17,6 +17,8 @@ namespace ActivityFinder.Server.Controllers
         [HttpPost]
         public IActionResult Create([FromBody]ActivityDTO activity)
         {
+            var test = new AddressValidator().GetAddress(activity.Address);
+
             return Ok();
             return null;
         }
