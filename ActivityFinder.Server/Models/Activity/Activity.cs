@@ -1,4 +1,4 @@
-﻿namespace ActivityFinder.Server.Entities
+﻿namespace ActivityFinder.Server.Models
 {
     public class Activity
     {
