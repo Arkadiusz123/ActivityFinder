@@ -23,7 +23,7 @@ namespace ActivityFinder.Server.Models
 
             var result = new Result<Address>();
 
-            if (addressessOsm == null)
+            if (addressessOsm == null || addressessOsm.Count == 0)
             {
                 result.Message = "Nie znaleziono adresu";
                 return result;
@@ -37,7 +37,7 @@ namespace ActivityFinder.Server.Models
             }
 
             var addressOsm = addressessOsm.First();
-            result.Value = addressessOsm;   //TODO: map addressOsm to Address
+            //result.Value = addressessOsm;   //TODO: map addressOsm to Address
             return result;
         }
     }

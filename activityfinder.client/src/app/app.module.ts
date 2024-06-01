@@ -14,8 +14,10 @@ import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
+import { MatCheckboxModule } from '@angular/material/checkbox';
 import { HTTP_INTERCEPTORS } from '@angular/common/http';
 import { HttpErrorInterceptor } from './http-error.interceptor';
+import { FormsModule } from '@angular/forms';
 
 const routes: Routes = [
   { path: '', component: EventsListComponent },
@@ -32,12 +34,11 @@ const routes: Routes = [
   imports: [
     BrowserModule,
     RouterModule.forRoot(routes),
-    HttpClientModule,
-    MatToolbarModule,
+    HttpClientModule,    
     NoopAnimationsModule,
-    MatIconModule,
-    MatTabsModule,
-    ReactiveFormsModule, MatInputModule, MatButtonModule, MatCardModule, MatAutocompleteModule
+    ReactiveFormsModule,
+    FormsModule,
+    MatIconModule, MatTabsModule, MatInputModule, MatButtonModule, MatCardModule, MatAutocompleteModule, MatCheckboxModule, MatToolbarModule
   ],
   providers: [
     {
