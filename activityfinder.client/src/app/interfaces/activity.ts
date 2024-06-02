@@ -7,4 +7,5 @@ export interface Activity {
   date: Date;
 
   address: Address;
+  displayName: string;
 }

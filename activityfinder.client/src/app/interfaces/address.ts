@@ -4,4 +4,5 @@ export interface Address {
   state: string;
   postcode: string;
   city: string;
+  osmId: string;
 }

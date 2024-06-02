@@ -14,16 +14,28 @@ namespace ActivityFinder.Server.Models
         public required AddressOsmDetails Details { get; set; }
 
         [JsonPropertyName("display_name")]
-        public required AddressOsmDetails DisplayName { get; set; }
+        public required string DisplayName { get; set; }
+
+        [JsonPropertyName("addresstype")]
+        public required string Type { get; set; }
+
+        [JsonPropertyName("osm_id")]
+        public double OsmId { get; set; }
+
+        [JsonPropertyName("osm_type")]
+        public required string OsmType { get; set; }
+
+        [JsonPropertyName("name")]
+        public string? Name { get; set; }
     }
 
     public class AddressOsmDetails
     {
         [JsonPropertyName("house_number")]
-        public required string HouseNumber { get; set; }
+        public string? HouseNumber { get; set; }
 
         [JsonPropertyName("road")]
-        public required string Road { get; set; }
+        public string? Road { get; set; }
 
         [JsonPropertyName("city")]
         public string? City { get; set; }   //one of them(city,town,village) required, save as city

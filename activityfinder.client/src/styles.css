@@ -4,3 +4,9 @@ html, body { height: 100%; }
 body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
 
 @import '~@angular/material/theming';
+
+.disabled-input {
+  background-color: #f5f5f5;
+  color: #595957;
+  cursor: not-allowed;
+}

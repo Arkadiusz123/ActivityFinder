@@ -16,38 +16,25 @@
     <div formGroupName="address">
       <h3>Adres</h3>
 
-      <mat-form-field appearance="fill">
-        <mat-label>Numer domu</mat-label>
-        <input matInput formControlName="houseNumber" required>
-        <mat-error *ngIf="activityForm.get('address.houseNumber')!.invalid">{{ errorMessageService.getErrorMessage(activityForm, 'address.houseNumber') }}</mat-error>
+      <input formControlName="osmId" type="hidden">
+
+      <mat-form-field appearance="fill" *ngIf="!activityForm.get('address.osmId')!.value">
+        <mat-label>Wyszukaj adres</mat-label>
+        <input matInput appDebounceClick [eventName]="'keydown.enter'" [(ngModel)]="searchInput" [ngModelOptions]="{standalone: true}" (debounceClickOrPress)="findAddress($any($event))">
+        <button mat-icon-button matSuffix appDebounceClick type="button" (debounceClickOrPress)="findAddress(null)">
+          <mat-icon>search</mat-icon>
+        </button>
       </mat-form-field>
 
-      <mat-form-field appearance="fill">
-        <mat-label>Ulica</mat-label>
-        <input matInput formControlName="road">
-        <mat-error *ngIf="activityForm.get('address.road')!.invalid">{{ errorMessageService.getErrorMessage(activityForm, 'address.road') }}</mat-error>
-      </mat-form-field>
-
-      <mat-form-field appearance="fill">
-        <mat-label>Województwo</mat-label>
-        <input matInput formControlName="state" required>
-        <mat-error *ngIf="activityForm.get('address.state')!.invalid">{{ errorMessageService.getErrorMessage(activityForm, 'address.state') }}</mat-error>
-      </mat-form-field>
-
-      <mat-form-field appearance="fill">
-        <mat-label>Kod pocztowy</mat-label>
-        <input matInput formControlName="postcode" required>
-        <mat-error *ngIf="activityForm.get('address.postcode')!.invalid">{{ errorMessageService.getErrorMessage(activityForm, 'address.postcode') }}</mat-error>
-      </mat-form-field>
-
-      <mat-form-field appearance="fill">
-        <mat-label>Miejscowość</mat-label>
-        <input matInput formControlName="city" required>
-        <mat-error *ngIf="activityForm.get('address.city')!.invalid">{{ errorMessageService.getErrorMessage(activityForm, 'address.city') }}</mat-error>
+      <mat-form-field appearance="fill" *ngIf="this.displayAddress">
+        <mat-label>Wybrany adres</mat-label>
+        <textarea class="disabled-input" matInput [(ngModel)]="displayAddress" [ngModelOptions]="{standalone: true}" readonly></textarea>
+        <button mat-icon-button matSuffix (click)="removeAddress()">
+          <mat-icon>delete</mat-icon>
+        </button>
       </mat-form-field>
 
     </div>
-
-      <button mat-raised-button color="primary" type="submit">Dodaj nowe wydarzenie</button>
+    <button mat-raised-button color="primary" type="submit">Dodaj nowe wydarzenie</button>
   </form>
 </mat-card>
