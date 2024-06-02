@@ -5,7 +5,7 @@ namespace ActivityFinder.Server.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class AddressController : Controller
+    public class AddressController : ControllerBase
     {
         private readonly ILogger<AddressController> _logger;
         private readonly IAddressSearch _addressSearch;

@@ -1,9 +1,10 @@
-﻿namespace ActivityFinder.Server.Models
+﻿
+namespace ActivityFinder.Server.Models
 {
     public class Activity
     {
         public int ActivityId { get; set; }
-        public DateTime Created { get; set; } = DateTime.Now;
+        public DbProperties DbProperties { get; set; } = new DbProperties();
         public required string Address { get; set; }
         public required string Description { get; set; }
         public required string Category { get; set; }
