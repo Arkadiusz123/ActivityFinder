@@ -8,17 +8,22 @@ namespace ActivityFinder.Server.Controllers
     public class AddressController : Controller
     {
         private readonly ILogger<AddressController> _logger;
+        private readonly IAddressSearch _addressSearch;
 
         public AddressController(ILogger<AddressController> logger)
         {
             _logger = logger;
+            _addressSearch = new AddressSearch();
         }
 
         [HttpGet]
         [Route("{input}")]
         public IActionResult GetBySearchInput(string input)
         {
-            var result = new AddressSearch().GetAddressByName(input);
+            if (string.IsNullOrEmpty(input))
+                return BadRequest("Nie podano adresu");
+
+            var result = _addressSearch.GetAddressByName(input);
 
             if (!result.Success)
                 return NotFound(result.Message);

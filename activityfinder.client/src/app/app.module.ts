@@ -18,6 +18,7 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
 import { HTTP_INTERCEPTORS } from '@angular/common/http';
 import { HttpErrorInterceptor } from './http-error.interceptor';
 import { FormsModule } from '@angular/forms';
+import { DebounceClickDirective } from './directives/debounce-click.directive';
 
 const routes: Routes = [
   { path: '', component: EventsListComponent },
@@ -29,7 +30,8 @@ const routes: Routes = [
   declarations: [
     AppComponent,
     EventFormComponent,
-    EventsListComponent
+    EventsListComponent,
+    DebounceClickDirective
   ],
   imports: [
     BrowserModule,

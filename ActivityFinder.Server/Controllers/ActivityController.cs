@@ -17,7 +17,7 @@ namespace ActivityFinder.Server.Controllers
         [HttpPost]
         public IActionResult Create([FromBody]ActivityDTO activity)
         {
-            var test = new AddressSearch().GetAddressByOsmId(activity.Address.OsmId);
+            //var test = new AddressSearch().GetAddressByOsmId(activity.Address.OsmId);
 
             return Ok();
         }

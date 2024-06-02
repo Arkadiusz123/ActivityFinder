@@ -2,8 +2,6 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Observable, Subscription } from 'rxjs';
 import { Activity } from '../interfaces/activity';
-import { AdresCompleteService } from '../services/adres-complete.service';
-import { debounceTime, distinctUntilChanged, map, startWith, switchMap } from 'rxjs/operators';
 import { ErrorMessagesService } from '../services/error-messages.service';
 import { ActivitiesService } from '../services/activities.service';
 import { AddressFinderService } from '../services/address-finder.service';
@@ -36,14 +34,13 @@ export class EventFormComponent implements OnInit, OnDestroy {
 
   }
 
-  delay(ms: number) {
-    return new Promise(resolve => setTimeout(resolve, ms));
-  }
-
-  async findAddress(event: KeyboardEvent | null) {
+  findAddress(event: KeyboardEvent | null) {
     event?.preventDefault();
 
-    await this.delay(300);
+    if (!this.searchInput) {
+      return;
+    }
+
     const nameControl = this.activityForm.get('address.displayName');
     if (nameControl && nameControl.value) {
       alert('Usuń wybrany adres, aby wyszukać inny.');

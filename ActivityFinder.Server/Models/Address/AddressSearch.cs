@@ -1,10 +1,15 @@
 ﻿using ActivityFinder.Server.OtherTools.Extensions;
-using System.Security.Cryptography;
 using System.Text.Json;
 
 namespace ActivityFinder.Server.Models
 {
-    public class AddressSearch
+    public interface IAddressSearch
+    {
+        public Result<Address> GetAddressByOsmId(string osmId);
+        public Result<Address> GetAddressByName(string name);
+    }
+
+    public class AddressSearch : IAddressSearch
     {
         private const string _nominatimOsmUlr = "https://nominatim.openstreetmap.org/";
         private readonly HttpClient _httpClient;
