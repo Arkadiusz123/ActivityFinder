@@ -18,7 +18,7 @@ export class EventFormComponent implements OnInit, OnDestroy {
   activityForm: FormGroup;
   filteredOptions: Observable<any[]> = {} as Observable<any[]>;
 
-  manualAddress: boolean = false;
+  displayAddress: string = '';
   searchInput: string = '';
 
   constructor(private fb: FormBuilder, private activityService: ActivitiesService, private addressFinder: AddressFinderService,
@@ -27,56 +27,13 @@ export class EventFormComponent implements OnInit, OnDestroy {
       description: ['', Validators.required],
       date: ['', Validators.required],
       address: this.fb.group({
-        houseNumber: [''],
-        road: [''],
-        state: [''],
-        postcode: [''],
-        city: [''],
-        displayName: [''],
+        osmId: ['']
       }),
     });
   }
 
   ngOnInit(): void {
 
-  }
-
-  manualAddressClick() {
-    this.addValidators();
-    this.removeValidators();
-    this.updateValidators();
-  }
-
-  removeValidators() {
-    if (!this.manualAddress) {
-      this.activityForm.get('address.houseNumber')!.clearValidators();
-      this.activityForm.get('address.state')!.clearValidators();
-      this.activityForm.get('address.postcode')!.clearValidators();
-      this.activityForm.get('address.city')!.clearValidators();
-    }
-    else {
-      this.activityForm.get('address.displayName')!.clearValidators();
-    }
-  }
-
-  addValidators() {
-    if (!this.manualAddress) {
-      this.activityForm.get('address.displayName')!.setValidators(Validators.required);
-    }
-    else {
-      this.activityForm.get('address.houseNumber')!.setValidators(Validators.required);
-      this.activityForm.get('address.state')!.setValidators(Validators.required);
-      this.activityForm.get('address.postcode')!.setValidators([Validators.required, Validators.pattern('^[0-9]{2}-[0-9]{3}$')]);
-      this.activityForm.get('address.city')!.setValidators(Validators.required);
-    }
-  }
-
-  updateValidators() {
-    this.activityForm.get('address.houseNumber')!.updateValueAndValidity();
-    this.activityForm.get('address.state')!.updateValueAndValidity();
-    this.activityForm.get('address.postcode')!.updateValueAndValidity();
-    this.activityForm.get('address.city')!.updateValueAndValidity();
-    this.activityForm.get('address.displayName')!.updateValueAndValidity();
   }
 
   delay(ms: number) {
@@ -98,15 +55,25 @@ export class EventFormComponent implements OnInit, OnDestroy {
         alert('Nie znaleziono adresu')
       }
       else {
-        this.activityForm.get('address.displayName')!.setValue(res[0].display_name);
-      }     
+        this.activityForm.get('address.osmId')!.setValue(res.osmId);
+        this.displayAddress = res.displayName;
+        this.searchInput = '';
+      }
     })
-
     this.subscriptions.push(addressSubscription);
   }
 
-  onSubmit(): void {
+  removeAddress() {
+    this.activityForm.get('address.osmId')!.setValue('');
+    this.displayAddress = '';
+  }
+
+  onSubmit() {
     //console.log('New Product:', this.activityForm.value);
+    if (!this.activityForm.get('address.osmId')!.value) {
+      alert('Nie wybrano adresu')
+      return;
+    }
 
     if (this.activityForm.valid) {
       const newActivity: Activity = this.activityForm.value;

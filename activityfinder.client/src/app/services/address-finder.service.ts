@@ -9,9 +9,7 @@ export class AddressFinderService {
 
   constructor(private http: HttpClient) { }
 
-  findAddress(searchInput: string): Observable<any[]> {
-
-    return this.http
-      .get<any[]>('https://nominatim.openstreetmap.org/search?format=json&accept-language=pl&addressdetails=1&q=' + searchInput);
+  findAddress(searchInput: string): Observable<any> {
+    return this.http.get<any>('/api/address/' + searchInput);
   }
 }
