@@ -12,6 +12,7 @@ namespace ActivityFinder.Server.Database
         //}
 
         public DbSet<Address> Addresses { get; set; }
+        public DbSet<Activity> Activity { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {

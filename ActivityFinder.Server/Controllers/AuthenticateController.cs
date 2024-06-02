@@ -1,6 +1,8 @@
-﻿using ActivityFinder.Server.Models;
+﻿using ActivityFinder.Server.Database;
+using ActivityFinder.Server.Models;
 using ActivityFinder.Server.Models.User;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
