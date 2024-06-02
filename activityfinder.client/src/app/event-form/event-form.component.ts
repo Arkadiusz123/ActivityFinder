@@ -5,6 +5,7 @@ import { Activity } from '../interfaces/activity';
 import { ErrorMessagesService } from '../services/error-messages.service';
 import { ActivitiesService } from '../services/activities.service';
 import { AddressFinderService } from '../services/address-finder.service';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-event-form',
@@ -36,20 +37,20 @@ export class EventFormComponent implements OnInit, OnDestroy {
 
   findAddress(event: KeyboardEvent | null) {
     event?.preventDefault();
-
+    console.log('szukanie')
     if (!this.searchInput) {
       return;
     }
 
     const nameControl = this.activityForm.get('address.displayName');
     if (nameControl && nameControl.value) {
-      alert('Usuń wybrany adres, aby wyszukać inny.');
+      Swal.fire('Usuń wybrany adres, aby wyszukać inny.');
       return;
     }
 
     var addressSubscription = this.addressFinder.findAddress(this.searchInput).subscribe(res => {
       if (res.length == 0) {
-        alert('Nie znaleziono adresu')
+        Swal.fire('Nie znaleziono adresu')
       }
       else {
         this.activityForm.get('address.osmId')!.setValue(res.osmId);
@@ -68,7 +69,7 @@ export class EventFormComponent implements OnInit, OnDestroy {
   onSubmit() {
     //console.log('New Product:', this.activityForm.value);
     if (!this.activityForm.get('address.osmId')!.value) {
-      alert('Nie wybrano adresu')
+      Swal.fire('Nie wybrano adresu')
       return;
     }
 

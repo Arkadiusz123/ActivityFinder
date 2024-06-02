@@ -20,7 +20,7 @@
 
       <mat-form-field appearance="fill" *ngIf="!activityForm.get('address.osmId')!.value">
         <mat-label>Wyszukaj adres</mat-label>
-        <input matInput appDebounceClick [(ngModel)]="searchInput" [ngModelOptions]="{standalone: true}" (debounceClickOrPress)="findAddress($any($event))">
+        <input matInput appDebounceClick [eventName]="'keydown.enter'" [(ngModel)]="searchInput" [ngModelOptions]="{standalone: true}" (debounceClickOrPress)="findAddress($any($event))">
         <button mat-icon-button matSuffix appDebounceClick type="button" (debounceClickOrPress)="findAddress(null)">
           <mat-icon>search</mat-icon>
         </button>
