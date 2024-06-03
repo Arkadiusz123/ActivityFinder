@@ -37,7 +37,7 @@ export class EventFormComponent implements OnInit, OnDestroy {
 
   findAddress(event: KeyboardEvent | null) {
     event?.preventDefault();
-    console.log('szukanie')
+
     if (!this.searchInput) {
       return;
     }

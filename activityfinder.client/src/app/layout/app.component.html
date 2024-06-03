@@ -1,20 +1,27 @@
-<mat-toolbar color="primary">
-  <a class="title">Activity Finder</a>
-  <span class="spacer"></span>
-  <mat-tab-group>
-    <mat-tab label="Tab 1">
-      <ng-template mat-tab-label>
-        <mat-icon class="white-text" routerLink="/">home</mat-icon>
-        <span class="white-text" routerLink="/">Home</span>
-      </ng-template>
-    </mat-tab>
-    <mat-tab label="Tab 2">
-      <ng-template mat-tab-label>
-        <mat-icon class="white-text" routerLink="event-form">add</mat-icon>
-        <span class="white-text" routerLink="event-form">Dodaj nowe wydarzenie</span>
-      </ng-template>
-    </mat-tab>
-  </mat-tab-group>
-</mat-toolbar>
+<mat-sidenav-container class="sidenav-container">
+  <mat-sidenav #sidenav [mode]="(isHandset$ | async) ? 'over' : 'side'" [opened]="!(isHandset$ | async)" class="sidenav" *ngIf="isHandset$ | async">
+    <mat-toolbar>Menu</mat-toolbar>
+    <mat-nav-list>
+      <a mat-list-item routerLink="/">Strona główna</a>
+      <a mat-list-item routerLink="event-form">Dodaj wydarzenie</a>
+    </mat-nav-list>
+  </mat-sidenav>
 
-<router-outlet></router-outlet>
+  <mat-sidenav-content>
+    <mat-toolbar color="primary">
+      <button mat-icon-button (click)="toggleSidenav()" *ngIf="isHandset$ | async">
+        <mat-icon>menu</mat-icon>
+      </button>
+      <span>Activity Finder</span>
+      <span class="spacer"></span>
+      <ng-container *ngIf="!(isHandset$ | async)">
+        <a mat-button routerLink="/">Strona główna</a>
+        <a mat-button routerLink="event-form">Dodaj wydarzenie</a>
+      </ng-container>
+    </mat-toolbar>
+
+    <div class="content">
+      <router-outlet></router-outlet>
+    </div>
+  </mat-sidenav-content>
+</mat-sidenav-container>
