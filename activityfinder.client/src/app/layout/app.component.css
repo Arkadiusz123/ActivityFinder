@@ -1,31 +1,28 @@
-:host {
-    max-width: 1280px;
-    padding: 2rem;
-    text-align: center;
+.sidenav-container {
+  height: 100%;
 }
 
-th, td {
-    padding-left: 1rem;
-    padding-right: 1rem;
+.sidenav {
+  width: 250px;
 }
 
-table {
-    margin: 0 auto;
+.mat-toolbar.mat-primary {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+}
+
+.content {
+  padding: 16px;
+  text-align: center;
 }
 
 .spacer {
   flex: 1 1 auto;
 }
 
-:host {
-  margin: 0;
-  padding: 0;
-}
-
-a.title:hover{
-    cursor: pointer;
-}
-
-.white-text{
-    color: white;
+@media (max-width: 600px) {
+  .sidenav {
+    width: 200px;
+  }
 }
