@@ -1,8 +1,7 @@
-﻿using ActivityFinder.Server.Database;
-using ActivityFinder.Server.Models;
+﻿using ActivityFinder.Server.Models;
 using ActivityFinder.Server.Models.User;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
@@ -64,7 +63,6 @@ namespace ActivityFinder.Server.Controllers
             var userExists = await _userManager.FindByNameAsync(model.Username);
             if (userExists != null)
                 return BadRequest("Użytkownik istnieje");
-                //return StatusCode(StatusCodes.Status500InternalServerError, new Response { Status = "Error", Message = "User already exists!" });
 
             IdentityUser user = new()
             {
@@ -74,23 +72,22 @@ namespace ActivityFinder.Server.Controllers
             };
             var result = await _userManager.CreateAsync(user, model.Password);
             if (!result.Succeeded)
-                return BadRequest("Nieprawidłowy logi lub hasło");
-            //return StatusCode(StatusCodes.Status500InternalServerError, new Response { Status = "Error", Message = "User creation failed! Please check user details and try again." });
+                return BadRequest("Nieprawidłowy logi lub hasło");            
 
-            await Task.Run(_roleManager.UpdateRoles);
+            await _roleManager.UpdateRoles();
             await _userManager.AddToRoleAsync(user, UserRoles.User);
 
             return Ok("Utworzonno noewgo użytkownika");
         }
 
+        //[Authorize(Roles = UserRoles.Admin)]
         [HttpPost]
-        [Route("register-admin")]
+        [Route("register-admin")]        
         public async Task<IActionResult> RegisterAdmin([FromBody] RegisterModel model)
         {
             var userExists = await _userManager.FindByNameAsync(model.Username);
             if (userExists != null)
                 return BadRequest("Użytkownik istnieje");
-            //return StatusCode(StatusCodes.Status500InternalServerError, new Response { Status = "Error", Message = "User already exists!" });
 
             IdentityUser user = new()
             {
@@ -100,15 +97,9 @@ namespace ActivityFinder.Server.Controllers
             };
             var result = await _userManager.CreateAsync(user, model.Password);
             if (!result.Succeeded)
-                return BadRequest("Nieprawidłowy logi lub hasło");
-            //return StatusCode(StatusCodes.Status500InternalServerError, new Response { Status = "Error", Message = "User creation failed! Please check user details and try again." });
+                return BadRequest("Nieprawidłowy logi lub hasło");             
 
-            await Task.Run(_roleManager.UpdateRoles);
-            //if (!await _roleManager.RoleExistsAsync(UserRoles.Admin))
-            //    await _roleManager.CreateAsync(new IdentityRole(UserRoles.Admin));
-            //if (!await _roleManager.RoleExistsAsync(UserRoles.User))
-            //    await _roleManager.CreateAsync(new IdentityRole(UserRoles.User));
-
+            await _roleManager.UpdateRoles();
             await _userManager.AddToRoleAsync(user, UserRoles.User);
             await _userManager.AddToRoleAsync(user, UserRoles.Admin);
 
@@ -121,7 +112,6 @@ namespace ActivityFinder.Server.Controllers
                 await _userManager.AddToRoleAsync(user, UserRoles.User);
             }
             return Ok("Utworzonno noewgo użytkownika");
-            //return Ok(new Response { Status = "Success", Message = "User created successfully!" });
         }
 
         private JwtSecurityToken GetToken(List<Claim> authClaims)

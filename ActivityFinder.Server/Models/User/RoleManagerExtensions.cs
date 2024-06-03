@@ -5,7 +5,7 @@ namespace ActivityFinder.Server.Models.User
 {
     public static class RoleManagerExtensions
     {
-        public async static void UpdateRoles(this RoleManager<IdentityRole> roleManager)
+        public async static Task<bool> UpdateRoles(this RoleManager<IdentityRole> roleManager)
         {
             Type t = typeof(UserRoles);
             FieldInfo[] roles = t.GetFields(BindingFlags.Static | BindingFlags.Public);
@@ -17,6 +17,7 @@ namespace ActivityFinder.Server.Models.User
                 if (!await roleManager.RoleExistsAsync(role))
                     await roleManager.CreateAsync(new IdentityRole(role));
             }
+            return true;
         }
     }
 }
