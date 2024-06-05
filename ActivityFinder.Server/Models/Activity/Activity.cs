@@ -1,6 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
-
-namespace ActivityFinder.Server.Models
+﻿namespace ActivityFinder.Server.Models
 {
     public class Activity
     {
@@ -17,8 +15,6 @@ namespace ActivityFinder.Server.Models
         public required Address Address { get; set; }
 
         public string CreatorId { get; set; }
-
-        [ForeignKey(nameof(CreatorId))]
         public required ApplicationUser Creator { get; set; }
 
         public List<ApplicationUser> JoinedUsers { get; set; } = [];

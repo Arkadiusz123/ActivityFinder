@@ -51,7 +51,7 @@ namespace ActivityFinder.Server.Models
 
         public Result<Address> GetAddressByName(string name)
         {
-            var url = $"{_nominatimOsmUlr}search?format=json&accept-language=pl&addressdetails=1&q={name}";
+            var url = $"{_nominatimOsmUlr}search?format=json&accept-language=pl&addressdetails=1&countrycodes=pl&q={name}";
 
             var addressessOsm = GetResponse(url);
 

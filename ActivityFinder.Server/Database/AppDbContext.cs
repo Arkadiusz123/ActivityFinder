@@ -1,6 +1,7 @@
 ﻿using ActivityFinder.Server.Models;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using System.Reflection.Emit;
 
 namespace ActivityFinder.Server.Database
 {
@@ -16,6 +17,8 @@ namespace ActivityFinder.Server.Database
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
+            builder.Entity<Activity>().HasOne(a => a.Creator).WithMany(a => a.CreatedActivities).HasForeignKey(a => a.CreatorId);
+
             base.OnModelCreating(builder);
         }
     }
