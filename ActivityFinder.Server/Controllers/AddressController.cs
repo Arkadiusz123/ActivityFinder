@@ -1,4 +1,5 @@
-﻿using ActivityFinder.Server.Models;
+﻿using ActivityFinder.Server.Database;
+using ActivityFinder.Server.Models;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ActivityFinder.Server.Controllers
@@ -9,11 +10,13 @@ namespace ActivityFinder.Server.Controllers
     {
         private readonly ILogger<AddressController> _logger;
         private readonly IAddressSearch _addressSearch;
+        private readonly AppDbContext _context;
 
-        public AddressController(ILogger<AddressController> logger)
+        public AddressController(ILogger<AddressController> logger, AppDbContext context)
         {
+            _context = context;
             _logger = logger;
-            _addressSearch = new AddressSearch();
+            _addressSearch = new AddressSearch(_context);
         }
 
         [HttpGet]

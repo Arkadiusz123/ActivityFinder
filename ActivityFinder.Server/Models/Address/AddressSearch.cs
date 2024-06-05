@@ -1,4 +1,6 @@
-﻿using ActivityFinder.Server.OtherTools.Extensions;
+﻿using ActivityFinder.Server.Database;
+using ActivityFinder.Server.OtherTools.Extensions;
+using Microsoft.EntityFrameworkCore;
 using System.Text.Json;
 
 namespace ActivityFinder.Server.Models
@@ -14,18 +16,25 @@ namespace ActivityFinder.Server.Models
         private const string _nominatimOsmUlr = "https://nominatim.openstreetmap.org/";
         private readonly HttpClient _httpClient;
         private readonly Result<Address> _result;
+        private readonly AppDbContext _context;
 
-        public AddressSearch()
+        public AddressSearch(AppDbContext context)
         {
             _httpClient = new HttpClient();
             _httpClient.SetBasicHeaders();
+            _context = context;
 
             _result = new Result<Address>();
         }
 
         public Result<Address> GetAddressByOsmId(string osmId)
         {
-            //TODO: find in db and return if exists
+            var addressDb = _context.Addresses.SingleOrDefault(x => x.OsmId == osmId);
+            if (addressDb != null)
+            {
+                _result.SetSuccess(addressDb);
+                return _result;
+            }
 
             var url = $"{_nominatimOsmUlr}lookup?format=json&accept-language=pl&addressdetails=1&osm_ids={osmId}";
 
@@ -33,12 +42,10 @@ namespace ActivityFinder.Server.Models
 
             if (addressessOsm == null || addressessOsm.Count() == 0)
             {
-                _result.Message = "Nie znaleziono adresu";
+                _result.SetFail("Nie znaleziono adresu");
                 return _result;
             }
-
-            _result.Value = addressessOsm.First().ToAddress();
-            _result.Success = true;
+            _result.SetSuccess(addressessOsm.First().ToAddress());
             return _result;
         }
 
@@ -50,12 +57,11 @@ namespace ActivityFinder.Server.Models
 
             if (addressessOsm == null || addressessOsm.Count() == 0)
             {
-                _result.Message = "Nie znaleziono adresu";
+                _result.SetFail("Nie znaleziono adresu");
                 return _result;
             }
 
-            _result.Value = addressessOsm.First().ToAddress();
-            _result.Success = true;
+            _result.SetSuccess(addressessOsm.First().ToAddress());
             return _result;
         }
 

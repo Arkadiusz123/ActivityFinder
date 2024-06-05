@@ -5,6 +5,7 @@ export interface Activity {
   description: string;
   category: string;
   date: Date;
+  otherInfo: string;
 
   address: Address;
   displayName: string;

@@ -1,5 +1,8 @@
-﻿namespace ActivityFinder.Server.Models
+﻿using Microsoft.EntityFrameworkCore;
+
+namespace ActivityFinder.Server.Models
 {
+    [Index(nameof(OsmId), IsUnique = true)]
     public class Address
     {
         public int AddressId { get; set; }
@@ -15,6 +18,8 @@
         public required string County { get; set; }     //(pl: powiat), for cities empty, then save city parameter
         public required string State { get; set; }  //pl: województwo
         public required string Country { get; set; }
+
+        public List<Activity> Activities { get; set; } = [];
 
         public override string ToString()
         {

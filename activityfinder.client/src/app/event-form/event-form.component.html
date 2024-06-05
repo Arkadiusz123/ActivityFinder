@@ -35,6 +35,13 @@
       </mat-form-field>
 
     </div>
+
+    <mat-form-field appearance="fill">
+      <mat-label>Dodatkowe informacje, wskazówki dojazdu</mat-label>
+      <textarea matInput formControlName="otherInfo"></textarea>
+      <mat-error *ngIf="activityForm.get('otherInfo')!.invalid">{{ errorMessageService.getErrorMessage(activityForm, 'otherInfo') }}</mat-error>
+    </mat-form-field>
+
     <button mat-raised-button color="primary" type="submit">Dodaj nowe wydarzenie</button>
   </form>
 </mat-card>
