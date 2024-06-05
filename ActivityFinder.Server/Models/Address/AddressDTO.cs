@@ -1,13 +1,11 @@
-﻿namespace ActivityFinder.Server.Models
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace ActivityFinder.Server.Models
 {
     public class AddressDTO
     {
-        //public required string HouseNumber { get; set; }
-        //public required string Road { get; set; }
-        //public required string State { get; set; }
-        //public required string Postcode { get; set; }
-        //public required string City { get; set; }
-        public required string OsmId { get; set; }
+        [Required(ErrorMessage = "Adres wymagany")]
+        public string? OsmId { get; set; }
         public string? DisplayName { get; set; }
     }
 }
