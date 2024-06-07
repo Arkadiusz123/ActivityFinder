@@ -1,5 +1,6 @@
 ﻿using ActivityFinder.Server.Models;
 using ActivityFinder.Server.Models.User;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
@@ -61,7 +62,7 @@ namespace ActivityFinder.Server.Controllers
         {
             var userExists = await _userManager.FindByNameAsync(model.Username);
             if (userExists != null)
-                return BadRequest("Użytkownik istnieje");
+                return BadRequest(new { Message = "Użytkownik istnieje" });
 
             ApplicationUser user = new()
             {
@@ -71,22 +72,22 @@ namespace ActivityFinder.Server.Controllers
             };
             var result = await _userManager.CreateAsync(user, model.Password);
             if (!result.Succeeded)
-                return BadRequest("Nieprawidłowy logi lub hasło");            
+                return BadRequest(new { Message = "Nieprawidłowy login lub hasło" });            
 
             await _roleManager.UpdateRoles();
             await _userManager.AddToRoleAsync(user, UserRoles.User);
 
-            return Ok("Utworzonno noewgo użytkownika");
+            return Ok(new { Message = "Utworzonno nowego użytkownika" });
         }
 
-        //[Authorize(Roles = UserRoles.Admin)]
+        [Authorize(Roles = UserRoles.Admin)]
         [HttpPost]
         [Route("register-admin")]        
         public async Task<IActionResult> RegisterAdmin([FromBody] RegisterModel model)
         {
             var userExists = await _userManager.FindByNameAsync(model.Username);
             if (userExists != null)
-                return BadRequest("Użytkownik istnieje");
+                return BadRequest(new { Message = "Użytkownik istnieje" });
 
             ApplicationUser user = new()
             {
@@ -96,7 +97,7 @@ namespace ActivityFinder.Server.Controllers
             };
             var result = await _userManager.CreateAsync(user, model.Password);
             if (!result.Succeeded)
-                return BadRequest("Nieprawidłowy logi lub hasło");             
+                return BadRequest(new { Message = "Nieprawidłowe dane do rejestracji" });             
 
             await _roleManager.UpdateRoles();
             await _userManager.AddToRoleAsync(user, UserRoles.User);
@@ -110,7 +111,7 @@ namespace ActivityFinder.Server.Controllers
             {
                 await _userManager.AddToRoleAsync(user, UserRoles.User);
             }
-            return Ok("Utworzonno noewgo użytkownika");
+            return Ok(new { Message = "Utworzonno noewgo użytkownika" });
         }
 
         private JwtSecurityToken GetToken(List<Claim> authClaims)

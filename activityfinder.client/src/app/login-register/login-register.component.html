@@ -1,0 +1,30 @@
+<mat-card>
+  <form [formGroup]="form" (ngSubmit)="onSubmit()">
+
+    <mat-form-field appearance="fill">
+      <mat-label>Login</mat-label>
+      <input matInput formControlName="username">
+      <mat-error *ngIf="form.get('username')!.invalid">{{ errorMessageService.getErrorMessage(form, 'username') }}</mat-error>
+    </mat-form-field>
+
+    <mat-form-field appearance="fill" *ngIf="registerForm">
+      <mat-label>E-mail</mat-label>
+      <input matInput formControlName="email">
+      <mat-error *ngIf="form.get('email')!.invalid">{{ errorMessageService.getErrorMessage(form, 'email') }}</mat-error>
+    </mat-form-field>
+
+    <mat-form-field appearance="fill">
+      <mat-label>Hasło</mat-label>
+      <input type="password" matInput formControlName="password">
+      <mat-error *ngIf="form.get('password')!.invalid && registerForm">
+        Hasło musi mieć przynajmniej 8 znaków, cyfrę oraz małą literę
+      </mat-error>
+    </mat-form-field>
+
+    <div *ngIf="!registerForm">
+      Nie masz konta? <a mat-button color="primary" (click)="setRegister()">Zarejestruj się</a>
+    </div>
+
+    <button mat-raised-button color="primary" type="submit">{{ registerForm ? 'Zarejestruj się' : 'Zaloguj się' }}</button>
+  </form>
+</mat-card>

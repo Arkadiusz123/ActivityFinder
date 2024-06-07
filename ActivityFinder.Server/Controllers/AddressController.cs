@@ -1,11 +1,13 @@
 ﻿using ActivityFinder.Server.Database;
 using ActivityFinder.Server.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ActivityFinder.Server.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
+    [Authorize]
     public class AddressController : ControllerBase
     {
         private readonly ILogger<AddressController> _logger;

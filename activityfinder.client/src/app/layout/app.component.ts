@@ -1,16 +1,21 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
-import { Observable } from 'rxjs';
+import { Observable, Subscription } from 'rxjs';
 import { map, shareReplay } from 'rxjs/operators';
 import { MatSidenav } from '@angular/material/sidenav';
+import { AuthenticateService } from '../services/authenticate.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css']
 })
-export class AppComponent implements OnInit {
+export class AppComponent implements OnInit, OnDestroy {
   @ViewChild('sidenav') sidenav!: MatSidenav;
+  isLoggedIn: boolean = false;
+  menuTools: MenuItem[] = [];
+  private subscriptions: Subscription[] = [];
 
   isHandset$: Observable<boolean> = this.breakpointObserver.observe(Breakpoints.Handset)
     .pipe(
@@ -18,15 +23,49 @@ export class AppComponent implements OnInit {
       shareReplay()
     );
 
-  constructor(private breakpointObserver: BreakpointObserver) {}
+  constructor(private breakpointObserver: BreakpointObserver, private authService: AuthenticateService, private router: Router) {}
+  
 
   ngOnInit() {
-
+    this.subscriptions.push(this.authService.isLoggedIn().subscribe(x => {
+      this.isLoggedIn = x
+      this.menuTools = this.menuItems()
+    }));
   }
 
   toggleSidenav() {
     this.sidenav.toggle();
   }
 
+  menuItems(): MenuItem[] {
+    const items: MenuItem[] = [];
+    items.push({ route: '/', display: 'Strona główna', clickAction: '' } as MenuItem)
+    items.push({ route: 'event-form', display: 'Dodaj wydarzenie', clickAction: '' } as MenuItem)
+
+    if (this.isLoggedIn) { items.push({ route: '', display: 'Wyloguj się', clickAction: 'logout' } as MenuItem) }
+    else { items.push({ route: 'authenticate', display: 'Zaloguj się', clickAction: '' } as MenuItem) }
+
+    return items;
+  }
+
+  callRouteAction(route: string, funcName: string) {
+    if (route) { this.router.navigate([route]); }
+    else if (funcName == 'logout') { this.authService.logout() } 
+  }
+
   title = 'activityfinder.client';
+
+  ngOnDestroy() {
+    this.subscriptions.forEach(subscription => {
+      if (subscription) {
+        subscription.unsubscribe();
+      }
+    });
+  }
+}
+
+interface MenuItem {
+  display: string;
+  route: string;
+  clickAction: string;
 }
