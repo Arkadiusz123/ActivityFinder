@@ -2,8 +2,9 @@
   <mat-sidenav #sidenav [mode]="(isHandset$ | async) ? 'over' : 'side'" [opened]="!(isHandset$ | async)" class="sidenav" *ngIf="isHandset$ | async">
     <mat-toolbar>Menu</mat-toolbar>
     <mat-nav-list>
-      <a mat-list-item routerLink="/">Strona główna</a>
-      <a mat-list-item routerLink="event-form">Dodaj wydarzenie</a>
+      <a *ngFor="let item of menuTools"
+         mat-list-item
+         (click)="callRouteAction(item.route, item.clickAction)">{{ item.display }}</a>
     </mat-nav-list>
   </mat-sidenav>
 
@@ -14,9 +15,13 @@
       </button>
       <span>Activity Finder</span>
       <span class="spacer"></span>
+
       <ng-container *ngIf="!(isHandset$ | async)">
-        <a mat-button routerLink="/">Strona główna</a>
-        <a mat-button routerLink="event-form">Dodaj wydarzenie</a>
+        <mat-nav-list class="list-horizontal">
+          <mat-list-item *ngFor="let item of menuTools">
+            <a (click)="callRouteAction(item.route, item.clickAction)">{{ item.display }}</a>
+          </mat-list-item>
+        </mat-nav-list>
       </ng-container>
     </mat-toolbar>
 

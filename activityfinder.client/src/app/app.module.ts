@@ -17,13 +17,17 @@ import { RouterModule, Routes } from '@angular/router';
 import { DebounceClickDirective } from './directives/debounce-click.directive';
 import { EventFormComponent } from './event-form/event-form.component';
 import { EventsListComponent } from './events-list/events-list.component';
-import { HttpErrorInterceptor } from './http-error.interceptor';
+import { HttpErrorInterceptor } from './interceptors/http-error.interceptor';
 import { AppComponent } from './layout/app.component';
+import { LoginRegisterComponent } from './login-register/login-register.component';
+import { AuthenticateService } from './services/authenticate.service';
+import { AuthInterceptor } from './interceptors/auth.interceptor';
 
 const routes: Routes = [
   { path: '', component: EventsListComponent },
   { path: 'event-form', component: EventFormComponent },
   { path: 'events-list', component: EventsListComponent },
+  { path: 'authenticate', component: LoginRegisterComponent },
 ];
 
 @NgModule({
@@ -31,7 +35,8 @@ const routes: Routes = [
     AppComponent,
     EventFormComponent,
     EventsListComponent,
-    DebounceClickDirective
+    DebounceClickDirective,
+    LoginRegisterComponent
   ],
   imports: [
     BrowserModule,
@@ -44,9 +49,15 @@ const routes: Routes = [
     MatSidenavModule, MatListModule
   ],
   providers: [
+    AuthenticateService,
     {
       provide: HTTP_INTERCEPTORS,
       useClass: HttpErrorInterceptor,
+      multi: true
+    },
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: AuthInterceptor,
       multi: true
     }
   ],

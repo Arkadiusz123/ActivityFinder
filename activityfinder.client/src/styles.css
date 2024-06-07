@@ -10,3 +10,19 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
   color: #595957;
   cursor: not-allowed;
 }
+
+mat-card {
+  max-width: 600px;
+  margin: 2rem auto;
+  padding: 2rem;
+}
+
+mat-form-field {
+  width: 100%;
+  margin-bottom: 1rem;
+}
+
+button {
+  display: block;
+  width: 100%;
+}

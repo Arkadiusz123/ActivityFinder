@@ -26,3 +26,13 @@
     width: 200px;
   }
 }
+
+mat-nav-list.list-horizontal {
+  padding: 0;
+  .mat-list-item{
+  display: inline-block;
+  height: auto;
+  width: auto;
+  color: white;
+  }
+}
