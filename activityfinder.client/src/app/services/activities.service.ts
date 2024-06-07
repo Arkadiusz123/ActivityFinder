@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 import { Activity } from '../interfaces/activity';
 import { BehaviorSubject } from 'rxjs';
 import { tap } from 'rxjs/operators';
+import { Router } from '@angular/router';
 
 @Injectable({
   providedIn: 'root'
@@ -11,7 +12,7 @@ export class ActivitiesService {
 
   private objectsSubject = new BehaviorSubject<Activity[]>([]);
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient, private router: Router) { }
 
   addActivity(activity: Activity) {
     //this.http.get('/weatherforecast').subscribe();
@@ -23,6 +24,8 @@ export class ActivitiesService {
         currentList.push(data);
         this.objectsSubject.next(currentList);
       }))
-      .subscribe();
+      .subscribe(res => {
+        this.router.navigate([''])
+      });
   }
 }
