@@ -1,4 +1,5 @@
 ﻿using ActivityFinder.Server.Database;
+using Microsoft.EntityFrameworkCore;
 
 namespace ActivityFinder.Server.Models
 {
@@ -24,6 +25,12 @@ namespace ActivityFinder.Server.Models
         public void SaveChanges()
         {
             _context.SaveChanges();
+        }
+
+        public virtual IQueryable<T> GetAll() 
+        {
+            return _context.Set<T>();
+                //.AsNoTracking();
         }
     }
 }

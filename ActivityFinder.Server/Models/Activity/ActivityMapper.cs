@@ -6,6 +6,7 @@
         {
             var activity = new Activity()
             {
+                Title = activityDTO.Title,
                 ActivityId = activityDTO.Id ?? 0,
                 Description = activityDTO.Description!,
                 Date = activityDTO.Date!.Value,

@@ -24,6 +24,7 @@ export class EventFormComponent implements OnInit, OnDestroy {
     public errorMessageService: ErrorMessagesService) {
     this.activityForm = this.fb.group({
       description: ['', Validators.required],
+      title: ['', Validators.required],
       date: ['', Validators.required],
       otherInfo: [''],
       address: this.fb.group({

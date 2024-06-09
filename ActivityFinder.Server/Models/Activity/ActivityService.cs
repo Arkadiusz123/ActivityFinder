@@ -1,10 +1,12 @@
 ﻿using ActivityFinder.Server.Database;
+using Microsoft.EntityFrameworkCore;
 
 namespace ActivityFinder.Server.Models
 {
     public interface IActivityService
     {
         public Result<Activity> Add(Activity activity);
+        public IQueryable<Activity> GetList();
     }
 
     public class ActivityService : IActivityService
@@ -26,6 +28,11 @@ namespace ActivityFinder.Server.Models
 
             _result.SetSuccess(activity);
             return _result;
+        }
+
+        public IQueryable<Activity> GetList()
+        {
+            return _repository.GetAll().AsNoTracking();
         }
     }
 }

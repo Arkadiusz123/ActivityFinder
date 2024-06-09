@@ -7,6 +7,9 @@ public class ActivityDTO
 {
     public int? Id { get; set; }
 
+    [Required(ErrorMessage = "Nazwa wymagana")]
+    public required string Title { get; set; }
+
     [Required(ErrorMessage = "Adres wymagany")]
     public required AddressDTO Address { get; set; }
 

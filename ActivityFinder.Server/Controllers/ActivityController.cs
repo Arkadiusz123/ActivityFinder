@@ -41,5 +41,30 @@ namespace ActivityFinder.Server.Controllers
             _activityService.Add(activity.ToActivity(addressResult.Value, userResult.Value));
             return Ok();
         }
+
+        [HttpGet]
+        [AllowAnonymous]//tylko na test
+        public IActionResult GetList(int page, int size, string sortField, string sortDirection, 
+            string? filter, string state)
+        {
+            var query = _activityService.GetList();
+
+            if (!string.IsNullOrEmpty(state))
+                query = query.Where(x => x.Address.State == state);
+
+            if (!string.IsNullOrEmpty(filter))
+            {
+                filter = filter.ToLower().Trim().Replace(",", "");
+                query = query.Where(x => 
+                //x.Address.ToString().Contains("Lusina") ||
+                (x.Address.Name + x.Address.Town + x.Address.Road + x.Address.HouseNumber + x.Address.County + x.Address.State).ToLower().Contains(filter)
+                || x.Title.Contains(filter)
+                || x.Date.ToString().Contains(filter)
+                );
+            }
+
+            var test = query.ToList();
+            return null;
+        }
     }
 }
