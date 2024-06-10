@@ -1,23 +1,24 @@
 ﻿using ActivityFinder.Server.Database;
-using Microsoft.EntityFrameworkCore;
 
 namespace ActivityFinder.Server.Models
 {
-    public interface IActivityService
+    interface IActivityService<TVm>
     {
-        public Result<Activity> Add(Activity activity);
-        public IQueryable<Activity> GetList();
+        Result<Activity> Add(Activity activity);
+        Result<TVm> GetPagedVm(int pageNumber, int size, string sortField, bool asc, string? filter, string state);
     }
 
-    public class ActivityService : IActivityService
+    public class ActivityService<TVm> : IActivityService<TVm>
     {
-        private readonly GenericRepository<Activity> _repository;
+        private readonly IActivityRepository _repository;
         private readonly Result<Activity> _result;
+        private readonly IEntityToVmMapper<Activity,TVm> _mapper;
 
-        public ActivityService(AppDbContext context)
+        public ActivityService(AppDbContext context, IEntityToVmMapper<Activity, TVm> mapper)
         {
-            _repository = new GenericRepository<Activity>(context);
+            _repository = new ActivityRepository(context);
             _result = new Result<Activity>();
+            _mapper = mapper;
         }
 
         public Result<Activity> Add(Activity activity) 
@@ -30,9 +31,20 @@ namespace ActivityFinder.Server.Models
             return _result;
         }
 
-        public IQueryable<Activity> GetList()
+        public Result<TVm> GetPagedVm(int pageNumber, int size, string sortField, bool asc, string? filter, string state)
         {
-            return _repository.GetAll().AsNoTracking();
+            var query = _repository.GetFilteredQuery(filter, state);
+            query = _repository.OrderQuery(query, sortField, asc);
+
+            var totalCount = query.Count();
+            query = _repository.GetDataForPage(query, pageNumber, size);
+
+            var vm = _mapper.MapListToVm(query, totalCount);
+
+            var vmResult = new Result<TVm>();
+            vmResult.SetSuccess(vm);
+
+            return vmResult;
         }
     }
 }
