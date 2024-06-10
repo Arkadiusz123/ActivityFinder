@@ -22,6 +22,10 @@ import { AppComponent } from './layout/app.component';
 import { LoginRegisterComponent } from './login-register/login-register.component';
 import { AuthenticateService } from './services/authenticate.service';
 import { AuthInterceptor } from './interceptors/auth.interceptor';
+import { MatTableModule } from '@angular/material/table';
+import { MatPaginatorModule } from '@angular/material/paginator';
+import { MatSortModule } from '@angular/material/sort';
+import { MatSelectModule } from '@angular/material/select';
 
 const routes: Routes = [
   { path: '', component: EventsListComponent },
@@ -46,7 +50,7 @@ const routes: Routes = [
     ReactiveFormsModule,
     FormsModule,
     MatIconModule, MatTabsModule, MatInputModule, MatButtonModule, MatCardModule, MatAutocompleteModule, MatCheckboxModule, MatToolbarModule,
-    MatSidenavModule, MatListModule
+    MatSidenavModule, MatListModule, MatTableModule, MatPaginatorModule, MatSortModule, MatSelectModule
   ],
   providers: [
     AuthenticateService,

@@ -45,7 +45,7 @@ namespace ActivityFinder.Server.Controllers
         [HttpGet]
         [AllowAnonymous]//tylko na test TODO
         public IActionResult GetList(int page, int size, string sortField, bool asc, 
-            string? filter, string state, TestEnum? test)
+            string? filter, string state)
         {
             //TODO params validation
 
@@ -55,11 +55,5 @@ namespace ActivityFinder.Server.Controllers
 
             return Ok(result.Value);
         }
-    }
-
-    public enum TestEnum
-    {
-        test1,
-        test2
     }
 }
