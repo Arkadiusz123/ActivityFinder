@@ -2,10 +2,10 @@ import { Component, OnInit, ViewChild, OnDestroy } from '@angular/core';
 import { MatTableDataSource } from '@angular/material/table';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
-import { tap } from 'rxjs/operators';
 import { ActivityListItem } from '../interfaces/activity';
 import { ActivitiesService } from '../services/activities.service';
-import { Subscription } from 'rxjs';
+import { fromEvent, Subscription } from 'rxjs';
+import { tap, debounceTime, distinctUntilChanged } from 'rxjs/operators';
 
 @Component({
   selector: 'app-events-list',
@@ -40,6 +40,7 @@ export class EventsListComponent implements OnInit, OnDestroy {
 
   @ViewChild(MatPaginator) paginator: MatPaginator = {} as MatPaginator;
   @ViewChild(MatSort) sort: MatSort = {} as MatSort;
+  @ViewChild('filterInput') filterInput: any;
 
   private subscriptions: Subscription[] = [];
 
@@ -59,18 +60,31 @@ export class EventsListComponent implements OnInit, OnDestroy {
       this.loadData();
     })).subscribe();
 
+    const filterSub = fromEvent(this.filterInput.nativeElement, 'keyup')
+      .pipe(
+        debounceTime(500),  // Opóźnienie 500ms
+        distinctUntilChanged(),  // Emituj tylko, jeśli wartość jest różna od poprzedniej
+        tap(() => {
+          this.applyFilter();
+        })
+      ).subscribe();
+
     this.subscriptions.push(pageSub);
     this.subscriptions.push(subSortPage);
+    this.subscriptions.push(filterSub);
   }
 
-  applyFilter(event: Event) {
-    const filterValue = (event.target as HTMLInputElement).value;
-    this.filterValue = filterValue.trim().toLowerCase();
+  onFilterChange(event: KeyboardEvent) {
+    const inputElement = event.target as HTMLInputElement;
+    this.filterValue = inputElement.value.trim().toLowerCase();
+  }
+
+  applyFilter() {
     this.paginator.pageIndex = 0;
     this.loadData();
   }
 
-  applyCategoryFilter(state: string) {
+  applyStateFilter(state: string) {
     this.selectedState = state;
     this.paginator.pageIndex = 0;
     this.loadData();
