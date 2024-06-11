@@ -49,7 +49,7 @@ namespace ActivityFinder.Server.Controllers
         {
             //TODO params validation
 
-            var result = _activityService.GetPagedVm(page, size, sortField, asc, filter, state);
+            var result = _activityService.GetPagedVm(page, size, sortField, asc, filter, state.ToLower());
             if (!result.Success)
                 return BadRequest(result.Message);
 

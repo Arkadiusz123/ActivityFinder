@@ -33,7 +33,7 @@ namespace ActivityFinder.Server.Models
 
         public Result<TVm> GetPagedVm(int pageNumber, int size, string sortField, bool asc, string? filter, string state)
         {
-            var query = _repository.GetFilteredQuery(filter, state);
+            var query = _repository.GetFilteredQuery(filter?.ToLower().Trim().Replace(",", "").Replace(".", "").Replace("ul", ""), state);
             query = _repository.OrderQuery(query, sortField, asc);
 
             var totalCount = query.Count();

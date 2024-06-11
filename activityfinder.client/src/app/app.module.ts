@@ -23,9 +23,10 @@ import { LoginRegisterComponent } from './login-register/login-register.componen
 import { AuthenticateService } from './services/authenticate.service';
 import { AuthInterceptor } from './interceptors/auth.interceptor';
 import { MatTableModule } from '@angular/material/table';
-import { MatPaginatorModule } from '@angular/material/paginator';
+import { MatPaginatorIntl, MatPaginatorModule } from '@angular/material/paginator';
 import { MatSortModule } from '@angular/material/sort';
 import { MatSelectModule } from '@angular/material/select';
+import { PolishPaginatorIntl } from './mat-extensions/polish-paginator-intl';
 
 const routes: Routes = [
   { path: '', component: EventsListComponent },
@@ -63,7 +64,8 @@ const routes: Routes = [
       provide: HTTP_INTERCEPTORS,
       useClass: AuthInterceptor,
       multi: true
-    }
+    },
+    { provide: MatPaginatorIntl, useClass: PolishPaginatorIntl }
   ],
   bootstrap: [AppComponent]
 })

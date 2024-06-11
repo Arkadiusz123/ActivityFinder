@@ -20,7 +20,7 @@ namespace ActivityFinder.Server.Models
 
             if (!string.IsNullOrEmpty(filter))
             {
-                var filterArray = filter.ToLower().Trim().Replace(",", "").Split(' ').Where(x => !string.IsNullOrEmpty(x)).ToArray();
+                var filterArray = filter.Split(' ').Where(x => !string.IsNullOrEmpty(x)).ToArray();
                 query = query
                     .Where(x => filterArray.All(y => (x.Address.Name + x.Address.Town + x.Address.Road + x.Address.HouseNumber + x.Address.County + x.Address.State
                     + x.Title + x.Date.ToString()).ToLower().Contains(y)));
@@ -33,8 +33,11 @@ namespace ActivityFinder.Server.Models
         {
             if (column == "address")
             {
-                return asc ? query.OrderBy(x => x.Address.Town + x.Address.Road + x.Address.HouseNumber)
-                    : query.OrderByDescending(x => x.Address.Town + x.Address.Road + x.Address.HouseNumber);
+                if (asc)
+                    return query.OrderBy(x => x.Address.Town).ThenBy(x => x.Address.Road).ThenBy(x => x.Address.HouseNumber).ThenBy(x => x.Address.Name);
+                else
+                    return query.OrderByDescending(x => x.Address.Town).ThenByDescending(x => x.Address.Road)
+                        .ThenByDescending(x => x.Address.HouseNumber).ThenByDescending(x => x.Address.Name);
             }
             else if (column == "title")
             {

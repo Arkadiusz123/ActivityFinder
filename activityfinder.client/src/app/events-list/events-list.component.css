@@ -43,3 +43,11 @@ mat-paginator {
 .centered-cell {
   text-align: center;
 }
+
+.mat-cell {
+  text-align: center;
+}
+
+::ng-deep .mat-sort-header-container {
+  justify-content: center;
+}

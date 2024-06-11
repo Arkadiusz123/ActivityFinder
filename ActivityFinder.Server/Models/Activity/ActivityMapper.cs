@@ -19,13 +19,24 @@
 
         public ActivityVmWrapper MapListToVm(IQueryable<Activity> queryForPage, int totalCount)
         {
-            var vmList = queryForPage.Select(x => new ActivityVm
+            var vmList = queryForPage.Select(x => new
             {
-                Id = x.ActivityId,
-                Title = x.Title,
-                Address = x.Address.ToString(),
-                Date = x.Date.ToString(ConstValues.DateFormatWithHour),
-            }).ToList();
+                x.ActivityId,
+                x.Title,
+                x.Date,
+                x.Address.Town,
+                x.Address.Name,
+                x.Address.Road,
+                x.Address.HouseNumber
+            })
+                .AsEnumerable()
+                .Select(x => new ActivityVm
+                {
+                    Id = x.ActivityId,
+                    Title = x.Title,
+                    Address = Address.ShortString(x.Name, x.Town, x.Road, x.HouseNumber),
+                    Date = x.Date.ToString(ConstValues.DateFormatWithHour),
+                }).ToList();
 
             return new ActivityVmWrapper() 
             {

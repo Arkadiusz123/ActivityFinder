@@ -2,13 +2,13 @@
   <div class="table-container">
     <div class="search-container">
       <mat-form-field>
-        <mat-label>Search</mat-label>
+        <mat-label>Wyszukaj</mat-label>
         <input matInput (keyup)="applyFilter($event)" placeholder="Type to search">
       </mat-form-field>
       <mat-form-field>
-        <mat-label>Category</mat-label>
-        <mat-select (selectionChange)="applyCategoryFilter($event.value)" [(value)]="selected">
-          <mat-option *ngFor="let category of categories" [value]="category">{{category}}</mat-option>
+        <mat-label>Województwo</mat-label>
+        <mat-select (selectionChange)="applyCategoryFilter($event.value)" [(value)]="selectedState">
+          <mat-option *ngFor="let state of states" [value]="state">{{state}}</mat-option>
         </mat-select>
       </mat-form-field>
     </div>

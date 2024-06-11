@@ -38,5 +38,18 @@ namespace ActivityFinder.Server.Models
 
             return string.Join(", ", list);
         }
+
+        public static string ShortString(string name, string town, string road, string number)
+        {
+            List<string> list = [town];           
+
+            if (!string.IsNullOrEmpty(road))
+                list.Add($"ul. {road}{(!string.IsNullOrEmpty(number) ? (" " + number) : "")}");
+
+            if (!string.IsNullOrEmpty(name))
+                list.Add(name);
+
+            return string.Join(", ", list);
+        }    
     }
 }

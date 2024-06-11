@@ -15,11 +15,28 @@ import { Subscription } from 'rxjs';
 export class EventsListComponent implements OnInit, OnDestroy {
   displayedColumns: string[] = ['date', 'title', 'address']; // dodaj inne kolumny w razie potrzeby
   dataSource = new MatTableDataSource<ActivityListItem>();
-  categories: string[] = ['małopolskie', 'Category 2', 'Category 3']; // Zaktualizuj według potrzeb
-  selected: string = 'małopolskie'
+  states: string[] = [
+    'Dolnośląskie',
+    'Kujawsko-Pomorskie',
+    'Lubelskie',
+    'Lubuskie',
+    'Łódzkie',
+    'Małopolskie',
+    'Mazowieckie',
+    'Opolskie',
+    'Podkarpackie',
+    'Podlaskie',
+    'Pomorskie',
+    'Śląskie',
+    'Świętokrzyskie',
+    'Warmińsko-Mazurskie',
+    'Wielkopolskie',
+    'Zachodniopomorskie'
+  ];
+  selectedState: string = 'Małopolskie'
 
   filterValue = '';
-  selectedCategory = '';
+  //selectedCategory = '';
 
   @ViewChild(MatPaginator) paginator: MatPaginator = {} as MatPaginator;
   @ViewChild(MatSort) sort: MatSort = {} as MatSort;
@@ -53,8 +70,8 @@ export class EventsListComponent implements OnInit, OnDestroy {
     this.loadData();
   }
 
-  applyCategoryFilter(category: string) {
-    this.selectedCategory = category;
+  applyCategoryFilter(state: string) {
+    this.selectedState = state;
     this.paginator.pageIndex = 0;
     this.loadData();
   }
@@ -66,9 +83,9 @@ export class EventsListComponent implements OnInit, OnDestroy {
     const sortDirection = this.sort.direction || '';
 
     const filter = this.filterValue;
-    const category = this.selectedCategory || this.selected;    
+    const state = this.selectedState;    
 
-    const serviceSub = this.activitiesService.activitiesList(pageIndex, pageSize, sortField, sortDirection, filter, category)
+    const serviceSub = this.activitiesService.activitiesList(pageIndex, pageSize, sortField, sortDirection, filter, state)
       .subscribe(response => {
       this.dataSource.data = response.data;
       this.paginator.length = response.totalCount;
