@@ -44,7 +44,7 @@ namespace ActivityFinder.Server.Models
             List<string> list = [town];           
 
             if (!string.IsNullOrEmpty(road))
-                list.Add($"ul. {road}{(!string.IsNullOrEmpty(number) ? (" " + number) : "")}");
+                list.Add($"{road}{(!string.IsNullOrEmpty(number) ? (" " + number) : "")}");
 
             if (!string.IsNullOrEmpty(name))
                 list.Add(name);

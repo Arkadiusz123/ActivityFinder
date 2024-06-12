@@ -29,6 +29,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { PolishPaginatorIntl } from './mat-extensions/polish-paginator-intl';
 import { LoadingInterceptor } from './interceptors/loading.interceptor';
+import { MatMenuModule} from '@angular/material/menu';
 
 const routes: Routes = [
   { path: '', component: EventsListComponent },
@@ -53,20 +54,12 @@ const routes: Routes = [
     ReactiveFormsModule,
     FormsModule,
     MatIconModule, MatTabsModule, MatInputModule, MatButtonModule, MatCardModule, MatAutocompleteModule, MatCheckboxModule, MatToolbarModule,
-    MatSidenavModule, MatListModule, MatTableModule, MatPaginatorModule, MatSortModule, MatSelectModule, MatProgressSpinnerModule
+    MatSidenavModule, MatListModule, MatTableModule, MatPaginatorModule, MatSortModule, MatSelectModule, MatProgressSpinnerModule, MatMenuModule
   ],
   providers: [
     AuthenticateService,
-    {
-      provide: HTTP_INTERCEPTORS,
-      useClass: HttpErrorInterceptor,
-      multi: true
-    },
-    {
-      provide: HTTP_INTERCEPTORS,
-      useClass: AuthInterceptor,
-      multi: true
-    },
+    { provide: HTTP_INTERCEPTORS, useClass: HttpErrorInterceptor, multi: true },
+    { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },
     { provide: HTTP_INTERCEPTORS, useClass: LoadingInterceptor, multi: true },
     { provide: MatPaginatorIntl, useClass: PolishPaginatorIntl },    
   ],

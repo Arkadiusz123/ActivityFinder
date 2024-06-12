@@ -13,7 +13,7 @@ import { tap, debounceTime, distinctUntilChanged } from 'rxjs/operators';
   styleUrls: ['./events-list.component.css']
 })
 export class EventsListComponent implements OnInit, OnDestroy {
-  displayedColumns: string[] = ['date', 'title', 'address']; // dodaj inne kolumny w razie potrzeby
+  displayedColumns: string[] = ['date', 'title', 'address', 'star']; // dodaj inne kolumny w razie potrzeby
   dataSource = new MatTableDataSource<ActivityListItem>();
   states: string[] = [
     'Dolnośląskie',
