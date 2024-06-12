@@ -1,12 +1,3 @@
-.table-container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  width: 100%;
-  padding: 20px;
-  box-sizing: border-box;
-}
-
 .search-container {
   display: flex;
   justify-content: center;
@@ -14,26 +5,33 @@
   margin-bottom: 20px;
 }
 
-  .search-container mat-form-field {
-    width: 45%;
-    margin: 0 10px;
-  }
+.search-container mat-form-field {
+  width: 45%;
+  margin: 0 10px;
+}
 
-.mat-elevation-z8 {
-  width: 100%;
-  max-width: 1200px; /* Maksymalna szerokość tabeli */
+.table-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 .centered-table {
-  margin: 0 auto;
-}
-
-table {
   width: 100%;
 }
 
-mat-paginator {
+.table-scroll {
+  overflow-x: auto;
   width: 100%;
+}
+
+.mat-table {
+  min-width: 600px; /* Można dostosować minimalną szerokość tabeli */
+  width: 100%;
+}
+
+.mat-cell, .mat-header-cell {
+  min-width: 150px; /* Minimalna szerokość komórki */
 }
 
 .centered-header {
@@ -44,8 +42,14 @@ mat-paginator {
   text-align: center;
 }
 
-.mat-cell {
-  text-align: center;
+.paginator-container {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+}
+
+.mat-paginator {
+  width: auto;
 }
 
 ::ng-deep .mat-sort-header-container {

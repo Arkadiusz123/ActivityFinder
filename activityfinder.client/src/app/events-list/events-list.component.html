@@ -1,20 +1,21 @@
 
-  <div class="table-container">
-    <div class="search-container">
-      <mat-form-field>
-        <mat-label>Wyszukaj</mat-label>
-        <input #filterInput matInput (keyup)="onFilterChange($event)" placeholder="Wpisz, aby wyszukać">
-      </mat-form-field>
-      <mat-form-field>
-        <mat-label>Województwo</mat-label>
-        <mat-select (selectionChange)="applyStateFilter($event.value)" [(value)]="selectedState">
-          <mat-option *ngFor="let state of states" [value]="state">{{state}}</mat-option>
-        </mat-select>
-      </mat-form-field>
-    </div>
+<div class="table-container">
+  <div class="search-container">
+    <mat-form-field>
+      <mat-label>Wyszukaj</mat-label>
+      <input #filterInput matInput (keyup)="onFilterChange($event)" placeholder="Wpisz, aby wyszukać">
+    </mat-form-field>
+    <mat-form-field>
+      <mat-label>Województwo</mat-label>
+      <mat-select (selectionChange)="applyStateFilter($event.value)" [(value)]="selectedState">
+        <mat-option *ngFor="let state of states" [value]="state">{{state}}</mat-option>
+      </mat-select>
+    </mat-form-field>
+  </div>
 
-    <div class="mat-elevation-z8">
-      <table mat-table [dataSource]="dataSource" matSort>
+  <div class="mat-elevation-z8 centered-table">
+    <div class="table-scroll">
+      <table mat-table [dataSource]="dataSource" matSort class="responsive-table">
         <!-- Id Column -->
         <ng-container matColumnDef="date">
           <th mat-header-cell *matHeaderCellDef mat-sort-header class="centered-header"> Data </th>
@@ -40,4 +41,5 @@
 
       <mat-paginator [pageSize]="10" [pageSizeOptions]="[5, 10, 20]"></mat-paginator>
     </div>
+  </div>
   </div>
