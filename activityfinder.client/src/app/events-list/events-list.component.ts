@@ -1,19 +1,24 @@
-import { Component, OnInit, ViewChild, OnDestroy } from '@angular/core';
+import { Component, OnInit, ViewChild, OnDestroy, ChangeDetectionStrategy } from '@angular/core';
 import { MatTableDataSource } from '@angular/material/table';
-import { MatPaginator } from '@angular/material/paginator';
-import { MatSort } from '@angular/material/sort';
 import { ActivityListItem } from '../interfaces/activity';
 import { ActivitiesService } from '../services/activities.service';
 import { fromEvent, Subscription } from 'rxjs';
 import { tap, debounceTime, distinctUntilChanged } from 'rxjs/operators';
+import { AppTableComponent, ColumnItem } from '../app-table/app-table.component';
 
 @Component({
   selector: 'app-events-list',
   templateUrl: './events-list.component.html',
-  styleUrls: ['./events-list.component.css']
+  styleUrls: ['./events-list.component.css'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class EventsListComponent implements OnInit, OnDestroy {
-  displayedColumns: string[] = ['date', 'title', 'address', 'star']; // dodaj inne kolumny w razie potrzeby
+  displayedColumns: ColumnItem[] = [
+    { name: 'date', display: 'Data' },
+    { name: 'title', display: 'Tytuł' },
+    { name: 'address', display: 'Adres' },
+    { name: 'star', display: '' },
+  ];
   dataSource = new MatTableDataSource<ActivityListItem>();
   states: string[] = [
     'Dolnośląskie',
@@ -36,30 +41,18 @@ export class EventsListComponent implements OnInit, OnDestroy {
   selectedState: string = 'Małopolskie'
 
   filterValue = '';
-  //selectedCategory = '';
 
-  @ViewChild(MatPaginator) paginator: MatPaginator = {} as MatPaginator;
-  @ViewChild(MatSort) sort: MatSort = {} as MatSort;
   @ViewChild('filterInput') filterInput: any;
+  @ViewChild(AppTableComponent) tableComponent!: AppTableComponent;
 
   private subscriptions: Subscription[] = [];
 
   constructor(private activitiesService: ActivitiesService) { }
 
   ngOnInit() {
-    this.loadData();
   }
 
   ngAfterViewInit() {
-    const pageSub = this.paginator.page.pipe(tap(() => this.loadData())).subscribe();
-    const subSortPage = this.sort.sortChange.pipe(tap(() => {
-      if (this.sort.direction === '') {
-        this.sort.active = '';
-      }
-      this.paginator.pageIndex = 0;
-      this.loadData();
-    })).subscribe();
-
     const filterSub = fromEvent(this.filterInput.nativeElement, 'keyup')
       .pipe(
         debounceTime(500),  // Opóźnienie 500ms
@@ -69,8 +62,6 @@ export class EventsListComponent implements OnInit, OnDestroy {
         })
       ).subscribe();
 
-    this.subscriptions.push(pageSub);
-    this.subscriptions.push(subSortPage);
     this.subscriptions.push(filterSub);
   }
 
@@ -80,29 +71,29 @@ export class EventsListComponent implements OnInit, OnDestroy {
   }
 
   applyFilter() {
-    this.paginator.pageIndex = 0;
+    this.tableComponent.paginator.pageIndex = 0;
     this.loadData();
   }
 
   applyStateFilter(state: string) {
     this.selectedState = state;
-    this.paginator.pageIndex = 0;
+    this.tableComponent.paginator.pageIndex = 0;
     this.loadData();
   }
 
   loadData() {
-    const pageIndex = this.paginator.pageIndex || 0;
-    const pageSize = this.paginator.pageSize || 10;
-    const sortField = this.sort.active || '';
-    const sortDirection = this.sort.direction || '';
+    const pageIndex = this.tableComponent.paginator.pageIndex || 0;
+    const pageSize = this.tableComponent.paginator.pageSize || 10;
+    const sortField = this.tableComponent.sort.active || '';
+    const sortDirection = this.tableComponent.sort.direction || '';
 
     const filter = this.filterValue;
     const state = this.selectedState;    
 
     const serviceSub = this.activitiesService.activitiesList(pageIndex, pageSize, sortField, sortDirection, filter, state)
       .subscribe(response => {
-      this.dataSource.data = response.data;
-      this.paginator.length = response.totalCount;
+        this.dataSource.data = response.data;
+        this.tableComponent.paginator.length = response.totalCount;
       });
 
     this.subscriptions.push(serviceSub);
@@ -116,6 +107,4 @@ export class EventsListComponent implements OnInit, OnDestroy {
       }
     });
   }
-
-
 }

@@ -30,6 +30,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { PolishPaginatorIntl } from './mat-extensions/polish-paginator-intl';
 import { LoadingInterceptor } from './interceptors/loading.interceptor';
 import { MatMenuModule} from '@angular/material/menu';
+import { AppTableComponent } from './app-table/app-table.component';
 
 const routes: Routes = [
   { path: '', component: EventsListComponent },
@@ -44,7 +45,8 @@ const routes: Routes = [
     EventFormComponent,
     EventsListComponent,
     DebounceClickDirective,
-    LoginRegisterComponent
+    LoginRegisterComponent,
+    AppTableComponent
   ],
   imports: [
     BrowserModule,
