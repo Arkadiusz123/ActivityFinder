@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Observable, Subscription } from 'rxjs';
 import { Activity } from '../interfaces/activity';
@@ -10,7 +10,8 @@ import Swal from 'sweetalert2';
 @Component({
   selector: 'app-event-form',
   templateUrl: './event-form.component.html',
-  styleUrls: ['./event-form.component.css']
+  styleUrls: ['./event-form.component.css'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class EventFormComponent implements OnInit, OnDestroy {
   private subscriptions: Subscription[] = [];
@@ -21,6 +22,7 @@ export class EventFormComponent implements OnInit, OnDestroy {
   searchInput: string = '';
 
   constructor(private fb: FormBuilder, private activityService: ActivitiesService, private addressFinder: AddressFinderService,
+    private changeDetectorRef: ChangeDetectorRef,
     public errorMessageService: ErrorMessagesService) {
     this.activityForm = this.fb.group({
       description: ['', Validators.required],
@@ -58,6 +60,7 @@ export class EventFormComponent implements OnInit, OnDestroy {
         this.activityForm.get('address.osmId')!.setValue(res.osmId);
         this.displayAddress = res.displayName;
         this.searchInput = '';
+        this.changeDetectorRef.markForCheck();
       }
     })
     this.subscriptions.push(addressSubscription);

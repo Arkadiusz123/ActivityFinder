@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { LoginRegister } from '../interfaces/login-register';
 import { AuthenticateService } from '../services/authenticate.service';
@@ -8,7 +8,8 @@ import { passwordValidator } from '../validators/password-validator';
 @Component({
   selector: 'app-login-register',
   templateUrl: './login-register.component.html',
-  styleUrls: ['./login-register.component.css']
+  styleUrls: ['./login-register.component.css'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class LoginRegisterComponent implements OnInit {
   form: FormGroup;

@@ -46,6 +46,7 @@ export class EventsListComponent implements OnInit, OnDestroy {
   @ViewChild(AppTableComponent) tableComponent!: AppTableComponent;
 
   private subscriptions: Subscription[] = [];
+  private dataSubsription: Subscription | null = null;
 
   constructor(private activitiesService: ActivitiesService) { }
 
@@ -82,6 +83,10 @@ export class EventsListComponent implements OnInit, OnDestroy {
   }
 
   loadData() {
+    if (this.dataSubsription !== null) {
+      this.dataSubsription.unsubscribe();      
+    }   
+
     const pageIndex = this.tableComponent.paginator.pageIndex || 0;
     const pageSize = this.tableComponent.paginator.pageSize || 10;
     const sortField = this.tableComponent.sort.active || '';
@@ -90,17 +95,15 @@ export class EventsListComponent implements OnInit, OnDestroy {
     const filter = this.filterValue;
     const state = this.selectedState;    
 
-    const serviceSub = this.activitiesService.activitiesList(pageIndex, pageSize, sortField, sortDirection, filter, state)
+    this.dataSubsription = this.activitiesService.activitiesList(pageIndex, pageSize, sortField, sortDirection, filter, state)
       .subscribe(response => {
         this.dataSource.data = response.data;
         this.tableComponent.paginator.length = response.totalCount;
       });
 
-    this.subscriptions.push(serviceSub);
   }
 
   ngOnDestroy() {
-
     this.subscriptions.forEach(subscription => {
       if (subscription) {
         subscription.unsubscribe();
