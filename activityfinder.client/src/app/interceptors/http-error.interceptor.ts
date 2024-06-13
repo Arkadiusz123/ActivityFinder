@@ -26,7 +26,8 @@ export class HttpErrorInterceptor implements HttpInterceptor {
           errorMessage = `Błąd aplikacji: ${error.error.message}`;
         } else {
           // Server-side error
-          errorMessage = error.error.message;
+          console.error(error);
+          errorMessage = error.error;
           if (error.status === 401) {
             // Handle unauthorized errors
             this.router.navigate(['/login']);
@@ -35,9 +36,6 @@ export class HttpErrorInterceptor implements HttpInterceptor {
             this.router.navigate(['/not-found']);
           }
         }
-
-        // Log the error (can be sent to logging infrastructure)
-        console.error(errorMessage);
 
         // Show an alert or notification to the user
 

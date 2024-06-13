@@ -26,6 +26,11 @@
     </mat-toolbar>
 
     <div class="content">
+      <ng-container *ngIf="loadingService.isLoading$ | async">
+        <div class="loading-indicator">
+          <mat-progress-spinner mode="indeterminate" color="primary"></mat-progress-spinner>
+        </div>
+      </ng-container>
       <router-outlet></router-outlet>
     </div>
   </mat-sidenav-content>

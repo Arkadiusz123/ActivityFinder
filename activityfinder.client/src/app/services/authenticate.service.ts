@@ -35,7 +35,7 @@ export class AuthenticateService {
     return this.http.post<any>('/api/authenticate/register', model).subscribe(res =>
     {
       this.router.navigate(['/']);
-      Swal.fire('Poprawnie zalogowano');
+      Swal.fire('Poprawnie zarejestrowano');
     });
   }
 

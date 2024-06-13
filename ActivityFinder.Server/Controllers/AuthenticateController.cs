@@ -62,7 +62,7 @@ namespace ActivityFinder.Server.Controllers
         {
             var userExists = await _userManager.FindByNameAsync(model.Username);
             if (userExists != null)
-                return BadRequest(new { Message = "Użytkownik istnieje" });
+                return BadRequest("Użytkownik istnieje");
 
             ApplicationUser user = new()
             {
@@ -72,12 +72,12 @@ namespace ActivityFinder.Server.Controllers
             };
             var result = await _userManager.CreateAsync(user, model.Password);
             if (!result.Succeeded)
-                return BadRequest(new { Message = "Nieprawidłowy login lub hasło" });            
+                return BadRequest("Nieprawidłowy login lub hasło");            
 
             await _roleManager.UpdateRoles();
             await _userManager.AddToRoleAsync(user, UserRoles.User);
 
-            return Ok(new { Message = "Utworzonno nowego użytkownika" });
+            return Ok(new {Message = "Utworzono nowego użytkownika" });
         }
 
         [Authorize(Roles = UserRoles.Admin)]
@@ -87,7 +87,7 @@ namespace ActivityFinder.Server.Controllers
         {
             var userExists = await _userManager.FindByNameAsync(model.Username);
             if (userExists != null)
-                return BadRequest(new { Message = "Użytkownik istnieje" });
+                return BadRequest("Użytkownik istnieje");
 
             ApplicationUser user = new()
             {
@@ -97,7 +97,8 @@ namespace ActivityFinder.Server.Controllers
             };
             var result = await _userManager.CreateAsync(user, model.Password);
             if (!result.Succeeded)
-                return BadRequest(new { Message = "Nieprawidłowe dane do rejestracji" });             
+                return BadRequest("Nieprawidłowe dane do rejestracji");
+                
 
             await _roleManager.UpdateRoles();
             await _userManager.AddToRoleAsync(user, UserRoles.User);
@@ -111,7 +112,7 @@ namespace ActivityFinder.Server.Controllers
             {
                 await _userManager.AddToRoleAsync(user, UserRoles.User);
             }
-            return Ok(new { Message = "Utworzonno noewgo użytkownika" });
+            return Ok(new { Message = "Utworzono nowego użytkownika" });
         }
 
         private JwtSecurityToken GetToken(List<Claim> authClaims)

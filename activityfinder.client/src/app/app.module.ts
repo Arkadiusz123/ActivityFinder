@@ -22,6 +22,15 @@ import { AppComponent } from './layout/app.component';
 import { LoginRegisterComponent } from './login-register/login-register.component';
 import { AuthenticateService } from './services/authenticate.service';
 import { AuthInterceptor } from './interceptors/auth.interceptor';
+import { MatTableModule } from '@angular/material/table';
+import { MatPaginatorIntl, MatPaginatorModule } from '@angular/material/paginator';
+import { MatSortModule } from '@angular/material/sort';
+import { MatSelectModule } from '@angular/material/select';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { PolishPaginatorIntl } from './mat-extensions/polish-paginator-intl';
+import { LoadingInterceptor } from './interceptors/loading.interceptor';
+import { MatMenuModule} from '@angular/material/menu';
+import { AppTableComponent } from './app-table/app-table.component';
 
 const routes: Routes = [
   { path: '', component: EventsListComponent },
@@ -36,7 +45,8 @@ const routes: Routes = [
     EventFormComponent,
     EventsListComponent,
     DebounceClickDirective,
-    LoginRegisterComponent
+    LoginRegisterComponent,
+    AppTableComponent
   ],
   imports: [
     BrowserModule,
@@ -46,20 +56,14 @@ const routes: Routes = [
     ReactiveFormsModule,
     FormsModule,
     MatIconModule, MatTabsModule, MatInputModule, MatButtonModule, MatCardModule, MatAutocompleteModule, MatCheckboxModule, MatToolbarModule,
-    MatSidenavModule, MatListModule
+    MatSidenavModule, MatListModule, MatTableModule, MatPaginatorModule, MatSortModule, MatSelectModule, MatProgressSpinnerModule, MatMenuModule
   ],
   providers: [
     AuthenticateService,
-    {
-      provide: HTTP_INTERCEPTORS,
-      useClass: HttpErrorInterceptor,
-      multi: true
-    },
-    {
-      provide: HTTP_INTERCEPTORS,
-      useClass: AuthInterceptor,
-      multi: true
-    }
+    { provide: HTTP_INTERCEPTORS, useClass: HttpErrorInterceptor, multi: true },
+    { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },
+    { provide: HTTP_INTERCEPTORS, useClass: LoadingInterceptor, multi: true },
+    { provide: MatPaginatorIntl, useClass: PolishPaginatorIntl },    
   ],
   bootstrap: [AppComponent]
 })

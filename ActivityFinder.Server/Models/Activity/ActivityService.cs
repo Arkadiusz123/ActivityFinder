@@ -2,20 +2,23 @@
 
 namespace ActivityFinder.Server.Models
 {
-    public interface IActivityService
+    interface IActivityService<TVm>
     {
-        public Result<Activity> Add(Activity activity);
+        Result<Activity> Add(Activity activity);
+        Result<TVm> GetPagedVm(int pageNumber, int size, string sortField, bool asc, string? filter, string state);
     }
 
-    public class ActivityService : IActivityService
+    public class ActivityService<TVm> : IActivityService<TVm>
     {
-        private readonly GenericRepository<Activity> _repository;
+        private readonly IActivityRepository _repository;
         private readonly Result<Activity> _result;
+        private readonly IEntityToVmMapper<Activity,TVm> _mapper;
 
-        public ActivityService(AppDbContext context)
+        public ActivityService(AppDbContext context, IEntityToVmMapper<Activity, TVm> mapper)
         {
-            _repository = new GenericRepository<Activity>(context);
+            _repository = new ActivityRepository(context);
             _result = new Result<Activity>();
+            _mapper = mapper;
         }
 
         public Result<Activity> Add(Activity activity) 
@@ -26,6 +29,22 @@ namespace ActivityFinder.Server.Models
 
             _result.SetSuccess(activity);
             return _result;
+        }
+
+        public Result<TVm> GetPagedVm(int pageNumber, int size, string sortField, bool asc, string? filter, string state)
+        {
+            var query = _repository.GetFilteredQuery(filter?.ToLower().Trim().Replace(",", "").Replace(".", "").Replace("ul", ""), state);
+            query = _repository.OrderQuery(query, sortField, asc);
+
+            var totalCount = query.Count();
+            query = _repository.GetDataForPage(query, pageNumber, size);
+
+            var vm = _mapper.MapListToVm(query, totalCount);
+
+            var vmResult = new Result<TVm>();
+            vmResult.SetSuccess(vm);
+
+            return vmResult;
         }
     }
 }

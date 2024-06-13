@@ -2,6 +2,12 @@
   <form [formGroup]="activityForm" (ngSubmit)="onSubmit()">
 
     <mat-form-field appearance="fill">
+      <mat-label>Nazwa</mat-label>
+      <textarea matInput formControlName="title" required></textarea>
+      <mat-error *ngIf="activityForm.get('title')!.invalid">{{ errorMessageService.getErrorMessage(activityForm, 'title') }}</mat-error>
+    </mat-form-field>
+
+    <mat-form-field appearance="fill">
       <mat-label>Data</mat-label>
       <input matInput formControlName="date" type="datetime-local" placeholder="start date">
       <mat-error *ngIf="activityForm.get('date')!.invalid">{{ errorMessageService.getErrorMessage(activityForm, 'date') }}</mat-error>
