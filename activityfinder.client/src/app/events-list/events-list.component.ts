@@ -2,8 +2,7 @@ import { Component, OnInit, ViewChild, OnDestroy, ChangeDetectionStrategy } from
 import { MatTableDataSource } from '@angular/material/table';
 import { ActivityListItem } from '../interfaces/activity';
 import { ActivitiesService } from '../services/activities.service';
-import { fromEvent, Subscription } from 'rxjs';
-import { tap, debounceTime, distinctUntilChanged } from 'rxjs/operators';
+import { Subscription } from 'rxjs';
 import { AppTableComponent, ColumnItem } from '../app-table/app-table.component';
 
 @Component({
@@ -41,11 +40,10 @@ export class EventsListComponent implements OnInit, OnDestroy {
   selectedState: string = 'Małopolskie'
 
   filterValue = '';
+  addressInput = '';
 
-  @ViewChild('filterInput') filterInput: any;
   @ViewChild(AppTableComponent) tableComponent!: AppTableComponent;
 
-  private subscriptions: Subscription[] = [];
   private dataSubsription: Subscription | null = null;
 
   constructor(private activitiesService: ActivitiesService) { }
@@ -53,31 +51,7 @@ export class EventsListComponent implements OnInit, OnDestroy {
   ngOnInit() {
   }
 
-  ngAfterViewInit() {
-    const filterSub = fromEvent(this.filterInput.nativeElement, 'keyup')
-      .pipe(
-        debounceTime(500),  // Opóźnienie 500ms
-        distinctUntilChanged(),  // Emituj tylko, jeśli wartość jest różna od poprzedniej
-        tap(() => {
-          this.applyFilter();
-        })
-      ).subscribe();
-
-    this.subscriptions.push(filterSub);
-  }
-
-  onFilterChange(event: KeyboardEvent) {
-    const inputElement = event.target as HTMLInputElement;
-    this.filterValue = inputElement.value.trim().toLowerCase();
-  }
-
   applyFilter() {
-    this.tableComponent.paginator.pageIndex = 0;
-    this.loadData();
-  }
-
-  applyStateFilter(state: string) {
-    this.selectedState = state;
     this.tableComponent.paginator.pageIndex = 0;
     this.loadData();
   }
@@ -90,24 +64,15 @@ export class EventsListComponent implements OnInit, OnDestroy {
     const pageIndex = this.tableComponent.paginator.pageIndex || 0;
     const pageSize = this.tableComponent.paginator.pageSize || 10;
     const sortField = this.tableComponent.sort.active || '';
-    const sortDirection = this.tableComponent.sort.direction || '';
+    const sortDirection = this.tableComponent.sort.direction || '';   
 
-    const filter = this.filterValue;
-    const state = this.selectedState;    
-
-    this.dataSubsription = this.activitiesService.activitiesList(pageIndex, pageSize, sortField, sortDirection, filter, state)
+    this.dataSubsription = this.activitiesService.activitiesList(pageIndex, pageSize, sortField, sortDirection, this.addressInput, this.selectedState)
       .subscribe(response => {
         this.dataSource.data = response.data;
         this.tableComponent.paginator.length = response.totalCount;
       });
-
   }
 
   ngOnDestroy() {
-    this.subscriptions.forEach(subscription => {
-      if (subscription) {
-        subscription.unsubscribe();
-      }
-    });
   }
 }

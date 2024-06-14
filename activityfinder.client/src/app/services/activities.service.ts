@@ -27,11 +27,11 @@ export class ActivitiesService {
       });
   }
 
-  activitiesList(pageIndex: number, pageSize: number, sortField: string, sortDirection: string, filter: string, state: string):
+  activitiesList(pageIndex: number, pageSize: number, sortField: string, sortDirection: string, address: string, state: string):
     Observable<{ data: ActivityListItem[], totalCount: number }>
   {
     return this.http.get<{ data: ActivityListItem[], totalCount: number }>(
-      `/api/activity?page=${pageIndex + 1}&size=${pageSize}&sortField=${sortField || 'date'}&asc=${sortDirection == 'asc'}&filter=${filter}&state=${state}`
+      `/api/activity?page=${pageIndex + 1}&size=${pageSize}&sortField=${sortField || 'date'}&asc=${sortDirection == 'asc'}&address=${address}&state=${state}`
     );
   }
 }

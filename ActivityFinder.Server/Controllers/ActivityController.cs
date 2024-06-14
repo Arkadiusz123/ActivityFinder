@@ -44,12 +44,11 @@ namespace ActivityFinder.Server.Controllers
 
         [HttpGet]
         [AllowAnonymous]//tylko na test TODO
-        public IActionResult GetList(int page, int size, string sortField, bool asc, 
-            string? filter, string state)
+        public IActionResult GetList([FromQuery]ActivityPaginationSettings settings)
         {
             //TODO params validation
 
-            var result = _activityService.GetPagedVm(page, size, sortField, asc, filter, state.ToLower());
+            var result = _activityService.GetPagedVm(settings);
             if (!result.Success)
                 return BadRequest(result.Message);
 

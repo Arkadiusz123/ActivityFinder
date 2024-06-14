@@ -5,7 +5,7 @@ namespace ActivityFinder.Server.Models
     interface IActivityService<TVm>
     {
         Result<Activity> Add(Activity activity);
-        Result<TVm> GetPagedVm(int pageNumber, int size, string sortField, bool asc, string? filter, string state);
+        Result<TVm> GetPagedVm(ActivityPaginationSettings settings);
     }
 
     public class ActivityService<TVm> : IActivityService<TVm>
@@ -31,13 +31,13 @@ namespace ActivityFinder.Server.Models
             return _result;
         }
 
-        public Result<TVm> GetPagedVm(int pageNumber, int size, string sortField, bool asc, string? filter, string state)
+        public Result<TVm> GetPagedVm(ActivityPaginationSettings settings)
         {
-            var query = _repository.GetFilteredQuery(filter?.ToLower().Trim().Replace(",", "").Replace(".", "").Replace("ul", ""), state);
-            query = _repository.OrderQuery(query, sortField, asc);
+            var query = _repository.GetFilteredQuery(settings.Address?.Trim().Replace(",", "").Replace("ul", ""), settings.State);
+            query = _repository.OrderQuery(query, settings.SortField, settings.Asc);
 
             var totalCount = query.Count();
-            query = _repository.GetDataForPage(query, pageNumber, size);
+            query = _repository.GetDataForPage(query, settings.Page, settings.Size);
 
             var vm = _mapper.MapListToVm(query, totalCount);
 
