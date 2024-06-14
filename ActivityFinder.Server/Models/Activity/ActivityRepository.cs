@@ -4,7 +4,7 @@ namespace ActivityFinder.Server.Models
 {
     interface IActivityRepository : IGenericRepository<Activity>
     {
-        IQueryable<Activity> GetFilteredQuery(string? filter, string state);
+        IQueryable<Activity> GetFilteredQuery(string? address, string state);
         IQueryable<Activity> OrderQuery(IQueryable<Activity> query, string column, bool asc);
     }
 
@@ -14,23 +14,23 @@ namespace ActivityFinder.Server.Models
         {             
         }
 
-        public IQueryable<Activity> GetFilteredQuery(string? filter, string state)
+        public IQueryable<Activity> GetFilteredQuery(string? address, string state)
         {
+            state = state.ToLower();
             var query = _context.Set<Activity>().Where(x => x.Address.State == state);
 
-            if (!string.IsNullOrEmpty(filter))
+            if (!string.IsNullOrEmpty(address))
             {
-                var filterArray = filter.Split(' ').Where(x => !string.IsNullOrEmpty(x)).ToArray();
+                var addressWordsArray = address.ToLower().Split(' ').Where(x => !string.IsNullOrEmpty(x)).ToArray();
                 query = query
-                    .Where(x => filterArray.All(y => (x.Address.Name + x.Address.Town + x.Address.Road + x.Address.HouseNumber + x.Address.County + x.Address.State
-                    + x.Title + x.Date.ToString()).ToLower().Contains(y)));
+                    .Where(x => addressWordsArray.All(y => (x.Address.Name + x.Address.Town + x.Address.Road + x.Address.HouseNumber ).ToLower().Contains(y)));
             }
-
             return query;
         }
 
         public IQueryable<Activity> OrderQuery(IQueryable<Activity> query, string column, bool asc)
         {
+            column = column.ToLower();
             if (column == "address")
             {
                 if (asc)
