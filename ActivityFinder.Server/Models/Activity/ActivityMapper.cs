@@ -17,7 +17,21 @@
             return activity;
         }
 
-        public ActivityVmWrapper MapListToVm(IQueryable<Activity> queryForPage, int totalCount)
+        public static ActivityDTO ToDTO(Activity activity)
+        {
+            var dto = new ActivityDTO()
+            {
+                Id = activity.ActivityId,
+                Title = activity.Title,
+                Address = activity.Address.ToAddressDto(),
+                Description = activity.Description,
+                Date = activity.Date,
+                OtherInfo = activity.OtherInfo
+            };
+            return dto;
+        }
+
+        public ActivityVmWrapper MapListToVm(IQueryable<Activity> queryForPage, int totalCount, string userName)
         {
             var vmList = queryForPage.Select(x => new
             {
@@ -27,7 +41,8 @@
                 x.Address.Town,
                 x.Address.Name,
                 x.Address.Road,
-                x.Address.HouseNumber
+                x.Address.HouseNumber,
+                CreatedByUser = x.Creator.UserName == userName
             })
                 .AsEnumerable()
                 .Select(x => new ActivityVm
@@ -36,6 +51,7 @@
                     Title = x.Title,
                     Address = Address.ShortString(x.Name, x.Town, x.Road, x.HouseNumber),
                     Date = x.Date.ToString(ConstValues.DateFormatWithHour),
+                    CreatedByUser = x.CreatedByUser
                 }).ToList();
 
             return new ActivityVmWrapper() 

@@ -84,11 +84,17 @@ export class EventsListComponent implements OnInit, OnDestroy {
 
   reloadElementMenu(element: ActivityListItem) {
     const items: MenuItem[] = [];
-    items.push({ route: '/authenticate', display: 'Strona główna', clickAction: '' } as MenuItem);
+
+    if (element.createdByUser) {
+      items.push({ route: '/event-form/' + element.id, display: 'Edytuj', clickAction: '' } as MenuItem);
+    }
 
     this.currentElementTools = items;
   }
 
   ngOnDestroy() {
+    if (this.dataSubsription !== null) {
+      this.dataSubsription.unsubscribe();
+    }
   }
 }

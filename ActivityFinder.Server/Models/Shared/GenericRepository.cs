@@ -7,6 +7,7 @@ namespace ActivityFinder.Server.Models
         IQueryable<T> GetAll();
         T? FindByKey(object key);
         void Add(T entity);
+        void Edit(T entity, object key);
         void SaveChanges();
         IQueryable<T> GetDataForPage(IQueryable<T> query, int pageNumber, int size);
     }
@@ -28,6 +29,16 @@ namespace ActivityFinder.Server.Models
         public virtual void Add(T entity)
         {
             _context.Set<T>().Add(entity);
+        }
+
+        public virtual void Edit(T entity, object key)
+        {
+            var dbEntity = FindByKey(key);
+
+            if (dbEntity == null)            
+                throw new ArgumentException("Nie znaleziono obiektu o podanym id");          
+
+            _context.Entry(dbEntity).CurrentValues.SetValues(entity);
         }
 
         public void SaveChanges()

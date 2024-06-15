@@ -1,4 +1,5 @@
 ﻿using ActivityFinder.Server.Database;
+using Microsoft.EntityFrameworkCore;
 
 namespace ActivityFinder.Server.Models
 {
@@ -58,7 +59,42 @@ namespace ActivityFinder.Server.Models
                 return asc ? query.OrderBy(x => x.Date) : query.OrderByDescending(x => x.Date);
             }
             else
-                throw new ArgumentException("wrong column name");
+                throw new ArgumentException("nieprawidłowa nazwa kolumny");
+        }
+
+        public override Activity? FindByKey(object key)
+        {
+            var id = Convert.ToInt32(key);
+
+            var activity = _context.Activity
+                .Include(x => x.Address)
+                .SingleOrDefault(x => x.ActivityId == id);
+
+            return activity;
+        }
+
+        public override void Edit(Activity entity, object key)
+        {
+            var id = Convert.ToInt32(key);
+
+            var dbEntity = _context.Activity
+                .Include(x => x.Creator)
+                .Include(x => x.Address)
+                .SingleOrDefault(x => x.ActivityId == id);
+
+            if (dbEntity == null)
+                throw new ArgumentException("Nie znaleziono obiektu o podanym id");
+
+            if (dbEntity.Creator != entity.Creator)
+                throw new ArgumentException("Nie można edytować obiektów innych użytkowników");
+
+            dbEntity.Title = entity.Title;
+            dbEntity.Address = entity.Address;
+            dbEntity.Description = entity.Description;
+            dbEntity.Date = entity.Date;
+            dbEntity.OtherInfo = entity.OtherInfo;
+
+            dbEntity.DbProperties.Edited = DateTime.Now;
         }
     }
 

@@ -17,4 +17,5 @@ export interface ActivityListItem {
   date: Date;
   title: string;
   address: string;
+  createdByUser: boolean;
 }

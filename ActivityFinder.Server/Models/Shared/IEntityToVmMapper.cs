@@ -2,6 +2,6 @@
 {
     public interface IEntityToVmMapper<TEntity,TVm>
     {
-        public TVm MapListToVm(IQueryable<TEntity> queryForPage, int totalCount);
+        public TVm MapListToVm(IQueryable<TEntity> queryForPage, int totalCount, string userName);
     }
 }
