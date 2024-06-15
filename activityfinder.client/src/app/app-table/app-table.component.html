@@ -5,26 +5,35 @@
 
       <!-- Columns -->
       <div *ngFor="let col of displayedColumns;">
-        <ng-container *ngIf="col.name != 'star';else toolColumn" [matColumnDef]="col.name">
+        <ng-container *ngIf="col.name != 'tools';else toolColumn" [matColumnDef]="col.name">
           <th mat-header-cell *matHeaderCellDef mat-sort-header> {{ col.display | uppercase }} </th>
-          <td mat-cell *matCellDef="let material" class='has_label_on_mobile' [attr.data-label]='col.display | uppercase'> {{ material[col.name] }} </td>
+          <td mat-cell *matCellDef="let material"
+              class='has_label_on_mobile' [class.hidden-mobile]="!material[col.name]"
+              [attr.data-label]='col.display | uppercase'> {{ material[col.name] || '-' }} </td>
         </ng-container>
       </div>
 
       <!-- Tools -->
       <ng-template #toolColumn>
-        <ng-container matColumnDef="star">
-          <th mat-header-cell *matHeaderCellDef> </th>
-          <td mat-cell *matCellDef="let material">
-            <button mat-icon-button [matMenuTriggerFor]="menu">
-              <mat-icon>more_vert</mat-icon>
-            </button>
+        <ng-container matColumnDef="tools">
+          <th mat-header-cell *matHeaderCellDef class="mat-column-tools"> NARZĘDZIA </th>
+          <td mat-cell *matCellDef="let element">
+            <ng-container>
+              <mat-menu #appMenu="matMenu">
+                <button mat-menu-item *ngFor="let tool of currentElementTools" (click)="callAction(tool.route, tool.clickAction)">
+                  {{tool.display}}
+                </button>
+              </mat-menu>
+              <button mat-icon-button (click)="openMenu(element)" [matMenuTriggerFor]="appMenu" class="tools-dropdown">
+                <mat-icon>more_vert</mat-icon>
+              </button>
+            </ng-container>
           </td>
         </ng-container>
-      </ng-template>
+        </ng-template>
 
-      <tr mat-header-row *matHeaderRowDef="columnNames; sticky: true"></tr>
-      <tr mat-row *matRowDef="let row; columns: columnNames;"></tr>
+        <tr mat-header-row *matHeaderRowDef="columnNames; sticky: true"></tr>
+        <tr mat-row *matRowDef="let row; columns: columnNames;"></tr>
     </table>
 
   </div>

@@ -2,8 +2,10 @@ import { ChangeDetectionStrategy, Component, EventEmitter, Input, OnInit, Output
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
+import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { tap } from 'rxjs/operators';
+import { MenuItem } from '../layout/app.component';
 
 @Component({
   selector: 'app-table',
@@ -15,9 +17,10 @@ export class AppTableComponent implements OnInit, OnDestroy {
 
   @Input() displayedColumns: ColumnItem[] = [];
   @Input() dataSource: MatTableDataSource<any> = {} as MatTableDataSource<any>;
-  @Input() menu: any = {};
+  @Input() currentElementTools: MenuItem[] = [];
 
   @Output() reloadData = new EventEmitter<any>();
+  @Output() reloadElementMenu = new EventEmitter<any>();
 
   @ViewChild(MatPaginator) paginator: MatPaginator = {} as MatPaginator;
   @ViewChild(MatSort) sort: MatSort = {} as MatSort;
@@ -25,7 +28,7 @@ export class AppTableComponent implements OnInit, OnDestroy {
   private subscriptions: Subscription[] = [];
   columnNames: string[] = [];
 
-  constructor() { }
+  constructor(private router: Router) { }
 
   ngOnInit(): void {
     this.columnNames = this.displayedColumns.map(a => a.name);
@@ -45,6 +48,15 @@ export class AppTableComponent implements OnInit, OnDestroy {
     this.subscriptions.push(subSortPage);
 
     this.reloadData.emit();
+  }
+
+  openMenu(element: any) {
+    this.reloadElementMenu.emit(element);
+  }
+
+  callAction(route: string, funcName: string) {
+    if (route) { this.router.navigate([route]); }
+    //else if (funcName == 'logout') { this.authService.logout() }
   }
 
   ngOnDestroy() {

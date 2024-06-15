@@ -1,9 +1,10 @@
 import { Component, OnInit, ViewChild, OnDestroy, ChangeDetectionStrategy } from '@angular/core';
 import { MatTableDataSource } from '@angular/material/table';
 import { ActivityListItem } from '../interfaces/activity';
-import { ActivitiesService } from '../services/activities.service';
+import { ActivitiesPaginationSettings, ActivitiesService } from '../services/activities.service';
 import { Subscription } from 'rxjs';
 import { AppTableComponent, ColumnItem } from '../app-table/app-table.component';
+import { MenuItem } from '../layout/app.component';
 
 @Component({
   selector: 'app-events-list',
@@ -16,7 +17,7 @@ export class EventsListComponent implements OnInit, OnDestroy {
     { name: 'date', display: 'Data' },
     { name: 'title', display: 'Tytuł' },
     { name: 'address', display: 'Adres' },
-    { name: 'star', display: '' },
+    { name: 'tools', display: '' },
   ];
   dataSource = new MatTableDataSource<ActivityListItem>();
   states: string[] = [
@@ -39,8 +40,11 @@ export class EventsListComponent implements OnInit, OnDestroy {
   ];
   selectedState: string = 'Małopolskie'
 
-  filterValue = '';
-  addressInput = '';
+  filterValue: string = '';
+  addressInput: string = '';
+  selectedStatus = '1';
+
+  currentElementTools: MenuItem[] = [];
 
   @ViewChild(AppTableComponent) tableComponent!: AppTableComponent;
 
@@ -59,18 +63,30 @@ export class EventsListComponent implements OnInit, OnDestroy {
   loadData() {
     if (this.dataSubsription !== null) {
       this.dataSubsription.unsubscribe();      
-    }   
+    }
 
-    const pageIndex = this.tableComponent.paginator.pageIndex || 0;
-    const pageSize = this.tableComponent.paginator.pageSize || 10;
-    const sortField = this.tableComponent.sort.active || '';
-    const sortDirection = this.tableComponent.sort.direction || '';   
+    const settings = {} as ActivitiesPaginationSettings;
 
-    this.dataSubsription = this.activitiesService.activitiesList(pageIndex, pageSize, sortField, sortDirection, this.addressInput, this.selectedState)
+    settings.page = (this.tableComponent.paginator.pageIndex || 0) + 1;
+    settings.size = this.tableComponent.paginator.pageSize || 10;
+    settings.sortField = this.tableComponent.sort.active || 'date';
+    settings.asc = this.tableComponent.sort.direction == 'asc';
+    settings.address = this.addressInput;
+    settings.state = this.selectedState;
+    settings.status = +this.selectedStatus;
+
+    this.dataSubsription = this.activitiesService.activitiesList(settings)
       .subscribe(response => {
         this.dataSource.data = response.data;
         this.tableComponent.paginator.length = response.totalCount;
       });
+  }
+
+  reloadElementMenu(element: ActivityListItem) {
+    const items: MenuItem[] = [];
+    items.push({ route: '/authenticate', display: 'Strona główna', clickAction: '' } as MenuItem);
+
+    this.currentElementTools = items;
   }
 
   ngOnDestroy() {

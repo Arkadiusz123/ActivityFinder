@@ -31,6 +31,7 @@ import { PolishPaginatorIntl } from './mat-extensions/polish-paginator-intl';
 import { LoadingInterceptor } from './interceptors/loading.interceptor';
 import { MatMenuModule} from '@angular/material/menu';
 import { AppTableComponent } from './app-table/app-table.component';
+import { MatRadioModule } from '@angular/material/radio';
 
 const routes: Routes = [
   { path: '', component: EventsListComponent },
@@ -56,7 +57,8 @@ const routes: Routes = [
     ReactiveFormsModule,
     FormsModule,
     MatIconModule, MatTabsModule, MatInputModule, MatButtonModule, MatCardModule, MatAutocompleteModule, MatCheckboxModule, MatToolbarModule,
-    MatSidenavModule, MatListModule, MatTableModule, MatPaginatorModule, MatSortModule, MatSelectModule, MatProgressSpinnerModule, MatMenuModule
+    MatSidenavModule, MatListModule, MatTableModule, MatPaginatorModule, MatSortModule, MatSelectModule, MatProgressSpinnerModule, MatMenuModule,
+    MatRadioModule
   ],
   providers: [
     AuthenticateService,

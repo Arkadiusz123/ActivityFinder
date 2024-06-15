@@ -27,11 +27,26 @@ export class ActivitiesService {
       });
   }
 
-  activitiesList(pageIndex: number, pageSize: number, sortField: string, sortDirection: string, address: string, state: string):
+  activitiesList(settings: ActivitiesPaginationSettings):
     Observable<{ data: ActivityListItem[], totalCount: number }>
   {
+    let params = new URLSearchParams();
+    for (let key in settings) {
+      params.set(key, settings[key])
+    }
+
     return this.http.get<{ data: ActivityListItem[], totalCount: number }>(
-      `/api/activity?page=${pageIndex + 1}&size=${pageSize}&sortField=${sortField || 'date'}&asc=${sortDirection == 'asc'}&address=${address}&state=${state}`
+      `/api/activity?${params.toString()}`
     );
   }
+}
+
+export interface ActivitiesPaginationSettings {
+  page: number;
+  size: number;
+  sortField: string;
+  asc: boolean;
+  address: string;
+  state: string;
+  status: number;
 }
