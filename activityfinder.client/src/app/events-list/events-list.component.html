@@ -1,3 +1,10 @@
+<div class="radio-buttons">
+  <mat-radio-group [(ngModel)]="selectedStatus" color="primary" aria-label="Wybierz status">
+    <mat-radio-button value="1">Wszystkie</mat-radio-button>
+    <mat-radio-button value="2">Dodane przez mnie</mat-radio-button>
+    <mat-radio-button value="3">Dołączono</mat-radio-button>
+  </mat-radio-group>
+</div>
 
 <div class="search-container">
   <mat-form-field>
@@ -13,21 +20,9 @@
   </button>
 </div>
 
-<app-table
-           [displayedColumns]="displayedColumns"
+<app-table [displayedColumns]="displayedColumns"
            [dataSource]="dataSource"
-           [menu]="menu"
+           [currentElementTools]="currentElementTools"
            (reloadData)="loadData()"
-           ></app-table>
+           (reloadElementMenu)="reloadElementMenu($event)"></app-table>
 
-
-  <mat-menu #menu="matMenu">
-    <button mat-menu-item>
-      <mat-icon>open_in_new</mat-icon>
-      <span>Open risk plan</span>
-    </button>
-    <button mat-menu-item disabled>
-      <mat-icon>delete</mat-icon>
-      <span>Delete questionnairre</span>
-    </button>
-  </mat-menu>

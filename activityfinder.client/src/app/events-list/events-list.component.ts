@@ -4,6 +4,7 @@ import { ActivityListItem } from '../interfaces/activity';
 import { ActivitiesService } from '../services/activities.service';
 import { Subscription } from 'rxjs';
 import { AppTableComponent, ColumnItem } from '../app-table/app-table.component';
+import { MenuItem } from '../layout/app.component';
 
 @Component({
   selector: 'app-events-list',
@@ -16,7 +17,7 @@ export class EventsListComponent implements OnInit, OnDestroy {
     { name: 'date', display: 'Data' },
     { name: 'title', display: 'Tytuł' },
     { name: 'address', display: 'Adres' },
-    { name: 'star', display: '' },
+    { name: 'tools', display: '' },
   ];
   dataSource = new MatTableDataSource<ActivityListItem>();
   states: string[] = [
@@ -39,8 +40,11 @@ export class EventsListComponent implements OnInit, OnDestroy {
   ];
   selectedState: string = 'Małopolskie'
 
-  filterValue = '';
-  addressInput = '';
+  filterValue: string = '';
+  addressInput: string = '';
+  selectedStatus: number = 1;
+
+  currentElementTools: MenuItem[] = [];
 
   @ViewChild(AppTableComponent) tableComponent!: AppTableComponent;
 
@@ -59,7 +63,7 @@ export class EventsListComponent implements OnInit, OnDestroy {
   loadData() {
     if (this.dataSubsription !== null) {
       this.dataSubsription.unsubscribe();      
-    }   
+    }
 
     const pageIndex = this.tableComponent.paginator.pageIndex || 0;
     const pageSize = this.tableComponent.paginator.pageSize || 10;
@@ -71,6 +75,13 @@ export class EventsListComponent implements OnInit, OnDestroy {
         this.dataSource.data = response.data;
         this.tableComponent.paginator.length = response.totalCount;
       });
+  }
+
+  reloadElementMenu(element: ActivityListItem) {
+    const items: MenuItem[] = [];
+    items.push({ route: '/authenticate', display: 'Strona główna', clickAction: '' } as MenuItem);
+
+    this.currentElementTools = items;
   }
 
   ngOnDestroy() {

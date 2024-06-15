@@ -2,12 +2,16 @@
   justify-content: center;
 }
 
+.mat-column-tools {
+  text-align: center;
+}
+
 table {
   width: 100%;
 }
 
 td.mat-column-star {
-  width: 20px;
+  width: 1.5rem;
   padding-right: 8px !important;
 }
 
@@ -24,16 +28,21 @@ td.mat-column-star {
   }
 }
 
-.mat-form-field {
-  font-size: 14px;
-  width: 100%;
-}
 
 .mat-icon {
   color: #3e75ff;
 }
 
 @media screen and (max-width: 960px) {
+  td.hidden-mobile {
+    display: none !important;
+  }
+
+  .tools-dropdown {
+    display: flex;
+    margin-left: auto;
+  }
+
   .mat-elevation-z8 {
     background: transparent;
     box-shadow: none;
@@ -64,19 +73,19 @@ td.mat-column-star {
       background-color: #fff;
       border-radius: 3px;
       + .mat-row {
-        margin-top: 24px;
+        margin-top: 1.8rem;
       }
     }
 
     .mat-cell {
       display: block;
       width: 100%;
-      padding: 0 16px;
-      margin: 16px 0;
+      padding: 0 1.1rem;
+      margin: 1.1rem 0;
       border: 0 none;
       &.m-card-sub-title {
-        margin-top: -8px;
-        padding: 0 48px 0 16px;
+        margin-top: -0.5rem;
+        padding: 0 3.5rem 0 1.1rem;
         color: rgba(0,0,0,.54);
       }
     }
@@ -104,7 +113,7 @@ td.mat-column-star {
   }
 
   .mat-paginator {
-    margin-top: 24px;
+    margin-top: 1.8rem;
   }
 
 }

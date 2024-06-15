@@ -67,7 +67,7 @@ export class AppComponent implements OnInit, OnDestroy {
   }
 }
 
-interface MenuItem {
+export interface MenuItem {
   display: string;
   route: string;
   clickAction: string;
