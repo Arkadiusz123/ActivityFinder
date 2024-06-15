@@ -5,7 +5,7 @@ namespace ActivityFinder.Server.Models
     interface IActivityService<TVm>
     {
         Result<Activity> Add(Activity activity);
-        Result<TVm> GetPagedVm(ActivityPaginationSettings settings);
+        Result<TVm> GetPagedVm(ActivityPaginationSettings settings, string userName);
     }
 
     public class ActivityService<TVm> : IActivityService<TVm>
@@ -31,9 +31,9 @@ namespace ActivityFinder.Server.Models
             return _result;
         }
 
-        public Result<TVm> GetPagedVm(ActivityPaginationSettings settings)
+        public Result<TVm> GetPagedVm(ActivityPaginationSettings settings, string userName)
         {
-            var query = _repository.GetFilteredQuery(settings.Address?.Trim().Replace(",", "").Replace("ul", ""), settings.State);
+            var query = _repository.GetFilteredQuery(PrepareAddressForFilter(settings.Address), settings.State, settings.Status, userName);
             query = _repository.OrderQuery(query, settings.SortField, settings.Asc);
 
             var totalCount = query.Count();
@@ -45,6 +45,14 @@ namespace ActivityFinder.Server.Models
             vmResult.SetSuccess(vm);
 
             return vmResult;
+        }
+
+        private string? PrepareAddressForFilter(string? address)
+        {
+            if (string.IsNullOrEmpty(address))
+                return address;
+
+            return address.Trim().Replace(",", "").Replace(".", "").Replace("ul", "");
         }
     }
 }

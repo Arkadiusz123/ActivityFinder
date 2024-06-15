@@ -26,9 +26,9 @@ namespace ActivityFinder.Server.Controllers
         }
 
         [HttpPost]
-        public IActionResult Create([FromBody]ActivityDTO activity)
+        public async Task<IActionResult> Create([FromBody]ActivityDTO activity)
         {
-            var addressResult = _addressSearch.GetAddressByOsmId(activity.Address.OsmId!);
+            var addressResult = await _addressSearch.GetAddressByOsmId(activity.Address.OsmId!);
 
             if (!addressResult.Success)
                 return NotFound(addressResult.Message);
@@ -46,9 +46,7 @@ namespace ActivityFinder.Server.Controllers
         [AllowAnonymous]//tylko na test TODO
         public IActionResult GetList([FromQuery]ActivityPaginationSettings settings)
         {
-            //TODO params validation
-
-            var result = _activityService.GetPagedVm(settings);
+            var result = _activityService.GetPagedVm(settings, User.Identity.Name);     //TODO filter by status
             if (!result.Success)
                 return BadRequest(result.Message);
 

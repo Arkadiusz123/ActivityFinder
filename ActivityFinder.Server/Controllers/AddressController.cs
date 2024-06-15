@@ -23,12 +23,12 @@ namespace ActivityFinder.Server.Controllers
 
         [HttpGet]
         [Route("{input}")]
-        public IActionResult GetBySearchInput(string input)
+        public async Task<IActionResult> GetBySearchInput(string input)
         {
             if (string.IsNullOrEmpty(input))
                 return BadRequest("Nie podano adresu");
 
-            var result = _addressSearch.GetAddressByName(input);
+            var result = await _addressSearch.GetAddressByName(input);
 
             if (!result.Success)
                 return NotFound(result.Message);

@@ -1,7 +1,7 @@
 import { Component, OnInit, ViewChild, OnDestroy, ChangeDetectionStrategy } from '@angular/core';
 import { MatTableDataSource } from '@angular/material/table';
 import { ActivityListItem } from '../interfaces/activity';
-import { ActivitiesService } from '../services/activities.service';
+import { ActivitiesPaginationSettings, ActivitiesService } from '../services/activities.service';
 import { Subscription } from 'rxjs';
 import { AppTableComponent, ColumnItem } from '../app-table/app-table.component';
 import { MenuItem } from '../layout/app.component';
@@ -42,7 +42,7 @@ export class EventsListComponent implements OnInit, OnDestroy {
 
   filterValue: string = '';
   addressInput: string = '';
-  selectedStatus: number = 1;
+  selectedStatus = '1';
 
   currentElementTools: MenuItem[] = [];
 
@@ -65,12 +65,17 @@ export class EventsListComponent implements OnInit, OnDestroy {
       this.dataSubsription.unsubscribe();      
     }
 
-    const pageIndex = this.tableComponent.paginator.pageIndex || 0;
-    const pageSize = this.tableComponent.paginator.pageSize || 10;
-    const sortField = this.tableComponent.sort.active || '';
-    const sortDirection = this.tableComponent.sort.direction || '';   
+    const settings = {} as ActivitiesPaginationSettings;
 
-    this.dataSubsription = this.activitiesService.activitiesList(pageIndex, pageSize, sortField, sortDirection, this.addressInput, this.selectedState)
+    settings.page = (this.tableComponent.paginator.pageIndex || 0) + 1;
+    settings.size = this.tableComponent.paginator.pageSize || 10;
+    settings.sortField = this.tableComponent.sort.active || 'date';
+    settings.asc = this.tableComponent.sort.direction == 'asc';
+    settings.address = this.addressInput;
+    settings.state = this.selectedState;
+    settings.status = +this.selectedStatus;
+
+    this.dataSubsription = this.activitiesService.activitiesList(settings)
       .subscribe(response => {
         this.dataSource.data = response.data;
         this.tableComponent.paginator.length = response.totalCount;

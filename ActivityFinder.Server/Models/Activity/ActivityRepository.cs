@@ -4,7 +4,7 @@ namespace ActivityFinder.Server.Models
 {
     interface IActivityRepository : IGenericRepository<Activity>
     {
-        IQueryable<Activity> GetFilteredQuery(string? address, string state);
+        IQueryable<Activity> GetFilteredQuery(string? address, string state, ActivityStatus status, string userName);
         IQueryable<Activity> OrderQuery(IQueryable<Activity> query, string column, bool asc);
     }
 
@@ -14,7 +14,7 @@ namespace ActivityFinder.Server.Models
         {             
         }
 
-        public IQueryable<Activity> GetFilteredQuery(string? address, string state)
+        public IQueryable<Activity> GetFilteredQuery(string? address, string state, ActivityStatus status, string userName)
         {
             state = state.ToLower();
             var query = _context.Set<Activity>().Where(x => x.Address.State == state);
@@ -25,6 +25,16 @@ namespace ActivityFinder.Server.Models
                 query = query
                     .Where(x => addressWordsArray.All(y => (x.Address.Name + x.Address.Town + x.Address.Road + x.Address.HouseNumber ).ToLower().Contains(y)));
             }
+
+            if (status == ActivityStatus.AddedByUser)
+            {
+                query = query.Where(x => x.Creator.UserName == userName);
+            }
+            else if (status == ActivityStatus.Joined)
+            {
+                query = query.Where(x => x.JoinedUsers.Any(y => y.UserName == userName));
+            }
+
             return query;
         }
 
@@ -50,5 +60,12 @@ namespace ActivityFinder.Server.Models
             else
                 throw new ArgumentException("wrong column name");
         }
+    }
+
+    public enum ActivityStatus
+    {
+        All = 1,
+        AddedByUser = 2,
+        Joined = 3
     }
 }
