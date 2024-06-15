@@ -25,8 +25,31 @@ namespace ActivityFinder.Server.Controllers
             _userService = new UserService(_context);
         }
 
+        [HttpGet]
+        [AllowAnonymous]//tylko na test TODO
+        public IActionResult GetList([FromQuery]ActivityPaginationSettings settings)
+        {
+            var result = _activityService.GetPagedVm(settings, User.Identity.Name);
+            if (!result.Success)
+                return BadRequest(result.Message);
+
+            return Ok(result.Value);
+        }
+
+        [HttpGet]
+        [Route("{id}")]
+        public IActionResult GetById(int id)
+        {
+            var activityResult = _activityService.GetById(id);
+
+            if (!activityResult.Success)
+                return BadRequest(activityResult.Message);
+
+            return Ok(ActivityMapper.ToDTO(activityResult.Value));
+        }
+
         [HttpPost]
-        public async Task<IActionResult> Create([FromBody]ActivityDTO activity)
+        public async Task<IActionResult> Create([FromBody] ActivityDTO activity)
         {
             var addressResult = await _addressSearch.GetAddressByOsmId(activity.Address.OsmId!);
 
@@ -42,15 +65,25 @@ namespace ActivityFinder.Server.Controllers
             return Ok();
         }
 
-        [HttpGet]
-        [AllowAnonymous]//tylko na test TODO
-        public IActionResult GetList([FromQuery]ActivityPaginationSettings settings)
+        [HttpPut]
+        public async Task<IActionResult> Edit([FromBody] ActivityDTO activity)
         {
-            var result = _activityService.GetPagedVm(settings, User.Identity.Name);     //TODO filter by status
-            if (!result.Success)
-                return BadRequest(result.Message);
+            if (!activity.Id.HasValue)
+                return BadRequest("Nie podano id");
 
-            return Ok(result.Value);
+            var addressResult = await _addressSearch.GetAddressByOsmId(activity.Address.OsmId!);
+
+            if (!addressResult.Success)
+                return NotFound(addressResult.Message);
+
+            var userResult = _userService.GetByName(User.Identity.Name);
+
+            if (!userResult.Success)
+                return NotFound(userResult.Message);
+
+            _activityService.Edit(ActivityMapper.ToActivity(activity, addressResult.Value, userResult.Value));
+            return Ok();
         }
+
     }
 }

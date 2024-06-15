@@ -6,6 +6,7 @@
         public required string Date { get; set; }
         public required string Title { get; set; }
         public required string Address { get; set; }
+        public required bool CreatedByUser { get; set; }
     }
 
     public class ActivityVmWrapper

@@ -15,20 +15,23 @@ export class ActivitiesService {
   constructor(private http: HttpClient, private router: Router) { }
 
   addActivity(activity: Activity) {
-    this.http.post<Activity>('/api/activity', activity)
-      //.pipe(
-      //tap(data => {
-      //  const currentList = this.objectsSubject.value;
-      //  currentList.push(data);
-      //  this.objectsSubject.next(currentList);
-      //}))
-      .subscribe(res => {
+    this.http.post<Activity>('/api/activity', activity).subscribe(res => {
         this.router.navigate([''])
       });
   }
 
-  activitiesList(settings: ActivitiesPaginationSettings):
-    Observable<{ data: ActivityListItem[], totalCount: number }>
+  editActivity(activity: Activity, id: number) {
+    activity.id = id;
+    this.http.put<Activity>('/api/activity', activity).subscribe(res => {
+      this.router.navigate([''])
+    });
+  }
+
+  getActivity(id: string): Observable<Activity> {
+    return this.http.get<Activity>('/api/activity/' + id);
+  }
+
+  activitiesList(settings: ActivitiesPaginationSettings): Observable<{ data: ActivityListItem[], totalCount: number }>
   {
     let params = new URLSearchParams();
     for (let key in settings) {

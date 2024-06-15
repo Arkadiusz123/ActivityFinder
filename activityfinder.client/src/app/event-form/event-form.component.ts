@@ -6,6 +6,7 @@ import { ErrorMessagesService } from '../services/error-messages.service';
 import { ActivitiesService } from '../services/activities.service';
 import { AddressFinderService } from '../services/address-finder.service';
 import Swal from 'sweetalert2';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-event-form',
@@ -14,16 +15,20 @@ import Swal from 'sweetalert2';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class EventFormComponent implements OnInit, OnDestroy {
-  private subscriptions: Subscription[] = [];
   activityForm: FormGroup;
   filteredOptions: Observable<any[]> = {} as Observable<any[]>;
 
   displayAddress: string = '';
   searchInput: string = '';
+  id: string = '';
+
+  private addressSub: Subscription | null = null;
+  private activitySub: Subscription | null = null;
 
   constructor(private fb: FormBuilder, private activityService: ActivitiesService, private addressFinder: AddressFinderService,
-    private changeDetectorRef: ChangeDetectorRef,
-    public errorMessageService: ErrorMessagesService) {
+    private changeDetectorRef: ChangeDetectorRef, private route: ActivatedRoute,
+    public errorMessageService: ErrorMessagesService)
+  {
     this.activityForm = this.fb.group({
       description: ['', Validators.required],
       title: ['', Validators.required],
@@ -36,11 +41,22 @@ export class EventFormComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
+    this.id = this.route.snapshot.paramMap.get('id') || '';
 
+    if (this.id) {
+      this.activitySub = this.activityService.getActivity(this.id).subscribe(x => {     
+        this.activityForm.patchValue(x)
+        this.displayAddress = x.address.displayName
+      });
+    }
   }
 
   findAddress(event: KeyboardEvent | null) {
     event?.preventDefault();
+
+    if (this.addressSub !== null) {
+      this.addressSub.unsubscribe();
+    }
 
     if (!this.searchInput) {
       return;
@@ -63,7 +79,7 @@ export class EventFormComponent implements OnInit, OnDestroy {
         this.changeDetectorRef.markForCheck();
       }
     })
-    this.subscriptions.push(addressSubscription);
+    this.addressSub = addressSubscription;
   }
 
   removeAddress() {
@@ -72,7 +88,6 @@ export class EventFormComponent implements OnInit, OnDestroy {
   }
 
   onSubmit() {
-    //console.log('New Product:', this.activityForm.value);
     if (!this.activityForm.get('address.osmId')!.value) {
       Swal.fire('Nie wybrano adresu')
       return;
@@ -80,16 +95,22 @@ export class EventFormComponent implements OnInit, OnDestroy {
 
     if (this.activityForm.valid) {
       const newActivity: Activity = this.activityForm.value;
-      this.activityService.addActivity(newActivity);
+      if (!this.id) {
+        this.activityService.addActivity(newActivity);
+      }
+      else {
+        this.activityService.editActivity(newActivity, +this.id);
+      }     
     }
   }
 
   ngOnDestroy() {
-    this.subscriptions.forEach(subscription => {
-      if (subscription) {
-        subscription.unsubscribe();
-      }
-    });
+    if (this.addressSub !== null) {
+      this.addressSub.unsubscribe();
+    }
+    if (this.activitySub !== null) {
+      this.activitySub.unsubscribe();
+    }
   }
 
 }

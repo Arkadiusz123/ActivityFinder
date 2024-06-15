@@ -36,6 +36,7 @@ import { MatRadioModule } from '@angular/material/radio';
 const routes: Routes = [
   { path: '', component: EventsListComponent },
   { path: 'event-form', component: EventFormComponent },
+  { path: 'event-form/:id', component: EventFormComponent },
   { path: 'events-list', component: EventsListComponent },
   { path: 'authenticate', component: LoginRegisterComponent },
 ];
