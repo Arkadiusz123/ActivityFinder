@@ -12,7 +12,8 @@
                 Date = activityDTO.Date!.Value,
                 OtherInfo = activityDTO.OtherInfo,
                 Address = address,
-                Creator = user               
+                Creator = user,
+                UsersLimit = activityDTO.UsersLimit
             };
             return activity;
         }
@@ -26,7 +27,8 @@
                 Address = activity.Address.ToAddressDto(),
                 Description = activity.Description,
                 Date = activity.Date,
-                OtherInfo = activity.OtherInfo
+                OtherInfo = activity.OtherInfo,
+                UsersLimit = activity.UsersLimit
             };
             return dto;
         }

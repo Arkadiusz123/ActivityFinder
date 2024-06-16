@@ -19,6 +19,12 @@
       <mat-error *ngIf="activityForm.get('description')!.invalid">{{ errorMessageService.getErrorMessage(activityForm, 'description') }}</mat-error>
     </mat-form-field>
 
+    <mat-form-field appearance="fill">
+      <mat-label>Limit uczestników</mat-label>
+      <input matInput formControlName="usersLimit" type="number" min="3">
+      <mat-error *ngIf="activityForm.get('usersLimit')!.invalid">{{ errorMessageService.getErrorMessage(activityForm, 'usersLimit') }}</mat-error>
+    </mat-form-field>
+
     <div formGroupName="address">
       <h3>Adres</h3>
 

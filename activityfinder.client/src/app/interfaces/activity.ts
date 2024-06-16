@@ -7,6 +7,7 @@ export interface Activity {
   category: string;
   date: Date;
   otherInfo: string;
+  usersLimit: number;
 
   address: Address;
   displayName: string;

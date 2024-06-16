@@ -84,6 +84,5 @@ namespace ActivityFinder.Server.Controllers
             _activityService.Edit(ActivityMapper.ToActivity(activity, addressResult.Value, userResult.Value));
             return Ok();
         }
-
     }
 }

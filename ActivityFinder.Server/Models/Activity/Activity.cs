@@ -8,6 +8,7 @@
         //public required string Category { get; set; }
         public required DateTime Date { get; set; }
         public string? OtherInfo { get; set; }
+        public int? UsersLimit { get; set; }
 
         public DbProperties DbProperties { get; set; } = new DbProperties();
 
