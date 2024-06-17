@@ -2,9 +2,10 @@ import { Component, OnInit, ViewChild, OnDestroy, ChangeDetectionStrategy } from
 import { MatTableDataSource } from '@angular/material/table';
 import { ActivityListItem } from '../interfaces/activity';
 import { ActivitiesPaginationSettings, ActivitiesService } from '../services/activities.service';
-import { Subscription } from 'rxjs';
+import { map, Subscription } from 'rxjs';
 import { AppTableComponent, ColumnItem } from '../app-table/app-table.component';
 import { MenuItem } from '../layout/app.component';
+import { AuthenticateService } from '../services/authenticate.service';
 
 @Component({
   selector: 'app-events-list',
@@ -16,29 +17,30 @@ export class EventsListComponent implements OnInit, OnDestroy {
   displayedColumns: ColumnItem[] = [
     { name: 'date', display: 'Data' },
     { name: 'title', display: 'Tytuł' },
+    { name: 'usersCount', display: 'Uczestnicy' },
     { name: 'address', display: 'Adres' },
     { name: 'tools', display: '' },
   ];
   dataSource = new MatTableDataSource<ActivityListItem>();
   states: string[] = [
-    'Dolnośląskie',
-    'Kujawsko-Pomorskie',
-    'Lubelskie',
-    'Lubuskie',
-    'Łódzkie',
-    'Małopolskie',
-    'Mazowieckie',
-    'Opolskie',
-    'Podkarpackie',
-    'Podlaskie',
-    'Pomorskie',
-    'Śląskie',
-    'Świętokrzyskie',
-    'Warmińsko-Mazurskie',
-    'Wielkopolskie',
-    'Zachodniopomorskie'
+    'dolnośląskie',
+    'kujawsko-Pomorskie',
+    'lubelskie',
+    'lubuskie',
+    'łódzkie',
+    'małopolskie',
+    'mazowieckie',
+    'opolskie',
+    'podkarpackie',
+    'podlaskie',
+    'pomorskie',
+    'śląskie',
+    'świętokrzyskie',
+    'warmińsko-mazurskie',
+    'wielkopolskie',
+    'zachodniopomorskie'
   ];
-  selectedState: string = 'Małopolskie'
+  selectedState: string = 'małopolskie'
 
   filterValue: string = '';
   addressInput: string = '';
@@ -48,11 +50,16 @@ export class EventsListComponent implements OnInit, OnDestroy {
 
   @ViewChild(AppTableComponent) tableComponent!: AppTableComponent;
 
-  private dataSubsription: Subscription | null = null;
+  isLogged: boolean = false;
 
-  constructor(private activitiesService: ActivitiesService) { }
+  private dataSubscription: Subscription | null = null;
+  private loggedSubscription: Subscription | null = null;
+  private joinSubscription: Subscription | null = null;
+
+  constructor(private activitiesService: ActivitiesService, private authService: AuthenticateService) { }
 
   ngOnInit() {
+    this.loggedSubscription = this.authService.isLoggedIn().subscribe(x => this.isLogged = x);
   }
 
   applyFilter() {
@@ -61,9 +68,7 @@ export class EventsListComponent implements OnInit, OnDestroy {
   }
 
   loadData() {
-    if (this.dataSubsription !== null) {
-      this.dataSubsription.unsubscribe();      
-    }
+    if (this.dataSubscription !== null) { this.dataSubscription.unsubscribe(); }
 
     const settings = {} as ActivitiesPaginationSettings;
 
@@ -75,10 +80,15 @@ export class EventsListComponent implements OnInit, OnDestroy {
     settings.state = this.selectedState;
     settings.status = +this.selectedStatus;
 
-    this.dataSubsription = this.activitiesService.activitiesList(settings)
+    this.dataSubscription = this.activitiesService.activitiesList(settings).pipe(
+      map(response => ({
+        total: response.totalCount,
+        objects: response.data.map(obj => this.addCalculatedValue(obj))
+      }))
+    )
       .subscribe(response => {
-        this.dataSource.data = response.data;
-        this.tableComponent.paginator.length = response.totalCount;
+        this.dataSource.data = response.objects;
+        this.tableComponent.paginator.length = response.total;
       });
   }
 
@@ -88,13 +98,32 @@ export class EventsListComponent implements OnInit, OnDestroy {
     if (element.createdByUser) {
       items.push({ route: '/event-form/' + element.id, display: 'Edytuj', clickAction: '' } as MenuItem);
     }
+    if (this.isLogged && !element.alreadyJoined) {
+      items.push({ route: '', display: 'Dołącz', clickAction: 'join', id: element.id } as MenuItem);
+    }
 
     this.currentElementTools = items;
   }
 
+  invokeTool(data: { action: string, id?: number }) {
+    if (data.action === 'join') { this.joinEvent(data.id!); }
+  }
+
+  joinEvent(id: number) {
+    if (this.joinSubscription !== null) { this.joinSubscription.unsubscribe(); }
+    this.joinSubscription = this.activitiesService.joinActivity(id).subscribe(x => this.loadData());
+  }
+
+  addCalculatedValue(obj: ActivityListItem) {
+    return {
+      ...obj,
+      usersCount: obj.joinedUsers + (obj.usersLimit ? `/${obj.usersLimit}` : '')
+    };
+  }
+
   ngOnDestroy() {
-    if (this.dataSubsription !== null) {
-      this.dataSubsription.unsubscribe();
-    }
+    if (this.dataSubscription !== null) { this.dataSubscription.unsubscribe(); }
+    if (this.loggedSubscription !== null) { this.loggedSubscription.unsubscribe(); }
+    if (this.joinSubscription !== null) { this.joinSubscription.unsubscribe(); }
   }
 }
