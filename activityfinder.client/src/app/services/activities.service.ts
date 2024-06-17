@@ -42,6 +42,10 @@ export class ActivitiesService {
       `/api/activity?${params.toString()}`
     );
   }
+
+  joinActivity(id: number): Observable<any> {
+    return this.http.post<Activity>('/api/activity/join/' + id, null);
+  }
 }
 
 export interface ActivitiesPaginationSettings {

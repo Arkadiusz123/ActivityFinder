@@ -7,6 +7,8 @@ namespace ActivityFinder.Server.Models
     {
         IQueryable<Activity> GetFilteredQuery(string? address, string state, ActivityStatus status, string userName);
         IQueryable<Activity> OrderQuery(IQueryable<Activity> query, string column, bool asc);
+        int JoinedUsersCount(int id);
+        bool UserAlreadyJoined(string userId, int activityId);
     }
 
     public class ActivityRepository : GenericRepository<Activity>, IActivityRepository
@@ -58,6 +60,10 @@ namespace ActivityFinder.Server.Models
             {
                 return asc ? query.OrderBy(x => x.Date) : query.OrderByDescending(x => x.Date);
             }
+            else if (column == "userscount")
+            {
+                return asc ? query.OrderBy(x => x.JoinedUsers.Count) : query.OrderByDescending(x => x.JoinedUsers.Count);
+            }
             else
                 throw new ArgumentException("nieprawidłowa nazwa kolumny");
         }
@@ -68,6 +74,7 @@ namespace ActivityFinder.Server.Models
 
             var activity = _context.Activity
                 .Include(x => x.Address)
+                .Include(x => x.Creator)
                 .SingleOrDefault(x => x.ActivityId == id);
 
             return activity;
@@ -75,12 +82,7 @@ namespace ActivityFinder.Server.Models
 
         public override void Edit(Activity entity, object key)
         {
-            var id = Convert.ToInt32(key);
-
-            var dbEntity = _context.Activity
-                .Include(x => x.Creator)
-                .Include(x => x.Address)
-                .SingleOrDefault(x => x.ActivityId == id);
+            var dbEntity = FindByKey(key);
 
             if (dbEntity == null)
                 throw new ArgumentException("Nie znaleziono obiektu o podanym id");
@@ -95,6 +97,26 @@ namespace ActivityFinder.Server.Models
             dbEntity.OtherInfo = entity.OtherInfo;
 
             dbEntity.DbProperties.Edited = DateTime.Now;
+        }
+
+        public int JoinedUsersCount(int id)
+        {
+            var result = _context.Activity.AsNoTracking()
+                .Where(x => x.ActivityId == id)
+                .Select(x => x.JoinedUsers.Count)
+                .Single();
+
+            return result;
+        }
+
+        public bool UserAlreadyJoined(string userId, int activityId)
+        {
+            var result = _context.Activity.AsNoTracking()
+                .Where(x => x.ActivityId == activityId)
+                .SelectMany(x => x.JoinedUsers)
+                .Any(x => x.Id == userId);
+
+            return result;
         }
     }
 

@@ -21,6 +21,7 @@ export class AppTableComponent implements OnInit, OnDestroy {
 
   @Output() reloadData = new EventEmitter<any>();
   @Output() reloadElementMenu = new EventEmitter<any>();
+  @Output() invokeTool = new EventEmitter<any>();
 
   @ViewChild(MatPaginator) paginator: MatPaginator = {} as MatPaginator;
   @ViewChild(MatSort) sort: MatSort = {} as MatSort;
@@ -54,9 +55,13 @@ export class AppTableComponent implements OnInit, OnDestroy {
     this.reloadElementMenu.emit(element);
   }
 
-  callAction(route: string, funcName: string) {
-    if (route) { this.router.navigate([route]); }
-    //else if (funcName == 'logout') { this.authService.logout() }
+  callAction(route: string, funcName: string, id?: number) {
+    if (route) {
+      this.router.navigate([route]);
+    }
+    else if (funcName) {
+      this.invokeTool.emit({ action: funcName, id: id });
+    }
   }
 
   ngOnDestroy() {

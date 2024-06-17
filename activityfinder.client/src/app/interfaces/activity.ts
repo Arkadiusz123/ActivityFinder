@@ -7,6 +7,7 @@ export interface Activity {
   category: string;
   date: Date;
   otherInfo: string;
+  usersLimit: number;
 
   address: Address;
   displayName: string;
@@ -18,4 +19,9 @@ export interface ActivityListItem {
   title: string;
   address: string;
   createdByUser: boolean;
+  joinedUsers: number;
+  usersLimit?: number;
+  alreadyJoined: boolean;
+
+  usersCount?: string;
 }

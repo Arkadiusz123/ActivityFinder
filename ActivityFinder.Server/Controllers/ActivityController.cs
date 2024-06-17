@@ -85,5 +85,21 @@ namespace ActivityFinder.Server.Controllers
             return Ok();
         }
 
+        [HttpPost]
+        [Route("join/{id}")]
+        public IActionResult JoinToActivity(int id)
+        {
+            var userResult = _userService.GetByName(User.Identity.Name);
+
+            if (!userResult.Success)
+                return NotFound(userResult.Message);
+
+            var joinResult = _activityService.JoinUser(userResult.Value, id);
+
+            if (!joinResult.Success)
+                return BadRequest(joinResult.Message);
+
+            return Ok();
+        }
     }
 }

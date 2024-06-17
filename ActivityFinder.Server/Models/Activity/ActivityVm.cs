@@ -7,6 +7,9 @@
         public required string Title { get; set; }
         public required string Address { get; set; }
         public required bool CreatedByUser { get; set; }
+        public required int JoinedUsers { get; set; }
+        public int? UsersLimit { get; set; }
+        public required bool AlreadyJoined { get; set; }
     }
 
     public class ActivityVmWrapper

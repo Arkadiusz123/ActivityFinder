@@ -22,7 +22,7 @@
               
               <mat-menu #appMenu="matMenu">
                 <div *ngIf="currentElementTools.length > 0; else noTools">
-                  <button mat-menu-item *ngFor="let tool of currentElementTools" (click)="callAction(tool.route, tool.clickAction)">
+                  <button mat-menu-item *ngFor="let tool of currentElementTools" (click)="callAction(tool.route, tool.clickAction, tool.id)">
                     {{tool.display}}
                   </button>
                 </div>

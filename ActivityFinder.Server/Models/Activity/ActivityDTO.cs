@@ -21,5 +21,8 @@ public class ActivityDTO
 
     public string? OtherInfo { get; set; }
 
+    [Range(minimum: ConstValues.ActivityMinUsers, maximum: int.MaxValue, ErrorMessage = "Nieprawidłowy limit uczestników")]
+    public int? UsersLimit { get; set; }
+
     //public required string Category { get; set; }
 }

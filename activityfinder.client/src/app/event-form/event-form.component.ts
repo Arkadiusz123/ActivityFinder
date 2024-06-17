@@ -34,6 +34,7 @@ export class EventFormComponent implements OnInit, OnDestroy {
       title: ['', Validators.required],
       date: ['', Validators.required],
       otherInfo: [''],
+      usersLimit: [''],
       address: this.fb.group({
         osmId: ['']
       }),

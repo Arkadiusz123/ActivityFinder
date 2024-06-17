@@ -71,4 +71,5 @@ export interface MenuItem {
   display: string;
   route: string;
   clickAction: string;
+  id?: number;
 }

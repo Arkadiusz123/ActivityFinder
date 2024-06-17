@@ -12,7 +12,8 @@
                 Date = activityDTO.Date!.Value,
                 OtherInfo = activityDTO.OtherInfo,
                 Address = address,
-                Creator = user               
+                Creator = user,
+                UsersLimit = activityDTO.UsersLimit
             };
             return activity;
         }
@@ -26,7 +27,8 @@
                 Address = activity.Address.ToAddressDto(),
                 Description = activity.Description,
                 Date = activity.Date,
-                OtherInfo = activity.OtherInfo
+                OtherInfo = activity.OtherInfo,
+                UsersLimit = activity.UsersLimit
             };
             return dto;
         }
@@ -42,7 +44,10 @@
                 x.Address.Name,
                 x.Address.Road,
                 x.Address.HouseNumber,
-                CreatedByUser = x.Creator.UserName == userName
+                CreatedByUser = x.Creator.UserName == userName,
+                JoinedCount = x.JoinedUsers.Count,
+                Limit = x.UsersLimit,
+                AlreadyJoined = x.JoinedUsers.Any(y => y.UserName == userName),
             })
                 .AsEnumerable()
                 .Select(x => new ActivityVm
@@ -51,7 +56,10 @@
                     Title = x.Title,
                     Address = Address.ShortString(x.Name, x.Town, x.Road, x.HouseNumber),
                     Date = x.Date.ToString(ConstValues.DateFormatWithHour),
-                    CreatedByUser = x.CreatedByUser
+                    CreatedByUser = x.CreatedByUser,
+                    JoinedUsers = x.JoinedCount,
+                    UsersLimit = x.Limit,
+                    AlreadyJoined = x.AlreadyJoined
                 }).ToList();
 
             return new ActivityVmWrapper() 
