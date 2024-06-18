@@ -9,6 +9,7 @@ namespace ActivityFinder.Server.Models
         Result<TVm> GetPagedVm(ActivityPaginationSettings settings, string userName);
         Result<Activity> GetById(int id);
         Result<Activity> JoinUser(ApplicationUser user, int activityId);
+        Result<Activity> RemoveFromActivity(ApplicationUser user, int activityId);
     }
 
     public class ActivityService<TVm> : IActivityService<TVm>
@@ -110,6 +111,21 @@ namespace ActivityFinder.Server.Models
             return _result;
         }
 
+        public Result<Activity> RemoveFromActivity(ApplicationUser user, int activityId)
+        {
+            if (!_repository.UserAlreadyJoined(user.Id, activityId))
+            {
+                _result.SetFail("Użytkownik nie dołączył do wydarzenia");
+                return _result;
+            }
+
+            _repository.RemoveFromActivity(activityId, user.Id);
+            _repository.SaveChanges();
+
+            _result.SetSuccess(null);
+            return _result;
+        }
+
         private string? PrepareAddressForFilter(string? address)
         {
             if (string.IsNullOrEmpty(address))
@@ -120,6 +136,7 @@ namespace ActivityFinder.Server.Models
 
         private void Validate(Activity activity)
         {
+            _result.SetSuccess(null);
             bool edit = activity.ActivityId != 0;
 
             if (edit)

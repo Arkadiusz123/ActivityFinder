@@ -26,14 +26,18 @@ export class HttpErrorInterceptor implements HttpInterceptor {
           errorMessage = `Błąd aplikacji: ${error.error.message}`;
         } else {
           // Server-side error
-          console.error(error);
+          //console.error(error);
           errorMessage = error.error;
           if (error.status === 401) {
             // Handle unauthorized errors
             this.router.navigate(['/login']);
-          } else if (error.status === 404) {
+          }
+          else if (error.status === 404) {
             // Handle not found errors
             this.router.navigate(['/not-found']);
+          }
+          else if (error.status === 500 || error.status === 504) {
+            errorMessage = 'Wystąpił nieznany błąd. Spróbuj ponownie później.'
           }
         }
 

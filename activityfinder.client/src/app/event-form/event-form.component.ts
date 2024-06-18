@@ -22,6 +22,8 @@ export class EventFormComponent implements OnInit, OnDestroy {
   searchInput: string = '';
   id: string = '';
 
+  minUsers: number = 3;
+
   private addressSub: Subscription | null = null;
   private activitySub: Subscription | null = null;
 
@@ -34,7 +36,7 @@ export class EventFormComponent implements OnInit, OnDestroy {
       title: ['', Validators.required],
       date: ['', Validators.required],
       otherInfo: [''],
-      usersLimit: [''],
+      usersLimit: [null],
       address: this.fb.group({
         osmId: ['']
       }),

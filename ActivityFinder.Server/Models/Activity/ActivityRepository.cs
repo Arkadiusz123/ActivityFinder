@@ -9,6 +9,7 @@ namespace ActivityFinder.Server.Models
         IQueryable<Activity> OrderQuery(IQueryable<Activity> query, string column, bool asc);
         int JoinedUsersCount(int id);
         bool UserAlreadyJoined(string userId, int activityId);
+        void RemoveFromActivity(int activityId, string userId);
     }
 
     public class ActivityRepository : GenericRepository<Activity>, IActivityRepository
@@ -20,7 +21,7 @@ namespace ActivityFinder.Server.Models
         public IQueryable<Activity> GetFilteredQuery(string? address, string state, ActivityStatus status, string userName)
         {
             state = state.ToLower();
-            var query = _context.Set<Activity>().Where(x => x.Address.State == state);
+            var query = _context.Set<Activity>().Where(x => x.Address.State == state).AsNoTracking();
 
             if (!string.IsNullOrEmpty(address))
             {
@@ -117,6 +118,14 @@ namespace ActivityFinder.Server.Models
                 .Any(x => x.Id == userId);
 
             return result;
+        }
+
+        public void RemoveFromActivity(int activityId, string userId)
+        {
+            var user = _context.Set<ApplicationUser>().Include(x => x.JoinedActivities).Single(x => x.Id == userId);
+            var activity = _context.Activity.Single(x => x.ActivityId == activityId);
+
+            user.JoinedActivities.Remove(activity);
         }
     }
 

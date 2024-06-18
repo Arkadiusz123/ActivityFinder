@@ -101,5 +101,22 @@ namespace ActivityFinder.Server.Controllers
 
             return Ok();
         }
+
+        [HttpPost]
+        [Route("leave/{id}")]
+        public IActionResult LeaveActivity(int id)
+        {
+            var userResult = _userService.GetByName(User.Identity.Name);
+
+            if (!userResult.Success)
+                return NotFound(userResult.Message);
+
+            var removeResult = _activityService.RemoveFromActivity(userResult.Value, id);
+
+            if (!removeResult.Success)
+                return BadRequest(removeResult.Message);
+
+            return Ok();
+        }
     }
 }
