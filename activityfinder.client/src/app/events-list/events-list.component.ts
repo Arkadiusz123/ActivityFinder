@@ -55,6 +55,7 @@ export class EventsListComponent implements OnInit, OnDestroy {
   private dataSubscription: Subscription | null = null;
   private loggedSubscription: Subscription | null = null;
   private joinSubscription: Subscription | null = null;
+  private leaveSubscription: Subscription | null = null;
 
   constructor(private activitiesService: ActivitiesService, private authService: AuthenticateService) { }
 
@@ -98,8 +99,11 @@ export class EventsListComponent implements OnInit, OnDestroy {
     if (element.createdByUser) {
       items.push({ route: '/event-form/' + element.id, display: 'Edytuj', clickAction: '' } as MenuItem);
     }
-    if (this.isLogged && !element.alreadyJoined) {
+    if (this.isLogged && !element.alreadyJoined && (element.usersLimit == null || element.joinedUsers < element.usersLimit)) {
       items.push({ route: '', display: 'Dołącz', clickAction: 'join', id: element.id } as MenuItem);
+    }
+    if (this.isLogged && element.alreadyJoined) {
+      items.push({ route: '', display: 'Zrezygnuj', clickAction: 'leave', id: element.id } as MenuItem);
     }
 
     this.currentElementTools = items;
@@ -107,11 +111,17 @@ export class EventsListComponent implements OnInit, OnDestroy {
 
   invokeTool(data: { action: string, id?: number }) {
     if (data.action === 'join') { this.joinEvent(data.id!); }
+    else if (data.action === 'leave') { this.leaveEvent(data.id!); }
   }
 
   joinEvent(id: number) {
     if (this.joinSubscription !== null) { this.joinSubscription.unsubscribe(); }
     this.joinSubscription = this.activitiesService.joinActivity(id).subscribe(x => this.loadData());
+  }
+
+  leaveEvent(id: number) {
+    if (this.leaveSubscription !== null) { this.leaveSubscription.unsubscribe(); }
+    this.leaveSubscription = this.activitiesService.leaveActivity(id).subscribe(x => this.loadData());
   }
 
   addCalculatedValue(obj: ActivityListItem) {
@@ -125,5 +135,6 @@ export class EventsListComponent implements OnInit, OnDestroy {
     if (this.dataSubscription !== null) { this.dataSubscription.unsubscribe(); }
     if (this.loggedSubscription !== null) { this.loggedSubscription.unsubscribe(); }
     if (this.joinSubscription !== null) { this.joinSubscription.unsubscribe(); }
+    if (this.leaveSubscription !== null) { this.leaveSubscription.unsubscribe(); }
   }
 }

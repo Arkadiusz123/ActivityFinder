@@ -46,6 +46,10 @@ export class ActivitiesService {
   joinActivity(id: number): Observable<any> {
     return this.http.post<Activity>('/api/activity/join/' + id, null);
   }
+
+  leaveActivity(id: number): Observable<any> {
+    return this.http.post<Activity>('/api/activity/leave/' + id, null);
+  }
 }
 
 export interface ActivitiesPaginationSettings {
