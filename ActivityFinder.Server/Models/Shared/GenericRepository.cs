@@ -1,8 +1,9 @@
 ﻿using ActivityFinder.Server.Database;
+using Microsoft.EntityFrameworkCore;
 
 namespace ActivityFinder.Server.Models
 {
-    interface IGenericRepository<T>
+    public interface IGenericRepository<T>
     {
         IQueryable<T> GetAll();
         T? FindByKey(object key);
@@ -48,8 +49,7 @@ namespace ActivityFinder.Server.Models
 
         public virtual IQueryable<T> GetAll() 
         {
-            return _context.Set<T>();
-                //.AsNoTracking();
+            return _context.Set<T>().AsNoTracking();
         }
 
         public IQueryable<T> GetDataForPage(IQueryable<T> query, int pageNumber, int size)

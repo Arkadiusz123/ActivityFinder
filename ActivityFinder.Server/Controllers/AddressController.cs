@@ -12,13 +12,11 @@ namespace ActivityFinder.Server.Controllers
     {
         private readonly ILogger<AddressController> _logger;
         private readonly IAddressSearch _addressSearch;
-        private readonly AppDbContext _context;
 
         public AddressController(ILogger<AddressController> logger, AppDbContext context)
         {
-            _context = context;
             _logger = logger;
-            _addressSearch = new AddressSearch(_context);
+            _addressSearch = new AddressSearch(context);
         }
 
         [HttpGet]

@@ -14,15 +14,13 @@ namespace ActivityFinder.Server.Controllers
         private readonly IAddressSearch _addressSearch;
         private readonly IActivityService<ActivityVmWrapper> _activityService;
         private readonly IUserService _userService;
-        private readonly AppDbContext _context;
 
         public ActivityController(ILogger<ActivityController> logger, AppDbContext context)
         {
-            _context = context;
             _logger = logger;
-            _addressSearch = new AddressSearch(_context);
-            _activityService = new ActivityService<ActivityVmWrapper>(_context, new ActivityMapper());
-            _userService = new UserService(_context);
+            _addressSearch = new AddressSearch(context);
+            _activityService = new ActivityService<ActivityVmWrapper>(context, new ActivityMapper());
+            _userService = new UserService(context);
         }
 
         [HttpGet]

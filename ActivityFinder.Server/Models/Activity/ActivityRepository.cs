@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace ActivityFinder.Server.Models
 {
-    interface IActivityRepository : IGenericRepository<Activity>
+    public interface IActivityRepository : IGenericRepository<Activity>
     {
         IQueryable<Activity> GetFilteredQuery(string? address, string state, ActivityStatus status, string userName);
         IQueryable<Activity> OrderQuery(IQueryable<Activity> query, string column, bool asc);
@@ -73,7 +73,7 @@ namespace ActivityFinder.Server.Models
         {
             var id = Convert.ToInt32(key);
 
-            var activity = _context.Activity
+            var activity = _context.Activities
                 .Include(x => x.Address)
                 .Include(x => x.Creator)
                 .SingleOrDefault(x => x.ActivityId == id);
@@ -102,7 +102,7 @@ namespace ActivityFinder.Server.Models
 
         public int JoinedUsersCount(int id)
         {
-            var result = _context.Activity.AsNoTracking()
+            var result = _context.Activities.AsNoTracking()
                 .Where(x => x.ActivityId == id)
                 .Select(x => x.JoinedUsers.Count)
                 .Single();
@@ -112,7 +112,7 @@ namespace ActivityFinder.Server.Models
 
         public bool UserAlreadyJoined(string userId, int activityId)
         {
-            var result = _context.Activity.AsNoTracking()
+            var result = _context.Activities.AsNoTracking()
                 .Where(x => x.ActivityId == activityId)
                 .SelectMany(x => x.JoinedUsers)
                 .Any(x => x.Id == userId);
@@ -123,7 +123,7 @@ namespace ActivityFinder.Server.Models
         public void RemoveFromActivity(int activityId, string userId)
         {
             var user = _context.Set<ApplicationUser>().Include(x => x.JoinedActivities).Single(x => x.Id == userId);
-            var activity = _context.Activity.Single(x => x.ActivityId == activityId);
+            var activity = _context.Activities.Single(x => x.ActivityId == activityId);
 
             user.JoinedActivities.Remove(activity);
         }

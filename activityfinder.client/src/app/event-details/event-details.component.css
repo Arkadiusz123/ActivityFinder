@@ -1,0 +1,42 @@
+/* event-detail.component.css */
+.event-detail {
+  padding: 20px;
+}
+
+  .event-detail h2, .event-detail h3, .event-detail h4 {
+    margin-top: 0;
+  }
+
+.comment {
+  border-bottom: 1px solid #ccc;
+  padding: 10px 0;
+}
+
+  .comment strong {
+    display: block;
+  }
+
+.add-comment {
+  margin-top: 20px;
+}
+
+  .add-comment textarea {
+    width: 100%;
+    height: 100px;
+    margin-bottom: 10px;
+  }
+
+  .add-comment button {
+    display: block;
+    width: 100%;
+  }
+
+@media (min-width: 768px) {
+  .add-comment textarea {
+    height: 150px;
+  }
+
+  .add-comment button {
+    width: auto;
+  }
+}
