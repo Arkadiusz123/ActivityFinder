@@ -1,14 +1,18 @@
 ﻿
+using System.Linq.Expressions;
+
 namespace ActivityFinder.Server.Models
 {
     public class CommentMapper
     {
-        public static Comment ToComment(string content, ApplicationUser user)
+        public static Comment ToComment(CommentDTO dto, ApplicationUser user, Activity activity = null) //if edit, find activity in db
         {
             var comment = new Comment 
             { 
-                Content = content,
-                User = user
+                CommentId = dto.Id ?? 0,
+                Content = dto.Content,
+                User = user,
+                Activity = activity
             };
             return comment;
         }
@@ -23,6 +27,17 @@ namespace ActivityFinder.Server.Models
                 UserName = comment.User.UserName
             };
             return vm;
+        }
+
+        public static Expression<Func<Comment, CommentVm>> SelectVmExpression()
+        {
+            return x => new CommentVm
+            {
+                Id = x.CommentId,
+                Content = x.Content,
+                Date = x.DbProperties.Created.ToString(ConstValues.DateFormatWithHour),
+                UserName = x.User.UserName
+            };
         }
     }
 }

@@ -105,6 +105,9 @@ export class EventsListComponent implements OnInit, OnDestroy {
     if (this.isLogged && element.alreadyJoined) {
       items.push({ route: '', display: 'Zrezygnuj', clickAction: 'leave', id: element.id } as MenuItem);
     }
+    if (this.isLogged && (element.alreadyJoined || element.createdByUser)) {
+      items.push({ route: '/event-details/' + element.id, display: 'Wiadomości', clickAction: '' } as MenuItem);
+    }
 
     this.currentElementTools = items;
   }

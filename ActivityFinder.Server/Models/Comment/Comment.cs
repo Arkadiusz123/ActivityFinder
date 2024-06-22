@@ -8,5 +8,8 @@
 
         public string UserId { get; set; }
         public required ApplicationUser User { get; set; }
+
+        public int ActivityId { get; set; }
+        public required Activity Activity { get; set; }
     }
 }

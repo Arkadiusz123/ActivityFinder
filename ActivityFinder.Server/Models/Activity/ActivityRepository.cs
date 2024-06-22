@@ -1,15 +1,17 @@
 ﻿using ActivityFinder.Server.Database;
+using ActivityFinder.Server.Models.Shared;
 using Microsoft.EntityFrameworkCore;
+using System.Linq.Expressions;
 
 namespace ActivityFinder.Server.Models
 {
     public interface IActivityRepository : IGenericRepository<Activity>
     {
-        IQueryable<Activity> GetFilteredQuery(string? address, string state, ActivityStatus status, string userName);
-        IQueryable<Activity> OrderQuery(IQueryable<Activity> query, string column, bool asc);
+        SinglePageData<T> GetPageData<T>(string userName, ActivityPaginationSettings settings, Expression<Func<Activity, T>> selectExpression);
         int JoinedUsersCount(int id);
         bool UserAlreadyJoined(string userId, int activityId);
         void RemoveFromActivity(int activityId, string userId);
+        bool CreatedOrJoined(string userId, int activityId);
     }
 
     public class ActivityRepository : GenericRepository<Activity>, IActivityRepository
@@ -18,10 +20,21 @@ namespace ActivityFinder.Server.Models
         {             
         }
 
-        public IQueryable<Activity> GetFilteredQuery(string? address, string state, ActivityStatus status, string userName)
+        public SinglePageData<T> GetPageData<T>(string userName, ActivityPaginationSettings settings, Expression<Func<Activity, T>> selectExpression)
+        {
+            var query = GetFilteredQuery(settings.Address, settings.State, settings.Status, userName);
+            var totalCount = query.Count();
+
+            query = OrderQuery(query, settings.SortField, settings.Asc);
+            query = GetDataForPage(query, settings.Page, settings.Size);
+
+            return new SinglePageData<T>(totalCount, query.Select(selectExpression).AsEnumerable());
+        }
+
+        private IQueryable<Activity> GetFilteredQuery(string? address, string state, ActivityStatus status, string userName)
         {
             state = state.ToLower();
-            var query = _context.Set<Activity>().Where(x => x.Address.State == state).AsNoTracking();
+            var query = _context.Activities.Where(x => x.Address.State == state).AsNoTracking();
 
             if (!string.IsNullOrEmpty(address))
             {
@@ -42,7 +55,7 @@ namespace ActivityFinder.Server.Models
             return query;
         }
 
-        public IQueryable<Activity> OrderQuery(IQueryable<Activity> query, string column, bool asc)
+        private IQueryable<Activity> OrderQuery(IQueryable<Activity> query, string column, bool asc)
         {
             column = column.ToLower();
             if (column == "address")
@@ -116,6 +129,16 @@ namespace ActivityFinder.Server.Models
                 .Where(x => x.ActivityId == activityId)
                 .SelectMany(x => x.JoinedUsers)
                 .Any(x => x.Id == userId);
+
+            return result;
+        }
+
+        public bool CreatedOrJoined(string userId, int activityId)
+        {
+            var result = _context.Activities.AsNoTracking()
+                .Where(x => x.ActivityId == activityId)
+                .Where(x => x.Creator.Id == userId || x.JoinedUsers.Any(y => y.Id == userId))
+                .Any();
 
             return result;
         }

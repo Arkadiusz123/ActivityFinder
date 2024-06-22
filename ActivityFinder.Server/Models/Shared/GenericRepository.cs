@@ -10,7 +10,7 @@ namespace ActivityFinder.Server.Models
         void Add(T entity);
         void Edit(T entity, object key);
         void SaveChanges();
-        IQueryable<T> GetDataForPage(IQueryable<T> query, int pageNumber, int size);
+        //IQueryable<T> GetDataForPage(IQueryable<T> query, int pageNumber, int size);
     }
 
     public class GenericRepository<T> : IGenericRepository<T> where T : class
@@ -52,7 +52,7 @@ namespace ActivityFinder.Server.Models
             return _context.Set<T>().AsNoTracking();
         }
 
-        public IQueryable<T> GetDataForPage(IQueryable<T> query, int pageNumber, int size)
+        protected IQueryable<T> GetDataForPage(IQueryable<T> query, int pageNumber, int size)
         {
             if (size < 1 || pageNumber < 1)
                 throw new ArgumentException("pageNumber and size must be greater than 0");

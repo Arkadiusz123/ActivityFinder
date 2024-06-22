@@ -1,26 +1,26 @@
 ﻿using ActivityFinder.Server.Database;
+using ActivityFinder.Server.Models.Shared;
+using System.Linq.Expressions;
 
 namespace ActivityFinder.Server.Models
 {
-    public interface IActivityService<TVm>
+    public interface IActivityService
     {
         ValueResult<Activity> Add(Activity activity);
         ValueResult<Activity> Edit(Activity activity);
-        ValueResult<TVm> GetPagedVm(ActivityPaginationSettings settings, string userName);
+        ValueResult<SinglePageData<T>> GetPagedVm<T>(ActivityPaginationSettings settings, string userName, Expression<Func<Activity, T>> selectExpression);
         ValueResult<Activity> GetById(int id);
         Result JoinUser(ApplicationUser user, int activityId);
         Result RemoveFromActivity(ApplicationUser user, int activityId);
     }
 
-    public class ActivityService<TVm> : IActivityService<TVm>
+    public class ActivityService : IActivityService
     {
         private readonly IActivityRepository _repository;
-        private readonly IEntityToVmMapper<Activity,TVm> _mapper;
 
-        public ActivityService(AppDbContext context, IEntityToVmMapper<Activity, TVm> mapper)
+        public ActivityService(AppDbContext context)
         {
             _repository = new ActivityRepository(context);
-            _mapper = mapper;
         }
 
         public ValueResult<Activity> Add(Activity activity) 
@@ -47,17 +47,10 @@ namespace ActivityFinder.Server.Models
             return new ValueResult<Activity>(activity, true);
         }
 
-        public ValueResult<TVm> GetPagedVm(ActivityPaginationSettings settings, string userName)
+        public ValueResult<SinglePageData<T>> GetPagedVm<T>(ActivityPaginationSettings settings, string userName, Expression<Func<Activity, T>> selectExpression)
         {
-            var query = _repository.GetFilteredQuery(PrepareAddressForFilter(settings.Address), settings.State, settings.Status, userName);
-            query = _repository.OrderQuery(query, settings.SortField, settings.Asc);
-
-            var totalCount = query.Count();
-            query = _repository.GetDataForPage(query, settings.Page, settings.Size);
-
-            var vm = _mapper.MapListToVm(query, totalCount, userName);
-
-            return new ValueResult<TVm>(vm, true);
+            var result = _repository.GetPageData(userName, settings, selectExpression);
+            return new ValueResult<SinglePageData<T>>(result, true);
         }
 
         public ValueResult<Activity> GetById(int id)
