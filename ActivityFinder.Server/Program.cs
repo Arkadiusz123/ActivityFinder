@@ -69,7 +69,7 @@ app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
 
-app.MapHub<CommentHub>("/commentHub");
+app.MapHub<CommentHub>("api/commentHub");
 app.MapControllers();
 
 app.MapFallbackToFile("/index.html");

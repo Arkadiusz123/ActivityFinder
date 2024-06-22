@@ -42,7 +42,7 @@ namespace ActivityFinder.Server.Models
         {
             return _context.Comments
                 .Where(x => x.ActivityId == activityId)
-                .OrderByDescending(x => x.DbProperties.Created)
+                .OrderBy(x => x.DbProperties.Created)
                 .Select(selectExpression)
                 .AsEnumerable();
         }
