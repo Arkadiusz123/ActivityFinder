@@ -2,6 +2,7 @@
 using ActivityFinder.Server.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
 
 namespace ActivityFinder.Server.Controllers
 {
@@ -14,13 +15,15 @@ namespace ActivityFinder.Server.Controllers
         private readonly ICommentService _commentService;
         private readonly IUserService _userService;
         private readonly IActivityService _activityService;
+        private readonly IHubContext<CommentHub, ICommentClient> _hubContext;
 
-        public CommentController(ILogger<CommentController> logger, AppDbContext context)
+        public CommentController(ILogger<CommentController> logger, AppDbContext context, IHubContext<CommentHub, ICommentClient> hubContext)
         {
             _logger = logger;
             _commentService = new CommentService(context);
             _userService = new UserService(context);
             _activityService = new ActivityService(context);
+            _hubContext = hubContext;
         }
 
         [HttpPost]
@@ -42,7 +45,9 @@ namespace ActivityFinder.Server.Controllers
             if (!createResult.Success)
                 return BadRequest(createResult.Message);
 
-            return Ok(CommentMapper.ToVm(createResult.Value));
+            var vm = CommentMapper.ToVm(createResult.Value);
+            _hubContext.Clients.Group(activityId.ToString()).ReceiveComment(vm);
+            return Ok(vm);
         }
 
         [HttpPut]
