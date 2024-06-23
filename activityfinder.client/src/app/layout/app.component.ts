@@ -6,6 +6,7 @@ import { MatSidenav } from '@angular/material/sidenav';
 import { AuthenticateService } from '../services/authenticate.service';
 import { Router } from '@angular/router';
 import { LoadingService } from '../services/loading.service';
+import { CommentService } from '../services/comment.service';
 
 @Component({
   selector: 'app-root',
@@ -26,7 +27,7 @@ export class AppComponent implements OnInit, OnDestroy {
     );
 
   constructor(private breakpointObserver: BreakpointObserver, private authService: AuthenticateService, private router: Router,
-    public loadingService: LoadingService) { }
+    private commentService: CommentService, public loadingService: LoadingService) { }
   
 
   ngOnInit() {
@@ -53,7 +54,10 @@ export class AppComponent implements OnInit, OnDestroy {
 
   callRouteAction(route: string, funcName: string) {
     if (route) { this.router.navigate([route]); }
-    else if (funcName == 'logout') { this.authService.logout() } 
+    else if (funcName == 'logout') {
+      this.commentService.closeConnection();
+      this.authService.logout()
+    } 
   }
 
   title = 'activityfinder.client';
@@ -64,6 +68,7 @@ export class AppComponent implements OnInit, OnDestroy {
         subscription.unsubscribe();
       }
     });
+    this.commentService.closeConnection();
   }
 }
 
