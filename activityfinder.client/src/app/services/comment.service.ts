@@ -35,9 +35,12 @@ export class CommentService {
     const token = this.authService.getToken();
     this.hubConnection = new signalR.HubConnectionBuilder().withUrl(`api/commentHub`,
       {
-        accessTokenFactory: () => token ?? ''
+        accessTokenFactory: () => token ?? '',
+        skipNegotiation: true,
+        transport: signalR.HttpTransportType.WebSockets
       }
-    ).build();
+    ).configureLogging(signalR.LogLevel.Information)
+      .build();
 
     //await this.hubConnection.start();
     this.hubConnection.start().then(() => this.hubConnection.invoke('JoinEventGroup', eventId));
