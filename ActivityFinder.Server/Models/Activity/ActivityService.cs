@@ -1,129 +1,106 @@
 ﻿using ActivityFinder.Server.Database;
+using ActivityFinder.Server.Models.Shared;
+using System.Linq.Expressions;
 
 namespace ActivityFinder.Server.Models
 {
-    interface IActivityService<TVm>
+    public interface IActivityService
     {
-        Result<Activity> Add(Activity activity);
-        Result<Activity> Edit(Activity activity);
-        Result<TVm> GetPagedVm(ActivityPaginationSettings settings, string userName);
-        Result<Activity> GetById(int id);
-        Result<Activity> JoinUser(ApplicationUser user, int activityId);
-        Result<Activity> RemoveFromActivity(ApplicationUser user, int activityId);
+        ValueResult<Activity> Add(Activity activity);
+        ValueResult<Activity> Edit(Activity activity);
+        ValueResult<SinglePageData<T>> GetPagedVm<T>(ActivityPaginationSettings settings, string userName, Expression<Func<Activity, T>> selectExpression);
+        ValueResult<Activity> GetById(int id);
+        Result JoinUser(ApplicationUser user, int activityId);
+        Result RemoveFromActivity(ApplicationUser user, int activityId);
     }
 
-    public class ActivityService<TVm> : IActivityService<TVm>
+    public class ActivityService : IActivityService
     {
         private readonly IActivityRepository _repository;
-        private readonly Result<Activity> _result;
-        private readonly IEntityToVmMapper<Activity,TVm> _mapper;
 
-        public ActivityService(AppDbContext context, IEntityToVmMapper<Activity, TVm> mapper)
+        public ActivityService(AppDbContext context)
         {
             _repository = new ActivityRepository(context);
-            _result = new Result<Activity>();
-            _mapper = mapper;
         }
 
-        public Result<Activity> Add(Activity activity) 
+        public ValueResult<Activity> Add(Activity activity) 
         {
-            Validate(activity);
-            if (!_result.Success)
-                return _result;
+            var validateRes = Validate(activity);
+            if (!validateRes.Success)
+                return new ValueResult<Activity>(false, validateRes.Message);
 
             _repository.Add(activity);
             _repository.SaveChanges();
 
-            _result.SetSuccess(activity);
-            return _result;
+            return new ValueResult<Activity>(activity, true);
         }
 
-        public Result<Activity> Edit(Activity activity)
+        public ValueResult<Activity> Edit(Activity activity)
         {
-            Validate(activity);
-            if (!_result.Success)
-                return _result;
+            var validateRes = Validate(activity);
+            if (!validateRes.Success)
+                return new ValueResult<Activity>(false, validateRes.Message);
 
             _repository.Edit(activity, activity.ActivityId);
             _repository.SaveChanges();
 
-            _result.SetSuccess(activity);
-            return _result;
+            return new ValueResult<Activity>(activity, true);
         }
 
-        public Result<TVm> GetPagedVm(ActivityPaginationSettings settings, string userName)
+        public ValueResult<SinglePageData<T>> GetPagedVm<T>(ActivityPaginationSettings settings, string userName, Expression<Func<Activity, T>> selectExpression)
         {
-            var query = _repository.GetFilteredQuery(PrepareAddressForFilter(settings.Address), settings.State, settings.Status, userName);
-            query = _repository.OrderQuery(query, settings.SortField, settings.Asc);
-
-            var totalCount = query.Count();
-            query = _repository.GetDataForPage(query, settings.Page, settings.Size);
-
-            var vm = _mapper.MapListToVm(query, totalCount, userName);
-
-            var vmResult = new Result<TVm>();
-            vmResult.SetSuccess(vm);
-
-            return vmResult;
+            var result = _repository.GetPageData(userName, settings, selectExpression);
+            return new ValueResult<SinglePageData<T>>(result, true);
         }
 
-        public Result<Activity> GetById(int id)
+        public ValueResult<Activity> GetById(int id)
         {
             var activity = _repository.FindByKey(id);
 
             if (activity == null)
             {
-                _result.SetFail("Nie znaleziono obiektu o podanym id");
-                return _result;
+                return new ValueResult<Activity>(false, "Nie znaleziono obiektu o podanym id");
             }
-
-            _result.SetSuccess(activity);
-            return _result;
+            return new ValueResult<Activity>(activity, true);
         }
 
-        public Result<Activity> JoinUser(ApplicationUser user, int activityId)
+        public Result JoinUser(ApplicationUser user, int activityId)
         {
             if (_repository.UserAlreadyJoined(user.Id, activityId))
             {
-                _result.SetFail("Użytkownik już dołączył do wydarzenia");
-                return _result;
+                return new Result(false, "Użytkownik już dołączył do wydarzenia");
             }
 
             var activity = _repository.FindByKey(activityId);
             if (activity == null)
             {
-                _result.SetFail("Nie znaleziono obiektu o podanym id");
-                return _result;
+                return new Result(false, "Nie znaleziono obiektu o podanym id");
             }
 
             var usersCount = _repository.JoinedUsersCount(activityId);
 
             if (activity.UsersLimit != null && usersCount >= activity.UsersLimit)
             {
-                _result.SetFail("Limit uczetników wypełniony");
-                return _result;
+                return new Result(false, "Limit uczetników wypełniony");
             }
 
             activity.JoinedUsers.Add(user);
             _repository.SaveChanges();
 
-            _result.SetSuccess(null);
-            return _result;
+            return new Result(true);
         }
 
-        public Result<Activity> RemoveFromActivity(ApplicationUser user, int activityId)
+        public Result RemoveFromActivity(ApplicationUser user, int activityId)
         {
             if (!_repository.UserAlreadyJoined(user.Id, activityId))
             {
-                _result.SetFail("Użytkownik nie dołączył do wydarzenia");
-                return _result;
+                return new Result(false, "Użytkownik nie dołączył do wydarzenia");
             }
 
             _repository.RemoveFromActivity(activityId, user.Id);
             _repository.SaveChanges();
 
-            _result.SetSuccess(null);
-            return _result;
+            return new Result(true);
         }
 
         private string? PrepareAddressForFilter(string? address)
@@ -134,9 +111,8 @@ namespace ActivityFinder.Server.Models
             return address.Trim().Replace(",", "").Replace(".", "").Replace("ul", "");
         }
 
-        private void Validate(Activity activity)
+        private Result Validate(Activity activity)
         {
-            _result.SetSuccess(null);
             bool edit = activity.ActivityId != 0;
 
             if (edit)
@@ -144,8 +120,9 @@ namespace ActivityFinder.Server.Models
                 var usersCount = _repository.JoinedUsersCount(activity.ActivityId);
 
                 if (activity.UsersLimit < usersCount)
-                    _result.SetFail("Nie można ustawić limitu mniejszego, niż liczba uczestników");
+                    return new Result(false, "Nie można ustawić limitu mniejszego, niż liczba uczestników");
             }
+            return new Result(true);
         }
     }
 }

@@ -1,6 +1,8 @@
-﻿namespace ActivityFinder.Server.Models
+﻿using System.Linq.Expressions;
+
+namespace ActivityFinder.Server.Models
 {
-    public class ActivityMapper : IEntityToVmMapper<Activity, ActivityVmWrapper>
+    public class ActivityMapper
     {
         public static Activity ToActivity(ActivityDTO activityDTO, Address address, ApplicationUser user)
         {
@@ -33,40 +35,19 @@
             return dto;
         }
 
-        public ActivityVmWrapper MapListToVm(IQueryable<Activity> queryForPage, int totalCount, string userName)
+        public static Expression<Func<Activity, ActivityVm>> SelectVmExpression(string userName)
         {
-            var vmList = queryForPage.Select(x => new
+            return x => new ActivityVm
             {
-                x.ActivityId,
-                x.Title,
-                x.Date,
-                x.Address.Town,
-                x.Address.Name,
-                x.Address.Road,
-                x.Address.HouseNumber,
+                Id = x.ActivityId,
+                Title = x.Title,
+                Address = Address.ShortString(x.Address.Name, x.Address.Town, x.Address.Road, x.Address.HouseNumber),
+                Date = x.Date.ToString(ConstValues.DateFormatWithHour),
                 CreatedByUser = x.Creator.UserName == userName,
-                JoinedCount = x.JoinedUsers.Count,
-                Limit = x.UsersLimit,
-                AlreadyJoined = x.JoinedUsers.Any(y => y.UserName == userName),
-            })
-                .AsEnumerable()
-                .Select(x => new ActivityVm
-                {
-                    Id = x.ActivityId,
-                    Title = x.Title,
-                    Address = Address.ShortString(x.Name, x.Town, x.Road, x.HouseNumber),
-                    Date = x.Date.ToString(ConstValues.DateFormatWithHour),
-                    CreatedByUser = x.CreatedByUser,
-                    JoinedUsers = x.JoinedCount,
-                    UsersLimit = x.Limit,
-                    AlreadyJoined = x.AlreadyJoined
-                }).ToList();
-
-            return new ActivityVmWrapper() 
-            {
-                Data = vmList,
-                TotalCount = totalCount
+                JoinedUsers = x.JoinedUsers.Count,
+                UsersLimit = x.UsersLimit,
+                AlreadyJoined = x.JoinedUsers.Any(y => y.UserName == userName)
             };
-        }
+        }        
     }
 }

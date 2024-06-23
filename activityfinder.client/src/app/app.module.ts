@@ -32,6 +32,7 @@ import { LoadingInterceptor } from './interceptors/loading.interceptor';
 import { MatMenuModule} from '@angular/material/menu';
 import { AppTableComponent } from './app-table/app-table.component';
 import { MatRadioModule } from '@angular/material/radio';
+import { EventDetailsComponent } from './event-details/event-details.component';
 
 const routes: Routes = [
   { path: '', component: EventsListComponent },
@@ -39,6 +40,7 @@ const routes: Routes = [
   { path: 'event-form/:id', component: EventFormComponent },
   { path: 'events-list', component: EventsListComponent },
   { path: 'authenticate', component: LoginRegisterComponent },
+  { path: 'event-details/:id', component: EventDetailsComponent },
 ];
 
 @NgModule({
@@ -48,7 +50,8 @@ const routes: Routes = [
     EventsListComponent,
     DebounceClickDirective,
     LoginRegisterComponent,
-    AppTableComponent
+    AppTableComponent,
+    EventDetailsComponent
   ],
   imports: [
     BrowserModule,

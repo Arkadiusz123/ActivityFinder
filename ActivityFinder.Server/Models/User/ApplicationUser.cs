@@ -6,5 +6,6 @@ namespace ActivityFinder.Server.Models
     {
         public List<Activity> CreatedActivities { get; set; } = [];
         public List<Activity> JoinedActivities { get; set; } = [];
+        public List<Comment> Comments { get; set; } = [];
     }
 }

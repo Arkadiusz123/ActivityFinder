@@ -19,6 +19,7 @@
         public required ApplicationUser Creator { get; set; }
 
         public List<ApplicationUser> JoinedUsers { get; set; } = [];
+        public List<Comment> Comments { get; set; } = [];
 
     }
 }

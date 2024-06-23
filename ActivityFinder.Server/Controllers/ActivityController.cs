@@ -12,24 +12,24 @@ namespace ActivityFinder.Server.Controllers
     {
         private readonly ILogger<ActivityController> _logger;
         private readonly IAddressSearch _addressSearch;
-        private readonly IActivityService<ActivityVmWrapper> _activityService;
+        private readonly IActivityService _activityService;
         private readonly IUserService _userService;
-        private readonly AppDbContext _context;
 
         public ActivityController(ILogger<ActivityController> logger, AppDbContext context)
         {
-            _context = context;
             _logger = logger;
-            _addressSearch = new AddressSearch(_context);
-            _activityService = new ActivityService<ActivityVmWrapper>(_context, new ActivityMapper());
-            _userService = new UserService(_context);
+            _addressSearch = new AddressSearch(context);
+            _activityService = new ActivityService(context);
+            _userService = new UserService(context);
         }
 
         [HttpGet]
         [AllowAnonymous]//tylko na test TODO
         public IActionResult GetList([FromQuery]ActivityPaginationSettings settings)
         {
-            var result = _activityService.GetPagedVm(settings, User.Identity.Name);
+            var userName = User.Identity.Name;
+
+            var result = _activityService.GetPagedVm(settings, userName, ActivityMapper.SelectVmExpression(userName));
             if (!result.Success)
                 return BadRequest(result.Message);
 

@@ -1,0 +1,20 @@
+<div class="event-detail" *ngIf="activity$ | async as activity">
+  <h2>{{ activity.title }}</h2>
+  <p>{{ activity.description }}</p>
+  <p>{{ activity.date | date : "dd-MM-YYYY hh:mm:ss" }}</p>
+</div>
+
+<h3>Wiadomości</h3>
+<div *ngFor="let comment of comments$ | async" class="comment">
+  <strong>{{ comment.userName }}</strong>
+  <small>{{ comment.date }}</small>
+  <p>{{ comment.content }}</p>
+</div>
+
+<div class="add-comment">
+  <mat-form-field appearance="fill">
+    <mat-label>Napisz komentarz</mat-label>
+    <textarea matInput appDebounceClick [eventName]="'keydown.enter'" (debounceClickOrPress)="addComment()" [(ngModel)]="commentInput"></textarea>
+  </mat-form-field>
+  <a mat-raised-button color="primary" appDebounceClick (debounceClickOrPress)="addComment()">Wyślij</a>
+</div>
