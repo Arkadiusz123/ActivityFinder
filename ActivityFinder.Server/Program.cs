@@ -14,6 +14,7 @@ ConfigurationManager configuration = builder.Configuration;
 builder.Services.AddDbContext<AppDbContext>(options => options.UseNpgsql(configuration.GetConnectionString("ConnStr")));
 
 builder.Services.AddIdentity<ApplicationUser, IdentityRole>().AddEntityFrameworkStores<AppDbContext>().AddDefaultTokenProviders();
+builder.Services.AddScoped<ITokenService, TokenService>();
 
 builder.Services.AddAuthentication(options =>
 {
@@ -77,3 +78,5 @@ app.MapControllers();
 app.MapFallbackToFile("/index.html");
 
 app.Run();
+
+public partial class Program { }
