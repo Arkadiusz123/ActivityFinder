@@ -61,8 +61,12 @@ namespace ActivityFinder.Server.Controllers
             if (!userResult.Success)
                 return NotFound(userResult.Message);
 
-            _activityService.Add(ActivityMapper.ToActivity(activity, addressResult.Value, userResult.Value));
-            return Ok();
+            var createResult = _activityService.Add(ActivityMapper.ToActivity(activity, addressResult.Value, userResult.Value));
+
+            if (!createResult.Success)
+                return BadRequest(createResult.Message);
+
+            return Ok(ActivityMapper.ToDTO(createResult.Value));
         }
 
         [HttpPut]
@@ -81,8 +85,12 @@ namespace ActivityFinder.Server.Controllers
             if (!userResult.Success)
                 return NotFound(userResult.Message);
 
-            _activityService.Edit(ActivityMapper.ToActivity(activity, addressResult.Value, userResult.Value));
-            return Ok();
+            var editResult = _activityService.Edit(ActivityMapper.ToActivity(activity, addressResult.Value, userResult.Value));
+
+            if (!editResult.Success)
+                return BadRequest(editResult.Message);
+
+            return Ok(ActivityMapper.ToDTO(editResult.Value));
         }
 
         [HttpPost]
