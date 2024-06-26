@@ -6,11 +6,11 @@ import { ActivitiesService } from '../services/activities.service';
 import { CommentService, Comment } from '../services/comment.service';
 
 @Component({
-  selector: 'app-event-details',
-  templateUrl: './event-details.component.html',
-  styleUrls: ['./event-details.component.css']
+  selector: 'app-event-comments',
+  templateUrl: './event-comments.component.html',
+  styleUrls: ['./event-comments.component.css']
 })
-export class EventDetailsComponent implements OnInit, OnDestroy {
+export class EventCommentsComponent implements OnInit, OnDestroy {
 
   id: string = '';
   comments$!: Observable<Comment[]>;
@@ -30,6 +30,14 @@ export class EventDetailsComponent implements OnInit, OnDestroy {
   addComment() {
     this.commentService.createComment(this.commentInput, +this.id);
     this.commentInput = '';
+  }
+
+  edit() {
+    console.log('edit')
+  }
+
+  delete() {
+
   }
 
   ngOnDestroy(): void {

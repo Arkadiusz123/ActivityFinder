@@ -50,6 +50,10 @@ export class ActivitiesService {
   leaveActivity(id: number): Observable<any> {
     return this.http.post<Activity>('/api/activity/leave/' + id, null);
   }
+
+  deleteActivity(id: number): Observable<any> {
+    return this.http.delete<Activity>('/api/activity/' + id);
+  }
 }
 
 export interface ActivitiesPaginationSettings {

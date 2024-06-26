@@ -21,6 +21,10 @@ namespace ActivityFinder.Server.Database
             builder.Entity<Activity>().HasOne(a => a.Creator).WithMany(a => a.CreatedActivities).HasForeignKey(a => a.CreatorId);
             builder.Entity<Comment>().HasOne(a => a.User).WithMany(a => a.Comments).HasForeignKey(a => a.UserId);
 
+            builder.Entity<Activity>().HasQueryFilter(u => !u.DbProperties.Deleted);
+            builder.Entity<Comment>().HasQueryFilter(u => !u.DbProperties.Deleted);
+            builder.Entity<ApplicationUser>().HasQueryFilter(u => !u.DbProperties.Deleted);
+
             base.OnModelCreating(builder);
         }
     }

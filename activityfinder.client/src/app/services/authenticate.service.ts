@@ -59,6 +59,19 @@ export class AuthenticateService {
     return this.loggedIn.asObservable();
   }
 
+  getUsername(): string | null {
+    const decodedToken = this.getDecodedToken();
+    return decodedToken ? decodedToken['username'] : null;
+  }
+
+  private getDecodedToken(): any {
+    const token = this.getToken();
+    if (token) {
+      return jwt_decode(token);
+    }
+    return null;
+  }
+
   private hasToken(): boolean {
     return !!sessionStorage.getItem(this.tokenKey);
   }

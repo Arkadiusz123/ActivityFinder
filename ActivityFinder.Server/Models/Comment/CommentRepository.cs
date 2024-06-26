@@ -31,6 +31,17 @@ namespace ActivityFinder.Server.Models
             dbComment.DbProperties.Edited = DateTime.Now;
         }
 
+        public override void Detele(object key, string userName)
+        {
+            var id = Convert.ToInt32(key);
+
+            var comment = _context.Comments.SingleOrDefault(x => x.CommentId == id && x.User.UserName == userName);
+            if (comment == null)
+                throw new ArgumentException("Nie znaleziono obiektu o podanym id");
+
+            _context.Comments.Remove(comment);
+        }
+
         public Activity GetAttachedActivity(int commentId)
         {
             var comment = _context.Comments.Include(x => x.Activity).SingleOrDefault(x => x.CommentId == commentId);

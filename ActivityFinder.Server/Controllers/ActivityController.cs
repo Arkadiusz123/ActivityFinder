@@ -93,6 +93,18 @@ namespace ActivityFinder.Server.Controllers
             return Ok(ActivityMapper.ToDTO(editResult.Value));
         }
 
+        [HttpDelete]
+        [Route("{id}")]
+        public IActionResult Delete(int id)
+        {
+            var result = _activityService.Delete(id, User.Identity.Name);
+
+            if (!result.Success)
+                return BadRequest(result.Message);
+
+            return NoContent();
+        }
+
         [HttpPost]
         [Route("join/{id}")]
         public IActionResult JoinToActivity(int id)

@@ -1,6 +1,6 @@
 ﻿namespace ActivityFinder.Server.Models
 {
-    public class Comment
+    public class Comment : IHasDbProperties
     {
         public int CommentId { get; set; }
         public required string Content { get; set; }
