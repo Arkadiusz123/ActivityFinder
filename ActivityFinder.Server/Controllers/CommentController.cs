@@ -67,6 +67,20 @@ namespace ActivityFinder.Server.Controllers
             return Ok(CommentMapper.ToVm(editResult.Value));
         }
 
+        [HttpDelete]
+        [Route("{id}")]
+        public IActionResult Delete(int id)
+        {
+            var activityId = 0;
+            var result = _commentService.Delete(id, User.Identity.Name, out activityId);
+
+            if (!result.Success)
+                return BadRequest(result.Message);
+
+            _hubContext.Clients.Group(activityId.ToString()).DeleteComment(id);
+            return NoContent();
+        }
+
         [HttpGet]
         [Route("activity/{activityId}")]
         public IActionResult GetList(int activityId)

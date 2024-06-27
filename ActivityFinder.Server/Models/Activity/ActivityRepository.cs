@@ -113,6 +113,17 @@ namespace ActivityFinder.Server.Models
             dbEntity.DbProperties.Edited = DateTime.Now;
         }
 
+        public override void Detele(object key, string userName)
+        {
+            var id = Convert.ToInt32(key);
+
+            var activity = _context.Activities.SingleOrDefault(x => x.ActivityId == id && x.Creator.UserName == userName);
+            if (activity == null)
+                throw new ArgumentException("Nie znaleziono obiektu o podanym id");
+
+            _context.Activities.Remove(activity);
+        }
+
         public int JoinedUsersCount(int id)
         {
             var result = _context.Activities.AsNoTracking()

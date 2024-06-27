@@ -1,6 +1,6 @@
 ﻿namespace ActivityFinder.Server.Models
 {
-    public class Activity
+    public class Activity : IHasDbProperties
     {
         public int ActivityId { get; set; }
         public required string Title { get; set; }

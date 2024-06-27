@@ -12,6 +12,7 @@ namespace ActivityFinder.Server.Models
         ValueResult<Activity> GetById(int id);
         Result JoinUser(ApplicationUser user, int activityId);
         Result RemoveFromActivity(ApplicationUser user, int activityId);
+        Result Delete(int activityId, string userName);
     }
 
     public class ActivityService : IActivityService
@@ -45,6 +46,20 @@ namespace ActivityFinder.Server.Models
             _repository.SaveChanges();
 
             return new ValueResult<Activity>(activity, true);
+        }
+
+        public Result Delete(int activityId, string userName)
+        {
+            try
+            {
+                _repository.Detele(activityId, userName);
+                _repository.SaveChanges();
+                return new Result(true);
+            }
+            catch (Exception e)
+            {
+                return new Result(false, e.Message);
+            }
         }
 
         public ValueResult<SinglePageData<T>> GetPagedVm<T>(ActivityPaginationSettings settings, string userName, Expression<Func<Activity, T>> selectExpression)

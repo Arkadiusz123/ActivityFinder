@@ -6,6 +6,7 @@ import { map, Subscription } from 'rxjs';
 import { AppTableComponent, ColumnItem } from '../app-table/app-table.component';
 import { MenuItem } from '../layout/app.component';
 import { AuthenticateService } from '../services/authenticate.service';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-events-list',
@@ -56,6 +57,7 @@ export class EventsListComponent implements OnInit, OnDestroy {
   private loggedSubscription: Subscription | null = null;
   private joinSubscription: Subscription | null = null;
   private leaveSubscription: Subscription | null = null;
+  private deleteSubscription: Subscription | null = null;
 
   constructor(private activitiesService: ActivitiesService, private authService: AuthenticateService) { }
 
@@ -106,7 +108,10 @@ export class EventsListComponent implements OnInit, OnDestroy {
       items.push({ route: '', display: 'Zrezygnuj', clickAction: 'leave', id: element.id } as MenuItem);
     }
     if (this.isLogged && (element.alreadyJoined || element.createdByUser)) {
-      items.push({ route: '/event-details/' + element.id, display: 'Wiadomości', clickAction: '' } as MenuItem);
+      items.push({ route: '/event-comments/' + element.id, display: 'Wiadomości', clickAction: '' } as MenuItem);
+    }
+    if (this.isLogged && element.createdByUser) {
+      items.push({ route: '', display: 'Usuń', clickAction: 'delete', id: element.id } as MenuItem);
     }
 
     this.currentElementTools = items;
@@ -115,6 +120,7 @@ export class EventsListComponent implements OnInit, OnDestroy {
   invokeTool(data: { action: string, id?: number }) {
     if (data.action === 'join') { this.joinEvent(data.id!); }
     else if (data.action === 'leave') { this.leaveEvent(data.id!); }
+    else if (data.action === 'delete') { this.deleteActivity(data.id!); }
   }
 
   joinEvent(id: number) {
@@ -125,6 +131,34 @@ export class EventsListComponent implements OnInit, OnDestroy {
   leaveEvent(id: number) {
     if (this.leaveSubscription !== null) { this.leaveSubscription.unsubscribe(); }
     this.leaveSubscription = this.activitiesService.leaveActivity(id).subscribe(x => this.loadData());
+  }
+
+  deleteActivity(id: number) {
+    if (this.deleteSubscription !== null) { this.deleteSubscription.unsubscribe(); }
+
+    Swal.fire({
+      title: "Czy jesteś pewien?",
+      text: "Nie da się cofnąć!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Potwierdź",
+      cancelButtonText: "Anuluj"
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this.deleteSubscription = this.activitiesService.deleteActivity(id).subscribe(x => {
+          this.loadData();
+
+          Swal.fire({
+            title: "Usunięto!",
+            text: "Twoja aktywność została usunięta.",
+            icon: "success"
+
+          });
+        });       
+      }
+    });
   }
 
   addCalculatedValue(obj: ActivityListItem) {
@@ -139,5 +173,6 @@ export class EventsListComponent implements OnInit, OnDestroy {
     if (this.loggedSubscription !== null) { this.loggedSubscription.unsubscribe(); }
     if (this.joinSubscription !== null) { this.joinSubscription.unsubscribe(); }
     if (this.leaveSubscription !== null) { this.leaveSubscription.unsubscribe(); }
+    if (this.deleteSubscription !== null) { this.deleteSubscription.unsubscribe(); }
   }
 }

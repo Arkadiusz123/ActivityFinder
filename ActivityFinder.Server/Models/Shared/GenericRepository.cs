@@ -10,7 +10,7 @@ namespace ActivityFinder.Server.Models
         void Add(T entity);
         void Edit(T entity, object key);
         void SaveChanges();
-        //IQueryable<T> GetDataForPage(IQueryable<T> query, int pageNumber, int size);
+        void Detele(object key, string userName);
     }
 
     public class GenericRepository<T> : IGenericRepository<T> where T : class
@@ -40,6 +40,12 @@ namespace ActivityFinder.Server.Models
                 throw new ArgumentException("Nie znaleziono obiektu o podanym id");          
 
             _context.Entry(dbEntity).CurrentValues.SetValues(entity);
+        }
+
+        public virtual void Detele(object key, string userName)
+        { 
+            var entity = FindByKey(key);
+            _context.Set<T>().Remove(entity);
         }
 
         public void SaveChanges()

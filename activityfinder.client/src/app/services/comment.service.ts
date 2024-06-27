@@ -23,6 +23,7 @@ export class CommentService {
       .build();
 
     this.hubConnection.on('ReceiveComment', (comment: Comment) => this.addCommentToSub(comment));
+    this.hubConnection.on('DeleteComment', (id: number) => this.removeCommentFromSub(id));
   }
 
   getMessages(id: number): Observable<Comment[]> {
@@ -32,6 +33,10 @@ export class CommentService {
 
   createComment(content: string, id: number) {
     this.http.post('/api/comment/activity/' + id, { content: content }).subscribe();
+  }
+
+  deleteComment(id: number) {
+    this.http.delete('/api/comment/' + id).subscribe();
   }
 
   joinEvent(eventId: string) {
@@ -58,6 +63,11 @@ export class CommentService {
   private addCommentToSub(comment: Comment): void {
     const currentComments = this.commentsSubject.getValue();
     this.commentsSubject.next([...currentComments, comment]);
+  }
+
+  private removeCommentFromSub(id: number): void {
+    const currentComments = this.commentsSubject.getValue();
+    this.commentsSubject.next(currentComments.filter(x => x.id !== id));
   }
 }
 

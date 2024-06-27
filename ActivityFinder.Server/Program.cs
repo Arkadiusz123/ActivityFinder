@@ -11,7 +11,10 @@ var builder = WebApplication.CreateBuilder(args);
 ConfigurationManager configuration = builder.Configuration;
 
 // Add services to the container.
-builder.Services.AddDbContext<AppDbContext>(options => options.UseNpgsql(configuration.GetConnectionString("ConnStr")));
+builder.Services.AddSingleton<SoftDeleteInterceptor>();
+builder.Services.AddDbContext<AppDbContext>((serviceProvider, options) => options
+    .UseNpgsql(configuration.GetConnectionString("ConnStr"))
+    .AddInterceptors(serviceProvider.GetRequiredService<SoftDeleteInterceptor>()));
 
 builder.Services.AddIdentity<ApplicationUser, IdentityRole>().AddEntityFrameworkStores<AppDbContext>().AddDefaultTokenProviders();
 builder.Services.AddScoped<ITokenService, TokenService>();

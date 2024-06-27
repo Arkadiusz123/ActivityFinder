@@ -5,6 +5,7 @@ import { tap } from 'rxjs/operators';
 import { LoginRegister } from '../interfaces/login-register';
 import Swal from 'sweetalert2';
 import { BehaviorSubject, Observable } from 'rxjs';
+import { jwtDecode } from "jwt-decode";
 
 @Injectable({
   providedIn: 'root'
@@ -57,6 +58,19 @@ export class AuthenticateService {
 
   isLoggedIn(): Observable<boolean> {
     return this.loggedIn.asObservable();
+  }
+
+  getUsername(): string | null {
+    const decodedToken = this.getDecodedToken();
+    return decodedToken ? decodedToken['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name'] : null;
+  }
+
+  private getDecodedToken(): any {
+    const token = this.getToken();   
+    if (token) {
+      return jwtDecode(token);
+    }
+    return null;
   }
 
   private hasToken(): boolean {

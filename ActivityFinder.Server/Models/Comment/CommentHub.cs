@@ -7,6 +7,7 @@ namespace ActivityFinder.Server.Models
     public interface ICommentClient
     {
         Task ReceiveComment(CommentVm comment);
+        Task DeleteComment(int id);
     }
 
     [Authorize]
@@ -36,11 +37,6 @@ namespace ActivityFinder.Server.Models
         public async Task LeaveEventGroup(string eventId)
         {
             await Groups.RemoveFromGroupAsync(Context.ConnectionId, eventId);
-        }
-
-        public async Task SendCommentToActivity(string eventId, CommentVm comment)
-        {
-            await Clients.Group(eventId).ReceiveComment(comment);
         }
     }
 }
