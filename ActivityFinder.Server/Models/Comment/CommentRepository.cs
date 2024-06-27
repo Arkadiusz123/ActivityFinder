@@ -9,6 +9,7 @@ namespace ActivityFinder.Server.Models
         bool CanEdit(string userName, int id);
         Activity GetAttachedActivity(int commentId);
         IEnumerable<T> GetDisplayList<T>(int activityId, Expression<Func<Comment, T>> selectExpression);
+        void Detele(object key, string userName, out int activityId);
     }
 
     public class CommentRepository : GenericRepository<Comment>, ICommentRepository
@@ -31,7 +32,7 @@ namespace ActivityFinder.Server.Models
             dbComment.DbProperties.Edited = DateTime.Now;
         }
 
-        public override void Detele(object key, string userName)
+        public void Detele(object key, string userName, out int activityId)
         {
             var id = Convert.ToInt32(key);
 
@@ -40,6 +41,7 @@ namespace ActivityFinder.Server.Models
                 throw new ArgumentException("Nie znaleziono obiektu o podanym id");
 
             _context.Comments.Remove(comment);
+            activityId = comment.ActivityId;
         }
 
         public Activity GetAttachedActivity(int commentId)

@@ -71,11 +71,13 @@ namespace ActivityFinder.Server.Controllers
         [Route("{id}")]
         public IActionResult Delete(int id)
         {
-            var result = _commentService.Delete(id, User.Identity.Name);
+            var activityId = 0;
+            var result = _commentService.Delete(id, User.Identity.Name, out activityId);
 
             if (!result.Success)
                 return BadRequest(result.Message);
 
+            _hubContext.Clients.Group(activityId.ToString()).DeleteComment(id);
             return NoContent();
         }
 

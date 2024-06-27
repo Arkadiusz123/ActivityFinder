@@ -8,7 +8,7 @@ namespace ActivityFinder.Server.Models
         ValueResult<Comment> AddComment(Comment comment);
         ValueResult<Comment> EditComment(Comment comment);
         ValueResult<IEnumerable<T>> GetDisplayList<T>(string userId, int activityId, Expression<Func<Comment, T>> selectExpression);
-        Result Delete(int commentId, string userName);
+        Result Delete(int commentId, string userName, out int activityId);
     }
 
     public class CommentService : ICommentService
@@ -49,16 +49,17 @@ namespace ActivityFinder.Server.Models
             return new ValueResult<Comment>(comment, true);
         }
 
-        public Result Delete(int commentId, string userName)
+        public Result Delete(int commentId, string userName, out int activityId)
         {
             try
             {
-                _commentRepository.Detele(commentId, userName);
+                _commentRepository.Detele(commentId, userName, out activityId);
                 _commentRepository.SaveChanges();
                 return new Result(true);
             }
             catch (Exception e)
             {
+                activityId = 0;
                 return new Result(false, e.Message);
             }
         }

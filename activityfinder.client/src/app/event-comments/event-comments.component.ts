@@ -41,8 +41,8 @@ export class EventCommentsComponent implements OnInit, OnDestroy {
     console.log(this.userName);
   }
 
-  delete() {
-
+  delete(id: number) {
+    this.commentService.deleteComment(id);
   }
 
   ngOnDestroy(): void {
