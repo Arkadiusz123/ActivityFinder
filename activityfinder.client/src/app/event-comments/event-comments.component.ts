@@ -3,6 +3,7 @@ import { ActivatedRoute } from '@angular/router';
 import { Observable } from 'rxjs';
 import { Activity } from '../interfaces/activity';
 import { ActivitiesService } from '../services/activities.service';
+import { AuthenticateService } from '../services/authenticate.service';
 import { CommentService, Comment } from '../services/comment.service';
 
 @Component({
@@ -15,16 +16,19 @@ export class EventCommentsComponent implements OnInit, OnDestroy {
   id: string = '';
   comments$!: Observable<Comment[]>;
   activity$!: Observable<Activity>;
+  userName = '';
 
   commentInput: string = '';
 
-  constructor(private route: ActivatedRoute, private commentService: CommentService, private activityService: ActivitiesService) { }   
+  constructor(private route: ActivatedRoute, private commentService: CommentService, private activityService: ActivitiesService,
+    private authSerive: AuthenticateService) { }   
 
   async ngOnInit() {
     this.id = this.route.snapshot.paramMap.get('id')!;
     this.commentService.joinEvent(this.id);
     this.comments$ = this.commentService.getMessages(+this.id);
     this.activity$ = this.activityService.getActivity(this.id);
+    this.userName = this.authSerive.getUsername() || '';
   }
 
   addComment() {
@@ -34,6 +38,7 @@ export class EventCommentsComponent implements OnInit, OnDestroy {
 
   edit() {
     console.log('edit')
+    console.log(this.userName);
   }
 
   delete() {

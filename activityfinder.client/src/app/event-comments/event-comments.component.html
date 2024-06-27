@@ -13,7 +13,7 @@
   <div class="comment-part">
     <small>{{ comment.date }}</small>
   </div>
-  <div class="comment-part tools">
+  <div *ngIf="userName === comment.userName" class="comment-part tools">
     <mat-icon color="primary" matTooltip="Edytuj" (click)="edit()">edit</mat-icon>
     <mat-icon color="primary" matTooltip="Usuń" (click)="delete()">delete</mat-icon>
   </div>
