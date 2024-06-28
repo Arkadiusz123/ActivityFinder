@@ -19,7 +19,7 @@ namespace ActivityFinder.Server.Models
 
         public static CommentVm ToVm(Comment comment)
         {
-            var vm = new CommentVm()
+            var vm = new CommentVm
             {
                 Id = comment.CommentId,
                 Content = comment.Content,

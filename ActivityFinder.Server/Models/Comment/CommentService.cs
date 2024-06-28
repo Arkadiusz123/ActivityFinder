@@ -6,7 +6,7 @@ namespace ActivityFinder.Server.Models
     public interface ICommentService
     {
         ValueResult<Comment> AddComment(Comment comment);
-        ValueResult<Comment> EditComment(Comment comment);
+        ValueResult<Comment> EditComment(Comment comment, out int activityId);
         ValueResult<IEnumerable<T>> GetDisplayList<T>(string userId, int activityId, Expression<Func<Comment, T>> selectExpression);
         Result Delete(int commentId, string userName, out int activityId);
     }
@@ -35,10 +35,11 @@ namespace ActivityFinder.Server.Models
             return new ValueResult<Comment>(comment, true);
         }
 
-        public ValueResult<Comment> EditComment(Comment comment)
+        public ValueResult<Comment> EditComment(Comment comment, out int activityId)
         {
             comment.Activity = _commentRepository.GetAttachedActivity(comment.CommentId);
             var validateResult = Validate(comment);
+            activityId = comment.Activity.ActivityId;
 
             if (!validateResult.Success)
                 return new ValueResult<Comment>(false, validateResult.Message);

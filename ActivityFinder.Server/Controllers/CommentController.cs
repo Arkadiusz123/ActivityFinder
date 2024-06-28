@@ -51,20 +51,22 @@ namespace ActivityFinder.Server.Controllers
         }
 
         [HttpPut]
-        [Route("{id}")]
-        public IActionResult Edit(int id, [FromBody]CommentDTO comment)
+        public IActionResult Edit([FromBody]CommentDTO comment)
         {
             var userResult = _userService.GetByName(User.Identity.Name);
 
             if (!userResult.Success)
                 return NotFound(userResult.Message);
 
-            var editResult = _commentService.EditComment(CommentMapper.ToComment(comment, userResult.Value));
+            var activityId = 0;
+            var editResult = _commentService.EditComment(CommentMapper.ToComment(comment, userResult.Value), out activityId);
 
             if (!editResult.Success)
                 return BadRequest(editResult.Message);
 
-            return Ok(CommentMapper.ToVm(editResult.Value));
+            var vm = CommentMapper.ToVm(editResult.Value);
+            _hubContext.Clients.Group(activityId.ToString()).EditComment(vm);
+            return Ok(vm);
         }
 
         [HttpDelete]

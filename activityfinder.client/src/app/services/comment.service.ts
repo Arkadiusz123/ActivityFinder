@@ -24,6 +24,7 @@ export class CommentService {
 
     this.hubConnection.on('ReceiveComment', (comment: Comment) => this.addCommentToSub(comment));
     this.hubConnection.on('DeleteComment', (id: number) => this.removeCommentFromSub(id));
+    this.hubConnection.on('EditComment', (comment: Comment) => this.editCommentInSub(comment));
   }
 
   getMessages(id: number): Observable<Comment[]> {
@@ -33,6 +34,10 @@ export class CommentService {
 
   createComment(content: string, id: number) {
     this.http.post('/api/comment/activity/' + id, { content: content }).subscribe();
+  }
+
+  editComment(comment: Comment) {
+    this.http.put('/api/comment/', comment).subscribe();
   }
 
   deleteComment(id: number) {
@@ -63,6 +68,14 @@ export class CommentService {
   private addCommentToSub(comment: Comment): void {
     const currentComments = this.commentsSubject.getValue();
     this.commentsSubject.next([...currentComments, comment]);
+  }
+
+  private editCommentInSub(comment: Comment): void {
+    const currentComments = this.commentsSubject.getValue();
+    const foundIndex = currentComments.findIndex(x => x.id == comment.id);
+    currentComments[foundIndex] = comment;
+
+    this.commentsSubject.next(currentComments);
   }
 
   private removeCommentFromSub(id: number): void {
