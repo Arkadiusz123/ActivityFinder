@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, ChangeDetectionStrategy } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Observable } from 'rxjs';
 import { Activity } from '../interfaces/activity';
@@ -9,7 +9,8 @@ import { CommentService, Comment } from '../services/comment.service';
 @Component({
   selector: 'app-event-comments',
   templateUrl: './event-comments.component.html',
-  styleUrls: ['./event-comments.component.css']
+  styleUrls: ['./event-comments.component.css'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class EventCommentsComponent implements OnInit, OnDestroy {
 
@@ -19,6 +20,8 @@ export class EventCommentsComponent implements OnInit, OnDestroy {
   userName = '';
 
   commentInput: string = '';
+  commentEditInput: string = '';
+  editModeId: number | null = null;
 
   constructor(private route: ActivatedRoute, private commentService: CommentService, private activityService: ActivitiesService,
     private authSerive: AuthenticateService) { }   
@@ -36,9 +39,20 @@ export class EventCommentsComponent implements OnInit, OnDestroy {
     this.commentInput = '';
   }
 
-  edit() {
-    console.log('edit')
-    console.log(this.userName);
+  setEditMode(id: number, content: string) {
+    this.editModeId = id;
+    this.commentEditInput = content;
+  }
+
+  cancelEditMode() {
+    this.editModeId = null;
+    this.commentEditInput = '';
+  }
+
+  confirmEdit() {
+    const comment = { id: this.editModeId!, content: this.commentEditInput } as Comment;
+    this.cancelEditMode();
+    this.commentService.editComment(comment);
   }
 
   delete(id: number) {

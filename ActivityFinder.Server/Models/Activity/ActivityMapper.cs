@@ -46,7 +46,8 @@ namespace ActivityFinder.Server.Models
                 CreatedByUser = x.Creator.UserName == userName,
                 JoinedUsers = x.JoinedUsers.Count,
                 UsersLimit = x.UsersLimit,
-                AlreadyJoined = x.JoinedUsers.Any(y => y.UserName == userName)
+                AlreadyJoined = x.JoinedUsers.Any(y => y.UserName == userName),
+                Description = x.Description
             };
         }        
     }

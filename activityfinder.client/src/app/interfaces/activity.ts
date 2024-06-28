@@ -22,6 +22,7 @@ export interface ActivityListItem {
   joinedUsers: number;
   usersLimit?: number;
   alreadyJoined: boolean;
+  description: string;
 
   usersCount?: string;
 }

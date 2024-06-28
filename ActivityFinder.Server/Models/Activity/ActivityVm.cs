@@ -10,6 +10,7 @@
         public required int JoinedUsers { get; set; }
         public int? UsersLimit { get; set; }
         public required bool AlreadyJoined { get; set; }
+        public required string Description { get; set; }
     }
 
     public class ActivityVmWrapper

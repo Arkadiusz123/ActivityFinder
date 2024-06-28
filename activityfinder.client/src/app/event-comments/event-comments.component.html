@@ -1,7 +1,9 @@
 <div class="event-detail" *ngIf="activity$ | async as activity">
   <h2>{{ activity.title }}</h2>
-  <p>{{ activity.description }}</p>
-  <p>{{ activity.date | date : "dd-MM-YYYY hh:mm:ss" }}</p>
+  <p><b>Opis:</b> {{ activity.description }}</p>
+  <p><b>Data wydarzenia: </b>{{ activity.date | date : "dd-MM-YYYY hh:mm:ss" }}</p>
+  <p><b>Adres: </b>{{ activity.address.displayName }}</p>
+  <p *ngIf="activity.otherInfo"><b>Dodatkowe wskazówki: </b>{{ activity.otherInfo }}</p>
 </div>
 
 <h3>Wiadomości</h3>
@@ -14,17 +16,30 @@
     <small>{{ comment.date }}</small>
   </div>
   <div *ngIf="userName === comment.userName" class="comment-part tools">
-    <mat-icon color="primary" matTooltip="Edytuj" (click)="edit()">edit</mat-icon>
-    <mat-icon color="primary" matTooltip="Usuń" (click)="delete(comment.id)">delete</mat-icon>
+    <div *ngIf="editModeId !== comment.id">
+      <mat-icon color="primary" matTooltip="Edytuj" (click)="setEditMode(comment.id, comment.content)">edit</mat-icon>
+      <mat-icon color="primary" matTooltip="Usuń" (click)="delete(comment.id)">delete</mat-icon>
+    </div>
+    <div *ngIf="editModeId === comment.id">
+      <mat-icon color="primary" matTooltip="Potwierdź" (click)="confirmEdit()">check</mat-icon>
+      <mat-icon color="primary" matTooltip="Anuluj" (click)="cancelEditMode()">cancel</mat-icon>
+    </div>
   </div>
-
-  <p>{{ comment.content }}</p>
+  <div *ngIf="editModeId !== comment.id">
+    <p>{{ comment.content }}</p>
+  </div>
+  <div *ngIf="editModeId === comment.id">
+    <mat-form-field appearance="fill">
+      <mat-label>Edytuj komentarz</mat-label>
+      <textarea matInput [(ngModel)]="commentEditInput"></textarea>
+    </mat-form-field>
+  </div>
 </div>
 
 <div class="add-comment">
   <mat-form-field appearance="fill">
     <mat-label>Napisz komentarz</mat-label>
-    <textarea matInput appDebounceClick [eventName]="'keydown.enter'" (debounceClickOrPress)="addComment()" [(ngModel)]="commentInput"></textarea>
+    <textarea matInput [(ngModel)]="commentInput"></textarea>
   </mat-form-field>
   <a mat-raised-button color="primary" appDebounceClick (debounceClickOrPress)="addComment()">Wyślij</a>
 </div>

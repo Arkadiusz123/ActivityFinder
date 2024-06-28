@@ -7,6 +7,7 @@ namespace ActivityFinder.Server.Models
     public interface ICommentClient
     {
         Task ReceiveComment(CommentVm comment);
+        Task EditComment(CommentVm comment);
         Task DeleteComment(int id);
     }
 

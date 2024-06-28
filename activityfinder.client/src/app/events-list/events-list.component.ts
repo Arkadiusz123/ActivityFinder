@@ -98,6 +98,8 @@ export class EventsListComponent implements OnInit, OnDestroy {
   reloadElementMenu(element: ActivityListItem) {
     const items: MenuItem[] = [];
 
+    items.push({ route: '', display: 'Opis', clickAction: 'displayDetails', id: element.id } as MenuItem);
+
     if (element.createdByUser) {
       items.push({ route: '/event-form/' + element.id, display: 'Edytuj', clickAction: '' } as MenuItem);
     }
@@ -118,9 +120,18 @@ export class EventsListComponent implements OnInit, OnDestroy {
   }
 
   invokeTool(data: { action: string, id?: number }) {
-    if (data.action === 'join') { this.joinEvent(data.id!); }
+    if (data.action === 'displayDetails') { this.displayDetails(data.id!); }
+    else if (data.action === 'join') { this.joinEvent(data.id!); }
     else if (data.action === 'leave') { this.leaveEvent(data.id!); }
     else if (data.action === 'delete') { this.deleteActivity(data.id!); }
+  }
+
+  displayDetails(id: number) {
+    const item = this.dataSource.data.find(x => x.id === id);
+    Swal.fire({
+      title: "Opis",
+      text: item?.description,
+    });
   }
 
   joinEvent(id: number) {
