@@ -8,16 +8,17 @@
 
 <div class="search-container">
   <mat-form-field>
-    <input matInput placeholder="Adres" [(ngModel)]="addressInput" (keyup.enter)="applyFilter()">
-  </mat-form-field>
-  <mat-form-field>
     <mat-select disableOptionCentering placeholder="Województwo" [(ngModel)]="selectedState">
       <mat-option *ngFor="let state of states" [value]="state">{{state}}</mat-option>
     </mat-select>
   </mat-form-field>
-  <button mat-icon-button (click)="applyFilter()">
-    <mat-icon>search</mat-icon>
-  </button>
+  <mat-form-field>
+    <input matInput placeholder="Adres" [(ngModel)]="addressInput" (keyup.enter)="applyFilter()">
+  </mat-form-field>
+</div>
+
+<div class="filter-button">
+  <button mat-raised-button color="primary" (click)="applyFilter()">Filtruj</button>
 </div>
 
 <app-table [displayedColumns]="displayedColumns"

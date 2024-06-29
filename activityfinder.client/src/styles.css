@@ -38,11 +38,6 @@ button {
   .search-container {
     flex-direction: column;
   }
-
-    .search-container button[mat-icon-button] {
-      margin-left: auto;
-      margin-top: -2.5rem;
-    }
 }
 
 .search-container mat-form-field {

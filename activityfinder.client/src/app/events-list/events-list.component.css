@@ -6,3 +6,18 @@ mat-radio-button {
 .radio-buttons {
   text-align: left;
 }
+
+.filter-button {
+  margin: -2.5rem auto 2rem auto;
+  max-width: 500px;
+}
+
+@media (max-width: 600px) {
+  .search-container > mat-form-field {
+    margin-bottom: -1.8rem;
+  }
+
+  .search-container > mat-form-field:last-child {
+    margin-bottom: 1rem;
+  }
+}
