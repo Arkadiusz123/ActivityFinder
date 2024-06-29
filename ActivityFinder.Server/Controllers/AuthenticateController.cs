@@ -15,14 +15,16 @@ namespace ActivityFinder.Server.Controllers
         private readonly RoleManager<IdentityRole> _roleManager;
         private readonly IConfiguration _configuration;
         private readonly ITokenService _tokenService;
+        private readonly ILogger<AuthenticateController> _logger;
 
         public AuthenticateController(UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager, IConfiguration configuration,
-            ITokenService tokenService)
+            ITokenService tokenService, ILogger<AuthenticateController> logger)
         {
             _userManager = userManager;
             _roleManager = roleManager;
             _configuration = configuration;
             _tokenService = tokenService;
+            _logger = logger;
         }
 
         [HttpPost]
@@ -36,6 +38,7 @@ namespace ActivityFinder.Server.Controllers
 
                 var token = _tokenService.GenerateToken(user.UserName, userRoles);
 
+                _logger.LogInformation($"User {user.UserName} successfully logged in");
                 return Ok(new
                 {
                     token = new JwtSecurityTokenHandler().WriteToken(token),
