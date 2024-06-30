@@ -2,6 +2,7 @@
 using ActivityFinder.Server.Models.User;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using System.IdentityModel.Tokens.Jwt;
 
@@ -16,15 +17,17 @@ namespace ActivityFinder.Server.Controllers
         private readonly IConfiguration _configuration;
         private readonly ITokenService _tokenService;
         private readonly ILogger<AuthenticateController> _logger;
+        private readonly IEmailSender _emailSender;
 
         public AuthenticateController(UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager, IConfiguration configuration,
-            ITokenService tokenService, ILogger<AuthenticateController> logger)
+            ITokenService tokenService, ILogger<AuthenticateController> logger, IEmailSender emailSender)
         {
             _userManager = userManager;
             _roleManager = roleManager;
             _configuration = configuration;
             _tokenService = tokenService;
             _logger = logger;
+            _emailSender = emailSender;
         }
 
         [HttpPost]
@@ -105,6 +108,47 @@ namespace ActivityFinder.Server.Controllers
                 await _userManager.AddToRoleAsync(user, UserRoles.User);
             }
             return Ok(new { Message = "Utworzono nowego użytkownika" });
+        }
+
+        [HttpPost]
+        [Route("forgotPassword")]
+        public async Task<IActionResult> ForgotPassword(ForgotPasswordModel model)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            var user = await _userManager.FindByEmailAsync(model.Email);
+            if (user == null)
+                return BadRequest("Nieprawidłowy email");
+
+            var token = await _userManager.GeneratePasswordResetTokenAsync(user);
+            var resetLink = Url.Action(nameof(ResetPassword), "Authenticate", new { token, email = user.Email }, Request.Scheme);
+
+            await _emailSender.SendEmailAsync(model.Email, "Reset hasła", $"<a href='{resetLink}'>Zresertuj hasło</a>");
+
+            return Ok();
+        }
+
+        [HttpPost]
+        [Route("resetPassword")]
+        public async Task<IActionResult> ResetPassword(ResetPasswordModel model)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            var user = await _userManager.FindByEmailAsync(model.Email);
+            if (user == null)
+                return BadRequest("Nieprawidłowy email");
+
+            var resetPassResult = await _userManager.ResetPasswordAsync(user, model.Token, model.NewPassword);
+            if (!resetPassResult.Succeeded)
+            {
+                foreach (var error in resetPassResult.Errors)
+                    ModelState.AddModelError(error.Code, error.Description);
+
+                return BadRequest(ModelState);
+            }
+            return Ok();
         }
     }
 }
