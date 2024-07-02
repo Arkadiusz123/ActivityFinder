@@ -26,5 +26,9 @@
     </div>
 
     <button mat-raised-button color="primary" type="submit">{{ registerForm ? 'Zarejestruj się' : 'Zaloguj się' }}</button>
+
+    <div *ngIf="!registerForm">
+      <a mat-button color="primary" routerLink="/forgot-password">Zapomniałem hasła</a>
+    </div>
   </form>
 </mat-card>

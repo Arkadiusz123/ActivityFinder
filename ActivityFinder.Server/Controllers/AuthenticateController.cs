@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using System.IdentityModel.Tokens.Jwt;
+using System.Web;
 
 namespace ActivityFinder.Server.Controllers
 {
@@ -114,15 +115,12 @@ namespace ActivityFinder.Server.Controllers
         [Route("forgotPassword")]
         public async Task<IActionResult> ForgotPassword(ForgotPasswordModel model)
         {
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
-
             var user = await _userManager.FindByEmailAsync(model.Email);
             if (user == null)
                 return BadRequest("Nieprawidłowy email");
 
             var token = await _userManager.GeneratePasswordResetTokenAsync(user);
-            var resetLink = Url.Action(nameof(ResetPassword), "Authenticate", new { token, email = user.Email }, Request.Scheme);
+            var resetLink = $"{Request.Scheme}://{Request.Host.Value}/reset-password?token={HttpUtility.UrlEncode(token)}&email={HttpUtility.UrlEncode(user.Email)}";
 
             await _emailSender.SendEmailAsync(model.Email, "Reset hasła", $"<a href='{resetLink}'>Zresertuj hasło</a>");
 
@@ -133,21 +131,15 @@ namespace ActivityFinder.Server.Controllers
         [Route("resetPassword")]
         public async Task<IActionResult> ResetPassword(ResetPasswordModel model)
         {
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
-
             var user = await _userManager.FindByEmailAsync(model.Email);
             if (user == null)
                 return BadRequest("Nieprawidłowy email");
 
             var resetPassResult = await _userManager.ResetPasswordAsync(user, model.Token, model.NewPassword);
-            if (!resetPassResult.Succeeded)
-            {
-                foreach (var error in resetPassResult.Errors)
-                    ModelState.AddModelError(error.Code, error.Description);
 
-                return BadRequest(ModelState);
-            }
+            if (!resetPassResult.Succeeded)            
+                return BadRequest("Wystąpił błąd. Spróbuj ponownie");
+            
             return Ok();
         }
     }

@@ -1,0 +1,46 @@
+import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { ActivatedRoute } from '@angular/router';
+import { AuthenticateService, PasswordReset } from '../services/authenticate.service';
+import { ErrorMessagesService } from '../services/error-messages.service';
+import { passwordValidator } from '../validators/password-validator';
+
+@Component({
+  selector: 'app-reset-password',
+  templateUrl: './reset-password.component.html',
+  styleUrls: ['./reset-password.component.css'],
+  changeDetection: ChangeDetectionStrategy.OnPush
+})
+export class ResetPasswordComponent implements OnInit {
+  form!: FormGroup;
+  email: string = '';
+  token: string = '';
+
+  constructor(private fb: FormBuilder, private authenticateService: AuthenticateService, private route: ActivatedRoute,
+    public errorMessageService: ErrorMessagesService) {
+  }
+
+  ngOnInit(): void {
+    this.route.queryParamMap.subscribe(params => {
+      this.token = decodeURIComponent(params.get('token') || '');
+      this.email = decodeURIComponent(params.get('email') || '');
+      this.createForm();
+    });
+  }
+
+  private createForm() {
+    this.form = this.fb.group({
+      email: [this.email, [Validators.required, Validators.email, Validators.pattern("^[a-z0-9._%+-]+@[a-z0-9.-]+\\.[a-z]{2,4}$")]],
+      token: [this.token, [Validators.required]],
+      newPassword: ['', [Validators.required, passwordValidator()]]
+    });
+  }
+
+  onSubmit() {
+    if (this.form.valid) {
+      const model: PasswordReset = this.form.value;
+      this.authenticateService.resetPassword(model);
+    }
+  }
+
+}

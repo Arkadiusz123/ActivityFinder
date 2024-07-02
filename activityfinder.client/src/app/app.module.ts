@@ -34,6 +34,8 @@ import { MatMenuModule} from '@angular/material/menu';
 import { AppTableComponent } from './app-table/app-table.component';
 import { MatRadioModule } from '@angular/material/radio';
 import { EventCommentsComponent } from './event-comments/event-comments.component';
+import { ForgotPasswordComponent } from './forgot-password/forgot-password.component';
+import { ResetPasswordComponent } from './reset-password/reset-password.component';
 
 const routes: Routes = [
   { path: '', component: EventsListComponent },
@@ -42,6 +44,8 @@ const routes: Routes = [
   { path: 'events-list', component: EventsListComponent },
   { path: 'authenticate', component: LoginRegisterComponent },
   { path: 'event-comments/:id', component: EventCommentsComponent },
+  { path: 'forgot-password', component: ForgotPasswordComponent },
+  { path: 'reset-password', component: ResetPasswordComponent },
 ];
 
 @NgModule({
@@ -52,7 +56,9 @@ const routes: Routes = [
     DebounceClickDirective,
     LoginRegisterComponent,
     AppTableComponent,
-    EventCommentsComponent
+    EventCommentsComponent,
+    ForgotPasswordComponent,
+    ResetPasswordComponent
   ],
   imports: [
     BrowserModule,

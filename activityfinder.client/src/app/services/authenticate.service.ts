@@ -40,6 +40,19 @@ export class AuthenticateService {
     });
   }
 
+  forgotPassword(email: string) {
+    return this.http.post<any>('/api/authenticate/forgotPassword', { email: email }).subscribe(res => {
+      Swal.fire('Email został wysłany. Jeżeli go nie ma, sprawdź również spam.');
+    });
+  }
+
+  resetPassword(model: PasswordReset) {
+    return this.http.post<any>('/api/authenticate/resetPassword', model).subscribe(res => {
+      this.router.navigate(['authenticate']);
+      Swal.fire('Hasło zostało zmienione. Możesz się zalogować');
+    });
+  }
+
   logout(): void {
     sessionStorage.removeItem(this.tokenKey);
     this.loggedIn.next(false);
@@ -76,4 +89,10 @@ export class AuthenticateService {
   private hasToken(): boolean {
     return !!sessionStorage.getItem(this.tokenKey);
   }
+}
+
+export interface PasswordReset {
+  email: string;
+  token: string;
+  newPassword: string;
 }
