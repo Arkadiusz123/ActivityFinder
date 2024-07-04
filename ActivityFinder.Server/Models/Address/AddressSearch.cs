@@ -20,7 +20,7 @@ namespace ActivityFinder.Server.Models
             _context = context;
         }
 
-        public async Task<ValueResult<Address>> GetAddressByOsmId(string osmId) //todo usunac try catch
+        public async Task<ValueResult<Address>> GetAddressByOsmId(string osmId)
         {
             var addressDb = _context.Addresses.SingleOrDefault(x => x.OsmId == osmId);
             if (addressDb != null)

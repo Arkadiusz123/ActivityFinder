@@ -5,7 +5,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace ActivityFinderTests
 {
-    internal class DbConfig
+    public class DbConfig
     {
         private readonly CustomWebApplicationFactory<Program> _factory;
 
@@ -14,7 +14,7 @@ namespace ActivityFinderTests
             _factory = factory;
         }
 
-        public async Task InitializeData()
+        public async Task InitializeData(IEnumerable<Activity> activities = null)
         {
             using (var scope = _factory.Services.CreateScope())
             {
@@ -23,12 +23,23 @@ namespace ActivityFinderTests
                 var userManager = scopedServices.GetRequiredService<UserManager<ApplicationUser>>();
                 var roleManager = scopedServices.GetRequiredService<RoleManager<IdentityRole>>();
 
+                db.Database.EnsureDeleted();
                 db.Database.EnsureCreated();
-                await SeedTestUser(userManager, roleManager);
+                var user = await SeedTestUser(userManager, roleManager);
+
+                if (activities?.Count() > 0) 
+                {
+                    foreach (var entity in activities)
+                    {
+                        entity.Creator = user;
+                        db.Add(entity);
+                    }
+                    db.SaveChanges();
+                }
             }
         }
 
-        private async Task SeedTestUser(UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager)
+        private async Task<ApplicationUser> SeedTestUser(UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager)
         {
             // Add roles
             if (!await roleManager.RoleExistsAsync("Admin"))
@@ -50,6 +61,7 @@ namespace ActivityFinderTests
                 await userManager.AddToRoleAsync(testUser, "User");
                 await userManager.AddToRoleAsync(testUser, "Admin");
             }
+            return testUser;
         }
     }
 }

@@ -49,7 +49,7 @@ namespace ActivityFinder.Server.Controllers
                     expiration = token.ValidTo
                 });
             }
-            return Unauthorized();
+            return Unauthorized("Niepoprawny login lub hasło");
         }
 
         [HttpPost]
