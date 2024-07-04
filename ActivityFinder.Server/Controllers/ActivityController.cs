@@ -24,7 +24,7 @@ namespace ActivityFinder.Server.Controllers
         }
 
         [HttpGet]
-        [AllowAnonymous]//tylko na test TODO
+        [AllowAnonymous]
         public IActionResult GetList([FromQuery]ActivityPaginationSettings settings)
         {
             var userName = User.Identity.Name;
@@ -43,7 +43,7 @@ namespace ActivityFinder.Server.Controllers
             var activityResult = _activityService.GetById(id);
 
             if (!activityResult.Success)
-                return BadRequest(activityResult.Message);
+                return NotFound(activityResult.Message);
 
             return Ok(ActivityMapper.ToDTO(activityResult.Value));
         }

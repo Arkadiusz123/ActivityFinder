@@ -1,16 +1,13 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Activity, ActivityListItem } from '../interfaces/activity';
-import { BehaviorSubject, Observable } from 'rxjs';
-import { tap } from 'rxjs/operators';
 import { Router } from '@angular/router';
+import { Observable } from 'rxjs';
+import { Activity, ActivityListItem } from '../interfaces/activity';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ActivitiesService {
-
- // private objectsSubject = new BehaviorSubject<Activity[]>([]);   todo test adding
 
   constructor(private http: HttpClient, private router: Router) { }
 

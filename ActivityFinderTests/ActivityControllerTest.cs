@@ -70,5 +70,48 @@ namespace ActivityFinderTests
             var response = await _client.PostAsJsonAsync("api/activity", activity);
             Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
         }
+
+        [Fact]
+        public async Task EditTest()
+        {
+            var activity = TestObjectFactory.CreateActivity(id: 1);
+            await _dbConfig.InitializeData(new List<Activity> { activity });
+
+            var getResponse = await _client.GetAsync("api/activity/1");
+            var getResponseString = await getResponse.Content.ReadAsStringAsync();
+            var options = new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase };
+            var getActivity = JsonSerializer.Deserialize<ActivityDTO>(getResponseString, options);
+
+            getActivity.Title = "NewTilteTest";
+            getActivity.Description = "NewDescriptionTest";
+            getActivity.UsersLimit = 3;
+            getActivity.OtherInfo = "NewOtherInfo";
+            getActivity.Date = DateTime.Today;
+
+            var putResponse = await _client.PutAsJsonAsync("api/activity", getActivity);
+            var putResponseString = await putResponse.Content.ReadAsStringAsync();
+
+            var editedEntity = JsonSerializer.Deserialize<ActivityDTO>(putResponseString, options);
+
+            Assert.Equal(HttpStatusCode.OK, putResponse.StatusCode);
+            Assert.Equal("NewTilteTest", editedEntity.Title);
+            Assert.Equal("NewDescriptionTest", editedEntity.Description);
+            Assert.Equal(3, editedEntity.UsersLimit);
+            Assert.Equal("NewOtherInfo", editedEntity.OtherInfo);
+            Assert.Equal(DateTime.Today, editedEntity.Date);
+        }
+
+        [Fact]
+        public async Task DeleteTest()
+        {
+            var activity = TestObjectFactory.CreateActivity(id: 1);
+            await _dbConfig.InitializeData(new List<Activity> { activity });      
+
+            var deleteResponse = await _client.DeleteAsync("api/activity/1");
+            Assert.Equal(HttpStatusCode.NoContent, deleteResponse.StatusCode);
+
+            var getResponse = await _client.GetAsync("api/activity/1");
+            Assert.Equal(HttpStatusCode.NotFound, getResponse.StatusCode);
+        }
     }
 }
