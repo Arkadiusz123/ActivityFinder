@@ -12,6 +12,7 @@ import { jwtDecode } from "jwt-decode";
 })
 export class AuthenticateService {
   private tokenKey = 'authToken';
+  private refreshTokenKey = 'refresh_token';
   private loggedIn = new BehaviorSubject<boolean>(this.hasToken());
 
   constructor(private http: HttpClient, private router: Router) { }
@@ -22,14 +23,25 @@ export class AuthenticateService {
       {
         if (response)
         {
-          const token = JSON.stringify(response);
-          sessionStorage.setItem(this.tokenKey, token);
+          sessionStorage.setItem(this.tokenKey, response.token);
+          sessionStorage.setItem(this.refreshTokenKey, response.refreshToken);
           this.loggedIn.next(true);
           this.router.navigate(['']);
           Swal.fire('Poprawnie zalogowano');
         }
       })
     ).subscribe();
+  }
+
+  refreshToken() {
+    const refreshToken = this.getRefreshToken();
+    return this.http.post<any>('api/authenticate/refresh-token', { token: this.getToken(), refreshToken }).pipe(
+      tap((response: any) => {
+        if (response) {
+          sessionStorage.setItem(this.tokenKey, response.token);
+          sessionStorage.setItem(this.refreshTokenKey, response.refreshToken);
+        }
+      }));
   }
 
   registerUser(model: LoginRegister) {
@@ -55,18 +67,18 @@ export class AuthenticateService {
 
   logout(): void {
     sessionStorage.removeItem(this.tokenKey);
+    sessionStorage.removeItem(this.refreshTokenKey);
     this.loggedIn.next(false);
     this.router.navigate(['']);
     Swal.fire('Wylogowano');
   }
 
   getToken(): string | null {
-    const sessionToken = sessionStorage.getItem(this.tokenKey);
-    if (!sessionToken) {
-      return '';
-    }
-    const tokenObject = JSON.parse(sessionToken);
-    return tokenObject.token;
+    return sessionStorage.getItem(this.tokenKey);
+  }
+
+  getRefreshToken(): string | null {
+    return sessionStorage.getItem(this.refreshTokenKey);
   }
 
   isLoggedIn(): Observable<boolean> {
