@@ -36,6 +36,7 @@ import { MatRadioModule } from '@angular/material/radio';
 import { EventCommentsComponent } from './event-comments/event-comments.component';
 import { ForgotPasswordComponent } from './forgot-password/forgot-password.component';
 import { ResetPasswordComponent } from './reset-password/reset-password.component';
+import { UsersEventsComponent } from './users-events/users-events.component';
 
 const routes: Routes = [
   { path: '', component: EventsListComponent },
@@ -46,6 +47,7 @@ const routes: Routes = [
   { path: 'event-comments/:id', component: EventCommentsComponent },
   { path: 'forgot-password', component: ForgotPasswordComponent },
   { path: 'reset-password', component: ResetPasswordComponent },
+  { path: 'users-events', component: UsersEventsComponent },
 ];
 
 @NgModule({
@@ -58,7 +60,8 @@ const routes: Routes = [
     AppTableComponent,
     EventCommentsComponent,
     ForgotPasswordComponent,
-    ResetPasswordComponent
+    ResetPasswordComponent,
+    UsersEventsComponent
   ],
   imports: [
     BrowserModule,

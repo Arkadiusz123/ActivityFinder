@@ -44,10 +44,15 @@ export class AppComponent implements OnInit, OnDestroy {
   menuItems(): MenuItem[] {
     const items: MenuItem[] = [];
     items.push({ route: '/', display: 'Strona główna', clickAction: '' } as MenuItem)
-    if (this.isLoggedIn) { items.push({ route: 'event-form', display: 'Dodaj wydarzenie', clickAction: '' } as MenuItem) }
 
-    if (this.isLoggedIn) { items.push({ route: '', display: 'Wyloguj się', clickAction: 'logout' } as MenuItem) }
-    else { items.push({ route: 'authenticate', display: 'Zaloguj się', clickAction: '' } as MenuItem) }
+    if (this.isLoggedIn) {
+      items.push({ route: 'event-form', display: 'Dodaj wydarzenie', clickAction: '' } as MenuItem)
+      items.push({ route: 'users-events', display: 'Wiadomości', clickAction: '' } as MenuItem)
+      items.push({ route: '', display: 'Wyloguj się', clickAction: 'logout' } as MenuItem)
+    }
+    else {
+      items.push({ route: 'authenticate', display: 'Zaloguj się', clickAction: '' } as MenuItem)
+    }
 
     return items;
   }

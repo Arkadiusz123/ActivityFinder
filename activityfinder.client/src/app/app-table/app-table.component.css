@@ -10,6 +10,11 @@ table {
   width: 100%;
 }
 
+th.mat-header-cell {
+  color: white;
+  background-color: blueviolet;
+}
+
 td.mat-column-star {
   width: 1.5rem;
   padding-right: 8px !important;
