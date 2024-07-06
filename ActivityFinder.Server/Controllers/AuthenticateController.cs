@@ -39,17 +39,55 @@ namespace ActivityFinder.Server.Controllers
             if (user != null && await _userManager.CheckPasswordAsync(user, model.Password))
             {
                 var userRoles = await _userManager.GetRolesAsync(user);
+                DateTime expireTime;
 
                 var token = _tokenService.GenerateToken(user.UserName, userRoles);
+                var refreshToken = _tokenService.GenerateRefreshToken(out expireTime);
+
+                user.RefreshToken = refreshToken;
+                user.RefreshTokenExpiryTime = expireTime;
+                await _userManager.UpdateAsync(user);
 
                 _logger.LogInformation($"User {user.UserName} successfully logged in");
                 return Ok(new
                 {
                     token = new JwtSecurityTokenHandler().WriteToken(token),
-                    expiration = token.ValidTo
+                    expiration = token.ValidTo,
+                    refreshToken
                 });
             }
             return Unauthorized("Niepoprawny login lub hasło");
+        }
+
+        [HttpPost("refresh-token")]
+        public async Task<IActionResult> RefreshToken([FromBody] TokenModel request)
+        {
+            if (request == null)           
+                return BadRequest("Nieprawidłowe dane");            
+
+            var principal = _tokenService.GetPrincipalFromExpiredToken(request.Token);
+            var username = principal.Identity.Name;
+            var user = await _userManager.FindByNameAsync(username);          
+
+            if (user == null || user.RefreshToken != request.RefreshToken || user.RefreshTokenExpiryTime == null || user.RefreshTokenExpiryTime <= DateTime.Now)            
+                return BadRequest("Nieprawidłowe dane");
+            
+            var userRoles = await _userManager.GetRolesAsync(user);
+            DateTime expireTime;
+
+            var newAccessToken = _tokenService.GenerateToken(username, userRoles);
+            var newRefreshToken = _tokenService.GenerateRefreshToken(out expireTime);
+
+            user.RefreshToken = newRefreshToken;
+            user.RefreshTokenExpiryTime = expireTime;
+            await _userManager.UpdateAsync(user);
+
+            return Ok(new
+            {
+                token = new JwtSecurityTokenHandler().WriteToken(newAccessToken),
+                expiration = newAccessToken.ValidTo,
+                refreshToken = newRefreshToken
+            });
         }
 
         [HttpPost]
@@ -122,7 +160,7 @@ namespace ActivityFinder.Server.Controllers
             var token = await _userManager.GeneratePasswordResetTokenAsync(user);
             var resetLink = $"{Request.Scheme}://{Request.Host.Value}/reset-password?token={HttpUtility.UrlEncode(token)}&email={HttpUtility.UrlEncode(user.Email)}";
 
-            await _emailSender.SendEmailAsync(model.Email, "Reset hasła", $"<a href='{resetLink}'>Zresertuj hasło</a>");
+            await _emailSender.SendEmailAsync(model.Email, "Reset hasła", $"<a href='{resetLink}'>Otwórz link, aby zmienić hasło</a>");
 
             return Ok();
         }
