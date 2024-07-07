@@ -1,0 +1,5 @@
+<h3>Wybierz wydarzenie, aby wyświetlić wiadomości</h3>
+
+<div class="message-link" *ngFor="let item of activities | async" routerLink="/event-comments/{{ item.id }}">
+  {{ item.title || 'Brak nazwy' }}, {{ item.address }} ({{ item.date }})
+</div>

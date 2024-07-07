@@ -9,6 +9,7 @@ namespace ActivityFinder.Server.Models
         ValueResult<Activity> Add(Activity activity);
         ValueResult<Activity> Edit(Activity activity);
         ValueResult<SinglePageData<T>> GetPagedVm<T>(ActivityPaginationSettings settings, string userName, Expression<Func<Activity, T>> selectExpression);
+        ValueResult<IEnumerable<T>> GetUsersActivities<T>(ApplicationUser user, Expression<Func<Activity, T>> selectExpression);
         ValueResult<Activity> GetById(int id);
         Result JoinUser(ApplicationUser user, int activityId);
         Result RemoveFromActivity(ApplicationUser user, int activityId);
@@ -66,6 +67,12 @@ namespace ActivityFinder.Server.Models
         {
             var result = _repository.GetPageData(userName, settings, selectExpression);
             return new ValueResult<SinglePageData<T>>(result, true);
+        }
+
+        public ValueResult<IEnumerable<T>> GetUsersActivities<T>(ApplicationUser user, Expression<Func<Activity, T>> selectExpression)
+        {
+            var result = _repository.GetUsersActivities(user, selectExpression);
+            return new ValueResult<IEnumerable<T>>(result, true);
         }
 
         public ValueResult<Activity> GetById(int id)

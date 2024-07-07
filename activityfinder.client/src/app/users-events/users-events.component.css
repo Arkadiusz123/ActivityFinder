@@ -1,0 +1,10 @@
+.message-link {
+  margin-bottom: 0.5rem;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+  .message-link:hover {
+    font-weight: bold;
+    text-decoration: none;
+  }

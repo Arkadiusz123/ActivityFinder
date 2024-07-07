@@ -1,3 +1,6 @@
+@use 'src/theme.scss' as theme;
+@import '~@angular/material/theming';
+
 ::ng-deep .mat-sort-header-container {
   justify-content: center;
 }
@@ -8,6 +11,11 @@
 
 table {
   width: 100%;
+}
+
+th.mat-header-cell {
+  color: white;
+  background-color: mat-color(theme.$app-primary);
 }
 
 td.mat-column-star {

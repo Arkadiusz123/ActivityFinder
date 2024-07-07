@@ -8,6 +8,7 @@ namespace ActivityFinder.Server.Models
     public interface IActivityRepository : IGenericRepository<Activity>
     {
         SinglePageData<T> GetPageData<T>(string userName, ActivityPaginationSettings settings, Expression<Func<Activity, T>> selectExpression);
+        IEnumerable<T> GetUsersActivities<T>(ApplicationUser user, Expression<Func<Activity, T>> selectExpression);
         int JoinedUsersCount(int id);
         bool UserAlreadyJoined(string userId, int activityId);
         void RemoveFromActivity(int activityId, string userId);
@@ -29,6 +30,17 @@ namespace ActivityFinder.Server.Models
             query = GetDataForPage(query, settings.Page, settings.Size);
 
             return new SinglePageData<T>(totalCount, query.Select(selectExpression).AsEnumerable());
+        }
+
+        public IEnumerable<T> GetUsersActivities<T>(ApplicationUser user, Expression<Func<Activity, T>> selectExpression)
+        {
+            var query = GetAll()
+                .Where(x => x.Creator == user || x.JoinedUsers.Contains(user))
+                .OrderBy(x => x.Date)
+                .Select(selectExpression)
+                .AsEnumerable();
+
+            return query;
         }
 
         private IQueryable<Activity> GetFilteredQuery(string? address, string state, ActivityStatus status, string userName)

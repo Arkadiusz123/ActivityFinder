@@ -37,6 +37,23 @@ namespace ActivityFinder.Server.Controllers
         }
 
         [HttpGet]
+        [Route("user")]
+        public IActionResult GetUsersActivities()
+        {
+            var userName = User.Identity.Name;
+            var userResult = _userService.GetByName(userName);
+
+            if (!userResult.Success)
+                return NotFound(userResult.Message);
+
+            var result = _activityService.GetUsersActivities(userResult.Value, ActivityMapper.SelectVmExpression(userName));
+            if (!result.Success)
+                return BadRequest(result.Message);
+
+            return Ok(result.Value);
+        }
+
+        [HttpGet]
         [Route("{id}")]
         public IActionResult GetById(int id)
         {

@@ -40,6 +40,10 @@ export class ActivitiesService {
     );
   }
 
+  getUsersActivities(): Observable<ActivityListItem[]> {
+    return this.http.get<ActivityListItem[]>('/api/activity/user');
+  }
+
   joinActivity(id: number): Observable<any> {
     return this.http.post<Activity>('/api/activity/join/' + id, null);
   }
