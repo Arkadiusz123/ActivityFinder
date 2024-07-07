@@ -10,7 +10,7 @@ import { MenuItem } from '../layout/app.component';
 @Component({
   selector: 'app-table',
   templateUrl: './app-table.component.html',
-  styleUrls: ['./app-table.component.css'],
+  styleUrls: ['./app-table.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class AppTableComponent implements OnInit, OnDestroy {
