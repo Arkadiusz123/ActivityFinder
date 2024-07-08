@@ -39,6 +39,7 @@ import { ResetPasswordComponent } from './reset-password/reset-password.componen
 import { UsersEventsComponent } from './users-events/users-events.component';
 import { LandingPageComponent } from './landing-page/landing-page.component';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
+import { ContactComponent } from './contact/contact.component';
 
 const routes: Routes = [
   { path: '', component: LandingPageComponent },
@@ -50,6 +51,7 @@ const routes: Routes = [
   { path: 'forgot-password', component: ForgotPasswordComponent },
   { path: 'reset-password', component: ResetPasswordComponent },
   { path: 'users-events', component: UsersEventsComponent },
+  { path: 'contact', component: ContactComponent },
 ];
 
 @NgModule({
@@ -64,7 +66,8 @@ const routes: Routes = [
     ForgotPasswordComponent,
     ResetPasswordComponent,
     UsersEventsComponent,
-    LandingPageComponent
+    LandingPageComponent,
+    ContactComponent
   ],
   imports: [
     BrowserModule,
