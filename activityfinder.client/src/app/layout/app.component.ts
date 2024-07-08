@@ -7,6 +7,7 @@ import { AuthenticateService } from '../services/authenticate.service';
 import { Router } from '@angular/router';
 import { LoadingService } from '../services/loading.service';
 import { CommentService } from '../services/comment.service';
+import { faPeopleArrows } from '@fortawesome/free-solid-svg-icons';
 
 @Component({
   selector: 'app-root',
@@ -19,6 +20,8 @@ export class AppComponent implements OnInit, OnDestroy {
   isLoggedIn: boolean = false;
   menuTools: MenuItem[] = [];
   private subscriptions: Subscription[] = [];
+
+  faPeopleArrows = faPeopleArrows;
 
   isHandset$: Observable<boolean> = this.breakpointObserver.observe(Breakpoints.Handset)
     .pipe(
@@ -43,8 +46,9 @@ export class AppComponent implements OnInit, OnDestroy {
 
   menuItems(): MenuItem[] {
     const items: MenuItem[] = [];
-    items.push({ route: '/', display: 'Strona główna', clickAction: '' } as MenuItem)
-
+    
+    items.push({ route: 'events-list', display: 'Wyszukaj', clickAction: '' } as MenuItem)
+    
     if (this.isLoggedIn) {
       items.push({ route: 'event-form', display: 'Dodaj wydarzenie', clickAction: '' } as MenuItem)
       items.push({ route: 'users-events', display: 'Wiadomości', clickAction: '' } as MenuItem)
@@ -53,6 +57,8 @@ export class AppComponent implements OnInit, OnDestroy {
     else {
       items.push({ route: 'authenticate', display: 'Zaloguj się', clickAction: '' } as MenuItem)
     }
+
+    items.push({ route: 'contact', display: 'Kontakt', clickAction: '' } as MenuItem)
 
     return items;
   }

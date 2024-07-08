@@ -37,9 +37,12 @@ import { EventCommentsComponent } from './event-comments/event-comments.componen
 import { ForgotPasswordComponent } from './forgot-password/forgot-password.component';
 import { ResetPasswordComponent } from './reset-password/reset-password.component';
 import { UsersEventsComponent } from './users-events/users-events.component';
+import { LandingPageComponent } from './landing-page/landing-page.component';
+import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
+import { ContactComponent } from './contact/contact.component';
 
 const routes: Routes = [
-  { path: '', component: EventsListComponent },
+  { path: '', component: LandingPageComponent },
   { path: 'event-form', component: EventFormComponent },
   { path: 'event-form/:id', component: EventFormComponent },
   { path: 'events-list', component: EventsListComponent },
@@ -48,6 +51,7 @@ const routes: Routes = [
   { path: 'forgot-password', component: ForgotPasswordComponent },
   { path: 'reset-password', component: ResetPasswordComponent },
   { path: 'users-events', component: UsersEventsComponent },
+  { path: 'contact', component: ContactComponent },
 ];
 
 @NgModule({
@@ -61,7 +65,9 @@ const routes: Routes = [
     EventCommentsComponent,
     ForgotPasswordComponent,
     ResetPasswordComponent,
-    UsersEventsComponent
+    UsersEventsComponent,
+    LandingPageComponent,
+    ContactComponent
   ],
   imports: [
     BrowserModule,
@@ -72,7 +78,8 @@ const routes: Routes = [
     FormsModule,
     MatIconModule, MatTabsModule, MatInputModule, MatButtonModule, MatCardModule, MatAutocompleteModule, MatCheckboxModule, MatToolbarModule,
     MatSidenavModule, MatListModule, MatTableModule, MatPaginatorModule, MatSortModule, MatSelectModule, MatProgressSpinnerModule, MatMenuModule,
-    MatRadioModule, MatTooltipModule
+    MatRadioModule, MatTooltipModule,
+    FontAwesomeModule
   ],
   providers: [
     AuthenticateService,
