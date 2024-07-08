@@ -38,6 +38,7 @@ import { ForgotPasswordComponent } from './forgot-password/forgot-password.compo
 import { ResetPasswordComponent } from './reset-password/reset-password.component';
 import { UsersEventsComponent } from './users-events/users-events.component';
 import { LandingPageComponent } from './landing-page/landing-page.component';
+import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 
 const routes: Routes = [
   { path: '', component: LandingPageComponent },
@@ -74,7 +75,8 @@ const routes: Routes = [
     FormsModule,
     MatIconModule, MatTabsModule, MatInputModule, MatButtonModule, MatCardModule, MatAutocompleteModule, MatCheckboxModule, MatToolbarModule,
     MatSidenavModule, MatListModule, MatTableModule, MatPaginatorModule, MatSortModule, MatSelectModule, MatProgressSpinnerModule, MatMenuModule,
-    MatRadioModule, MatTooltipModule
+    MatRadioModule, MatTooltipModule,
+    FontAwesomeModule
   ],
   providers: [
     AuthenticateService,

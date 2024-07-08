@@ -7,6 +7,7 @@ import { AuthenticateService } from '../services/authenticate.service';
 import { Router } from '@angular/router';
 import { LoadingService } from '../services/loading.service';
 import { CommentService } from '../services/comment.service';
+import { faPeopleArrows } from '@fortawesome/free-solid-svg-icons';
 
 @Component({
   selector: 'app-root',
@@ -19,6 +20,8 @@ export class AppComponent implements OnInit, OnDestroy {
   isLoggedIn: boolean = false;
   menuTools: MenuItem[] = [];
   private subscriptions: Subscription[] = [];
+
+  faPeopleArrows = faPeopleArrows;
 
   isHandset$: Observable<boolean> = this.breakpointObserver.observe(Breakpoints.Handset)
     .pipe(
