@@ -43,7 +43,7 @@ export class AppComponent implements OnInit, OnDestroy {
 
   menuItems(): MenuItem[] {
     const items: MenuItem[] = [];
-    items.push({ route: '/', display: 'Strona główna', clickAction: '' } as MenuItem)
+    items.push({ route: 'events-list', display: 'Wyszukaj', clickAction: '' } as MenuItem)
 
     if (this.isLoggedIn) {
       items.push({ route: 'event-form', display: 'Dodaj wydarzenie', clickAction: '' } as MenuItem)

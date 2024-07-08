@@ -13,7 +13,7 @@
       <button mat-icon-button (click)="toggleSidenav()" *ngIf="isHandset$ | async">
         <mat-icon>menu</mat-icon>
       </button>
-      <span>Activity Finder</span>
+      <span routerLink="/" class="main-link">Activity Finder</span>
       <span class="spacer"></span>
 
       <ng-container *ngIf="!(isHandset$ | async)">

@@ -37,9 +37,10 @@ import { EventCommentsComponent } from './event-comments/event-comments.componen
 import { ForgotPasswordComponent } from './forgot-password/forgot-password.component';
 import { ResetPasswordComponent } from './reset-password/reset-password.component';
 import { UsersEventsComponent } from './users-events/users-events.component';
+import { LandingPageComponent } from './landing-page/landing-page.component';
 
 const routes: Routes = [
-  { path: '', component: EventsListComponent },
+  { path: '', component: LandingPageComponent },
   { path: 'event-form', component: EventFormComponent },
   { path: 'event-form/:id', component: EventFormComponent },
   { path: 'events-list', component: EventsListComponent },
@@ -61,7 +62,8 @@ const routes: Routes = [
     EventCommentsComponent,
     ForgotPasswordComponent,
     ResetPasswordComponent,
-    UsersEventsComponent
+    UsersEventsComponent,
+    LandingPageComponent
   ],
   imports: [
     BrowserModule,

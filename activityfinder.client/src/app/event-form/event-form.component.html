@@ -1,3 +1,5 @@
+<h2>{{ id ? 'Edytuj wydarzenie' : 'Dodaj nowe wydarzenie' }}</h2>
+
 <mat-card>
   <form [formGroup]="activityForm" (ngSubmit)="onSubmit()">
 
@@ -54,6 +56,6 @@
       <mat-error *ngIf="activityForm.get('otherInfo')!.invalid">{{ errorMessageService.getErrorMessage(activityForm, 'otherInfo') }}</mat-error>
     </mat-form-field>
 
-    <button mat-raised-button color="primary" type="submit">{{ id ? 'Edytuj' : 'Dodaj nowe wydarzenie' }}</button>
+    <button mat-raised-button color="primary" type="submit">{{ id ? 'Edytuj' : 'Dodaj' }}</button>
   </form>
 </mat-card>
