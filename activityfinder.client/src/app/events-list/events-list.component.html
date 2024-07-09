@@ -6,6 +6,11 @@
   </mat-radio-group>
 </div>
 
+<div class="checkboxes">
+  <mat-checkbox color="primary" [(ngModel)]="finished">Zakończone</mat-checkbox>
+  <mat-checkbox color="primary" [(ngModel)]="full">Pełne</mat-checkbox>
+</div>
+
 <div class="search-container">
   <mat-form-field>
     <mat-select disableOptionCentering placeholder="Województwo" [(ngModel)]="selectedState">
