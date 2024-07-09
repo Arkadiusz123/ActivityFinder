@@ -41,11 +41,13 @@ export class EventsListComponent implements OnInit, OnDestroy {
     'wielkopolskie',
     'zachodniopomorskie'
   ];
-  selectedState: string = 'małopolskie'
+  selectedState: string = 'małopolskie';
 
   filterValue: string = '';
   addressInput: string = '';
   selectedStatus = '1';
+  finished: boolean = false;
+  full: boolean = false;
 
   currentElementTools: MenuItem[] = [];
 
@@ -82,6 +84,8 @@ export class EventsListComponent implements OnInit, OnDestroy {
     settings.address = this.addressInput;
     settings.state = this.selectedState;
     settings.status = +this.selectedStatus;
+    settings.finished = this.finished;
+    settings.full = this.full;
 
     this.dataSubscription = this.activitiesService.activitiesList(settings).pipe(
       map(response => ({

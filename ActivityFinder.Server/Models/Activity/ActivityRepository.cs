@@ -23,7 +23,7 @@ namespace ActivityFinder.Server.Models
 
         public SinglePageData<T> GetPageData<T>(string userName, ActivityPaginationSettings settings, Expression<Func<Activity, T>> selectExpression)
         {
-            var query = GetFilteredQuery(settings.Address, settings.State, settings.Status, userName);
+            var query = GetFilteredQuery(settings.Address, settings.State, settings.Status, userName, settings.Full, settings.Finished);
             var totalCount = query.Count();
 
             query = OrderQuery(query, settings.SortField, settings.Asc);
@@ -43,7 +43,7 @@ namespace ActivityFinder.Server.Models
             return query;
         }
 
-        private IQueryable<Activity> GetFilteredQuery(string? address, string state, ActivityStatus status, string userName)
+        private IQueryable<Activity> GetFilteredQuery(string? address, string state, ActivityStatus status, string userName, bool full, bool finished)
         {
             state = state.ToLower();
             var query = _context.Activities.Where(x => x.Address.State == state).AsNoTracking();
@@ -63,6 +63,12 @@ namespace ActivityFinder.Server.Models
             {
                 query = query.Where(x => x.JoinedUsers.Any(y => y.UserName == userName));
             }
+
+            if (!finished)
+                query = query.Where(x => x.Date > DateTime.Now);
+
+            if (!full)
+                query = query.Where(x => x.UsersLimit == null || x.UsersLimit > x.JoinedUsers.Count);
 
             return query;
         }

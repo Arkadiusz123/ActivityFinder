@@ -47,8 +47,9 @@ td.mat-column-star {
   }
 
   .tools-dropdown {
-    display: flex;
-    margin-left: auto;
+    position: absolute;
+    top: 0;
+    right: 0;
   }
 
   .mat-elevation-z8 {
@@ -103,7 +104,7 @@ td.mat-column-star {
         content: attr(data-label);
         display: inline;
         font-weight: normal;
-        color: #180fef;
+        font-weight: 500;
       }
     }
 

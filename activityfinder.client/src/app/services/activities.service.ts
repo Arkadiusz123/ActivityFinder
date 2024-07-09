@@ -65,4 +65,6 @@ export interface ActivitiesPaginationSettings {
   address: string;
   state: string;
   status: number;
+  finished: boolean;
+  full: boolean;
 }

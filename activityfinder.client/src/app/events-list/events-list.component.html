@@ -1,12 +1,17 @@
-<div class="radio-buttons">
-  <mat-radio-group [(ngModel)]="selectedStatus" color="primary" aria-label="Wybierz status">
-    <mat-radio-button value="1">Wszystkie</mat-radio-button>
-    <mat-radio-button value="2">Dodane przez mnie</mat-radio-button>
-    <mat-radio-button value="3">Dołączono</mat-radio-button>
-  </mat-radio-group>
+
+<div class="checkboxes">
+  <mat-checkbox color="primary" [(ngModel)]="finished">Zakończone</mat-checkbox>
+  <mat-checkbox color="primary" [(ngModel)]="full">Pełne</mat-checkbox>
 </div>
 
 <div class="search-container">
+  <mat-form-field>
+    <mat-select disableOptionCentering placeholder="Status" [(ngModel)]="selectedStatus">
+      <mat-option value="1">Wszystkie</mat-option>
+      <mat-option value="2">Dodane przez mnie</mat-option>
+      <mat-option value="3">Dołączono</mat-option>
+    </mat-select>
+  </mat-form-field>
   <mat-form-field>
     <mat-select disableOptionCentering placeholder="Województwo" [(ngModel)]="selectedState">
       <mat-option *ngFor="let state of states" [value]="state">{{state}}</mat-option>
