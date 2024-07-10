@@ -40,17 +40,18 @@ import { UsersEventsComponent } from './users-events/users-events.component';
 import { LandingPageComponent } from './landing-page/landing-page.component';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { ContactComponent } from './contact/contact.component';
+import { AuthGuard } from './auth.guard';
 
 const routes: Routes = [
   { path: '', component: LandingPageComponent },
-  { path: 'event-form', component: EventFormComponent },
-  { path: 'event-form/:id', component: EventFormComponent },
+  { path: 'event-form', component: EventFormComponent, canActivate: [AuthGuard] },
+  { path: 'event-form/:id', component: EventFormComponent, canActivate: [AuthGuard] },
   { path: 'events-list', component: EventsListComponent },
   { path: 'authenticate', component: LoginRegisterComponent },
-  { path: 'event-comments/:id', component: EventCommentsComponent },
+  { path: 'event-comments/:id', component: EventCommentsComponent, canActivate: [AuthGuard] },
   { path: 'forgot-password', component: ForgotPasswordComponent },
   { path: 'reset-password', component: ResetPasswordComponent },
-  { path: 'users-events', component: UsersEventsComponent },
+  { path: 'users-events', component: UsersEventsComponent, canActivate: [AuthGuard] },
   { path: 'contact', component: ContactComponent },
 ];
 
