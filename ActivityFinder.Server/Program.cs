@@ -74,6 +74,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+app.UseMiddleware<RateLimitingMiddleware>();
 app.UseMiddleware<WebSocketsMiddleware>();
 app.UseHttpsRedirection();
 app.UseAuthentication();
