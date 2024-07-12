@@ -35,11 +35,17 @@ export class EventCommentsComponent implements OnInit, OnDestroy {
   }
 
   addComment() {
+    if (!this.commentInput) {
+      return;
+    }
     this.commentService.createComment(this.commentInput, +this.id);
     this.commentInput = '';
   }
 
   setEditMode(id: number, content: string) {
+    if (!this.commentEditInput) {
+      return;
+    }
     this.editModeId = id;
     this.commentEditInput = content;
   }
