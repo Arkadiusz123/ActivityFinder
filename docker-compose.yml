@@ -1,0 +1,27 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:13
+    environment:
+      POSTGRES_USER: postgresSql
+      POSTGRES_PASSWORD: Apriliarsv1000
+      POSTGRES_DB: ActivityFinderDb
+    ports:
+      - "5432:5432"
+    volumes:
+      - db-data:/var/lib/postgresql/data
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "5000:80"
+    depends_on:
+      - db
+    environment:
+      ConnectionStrings__DefaultConnection: "Server=localhost;Port=5432;Database=ActivityFinderDb;User ID=postgresSql;Password=Apriliarsv1000;"
+
+volumes:
+  db-data:
