@@ -89,6 +89,6 @@ app.MapControllers();
 
 app.MapFallbackToFile("/index.html");
 
-app.Run();
+app.Run(builder.Configuration["BackendUrl"]);
 
 public partial class Program { }
