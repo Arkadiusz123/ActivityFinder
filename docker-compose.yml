@@ -21,7 +21,7 @@ services:
     depends_on:
       - db
     environment:
-      ConnectionStrings__DefaultConnection: "Server=localhost;Port=5432;Database=ActivityFinderDb;User ID=postgresSql;Password=Apriliarsv1000;"
+      ConnectionStrings__DefaultConnection: "Server=host.docker.internal;Port=5432;Database=ActivityFinderDb;User ID=postgresSql;Password=Apriliarsv1000;"
 
 volumes:
   db-data:
