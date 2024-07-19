@@ -13,6 +13,8 @@ namespace ActivityFinderTests
         private readonly HttpClient _client;
         private readonly DbConfig _dbConfig;
 
+        private const string _apiUrl = "https://localhost:443/api";
+
         public ActivityControllerTest(CustomWebApplicationFactory<Program> factory)
         {
             _factory = factory;
@@ -34,7 +36,7 @@ namespace ActivityFinderTests
                 Date = DateTime.Now,
             };
 
-            var response = await _client.PostAsJsonAsync("api/activity", activity);
+            var response = await _client.PostAsJsonAsync($"{Configs.ApiUrl}/activity", activity);
             response.EnsureSuccessStatusCode();
 
             var responseString = await response.Content.ReadAsStringAsync();
@@ -67,7 +69,7 @@ namespace ActivityFinderTests
                 Date = DateTime.Now,
             };
 
-            var response = await _client.PostAsJsonAsync("api/activity", activity);
+            var response = await _client.PostAsJsonAsync($"{Configs.ApiUrl}/activity", activity);
             Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
         }
 
@@ -77,7 +79,7 @@ namespace ActivityFinderTests
             var activity = TestObjectFactory.CreateActivity(id: 1);
             await _dbConfig.InitializeData(new List<Activity> { activity });
 
-            var getResponse = await _client.GetAsync("api/activity/1");
+            var getResponse = await _client.GetAsync($"{Configs.ApiUrl}/activity/1");
             var getResponseString = await getResponse.Content.ReadAsStringAsync();
             var options = new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase };
             var getActivity = JsonSerializer.Deserialize<ActivityDTO>(getResponseString, options);
@@ -88,7 +90,7 @@ namespace ActivityFinderTests
             getActivity.OtherInfo = "NewOtherInfo";
             getActivity.Date = DateTime.Today;
 
-            var putResponse = await _client.PutAsJsonAsync("api/activity", getActivity);
+            var putResponse = await _client.PutAsJsonAsync($"{Configs.ApiUrl}/activity", getActivity);
             var putResponseString = await putResponse.Content.ReadAsStringAsync();
 
             var editedEntity = JsonSerializer.Deserialize<ActivityDTO>(putResponseString, options);
@@ -107,10 +109,10 @@ namespace ActivityFinderTests
             var activity = TestObjectFactory.CreateActivity(id: 1);
             await _dbConfig.InitializeData(new List<Activity> { activity });      
 
-            var deleteResponse = await _client.DeleteAsync("api/activity/1");
+            var deleteResponse = await _client.DeleteAsync($"{Configs.ApiUrl}/activity/1");
             Assert.Equal(HttpStatusCode.NoContent, deleteResponse.StatusCode);
 
-            var getResponse = await _client.GetAsync("api/activity/1");
+            var getResponse = await _client.GetAsync($"{Configs.ApiUrl}/activity/1");
             Assert.Equal(HttpStatusCode.NotFound, getResponse.StatusCode);
         }
     }

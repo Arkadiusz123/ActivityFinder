@@ -8,7 +8,7 @@ const PROXY_CONFIG = [
     context: [
       "/api/**",
     ],
-    target: target,
+    target,
     secure: false,
     logLevel: 'debug',
     ws: true

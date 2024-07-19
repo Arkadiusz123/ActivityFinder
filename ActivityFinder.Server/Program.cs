@@ -61,6 +61,12 @@ builder.Services.AddSignalR();
 
 var app = builder.Build();
 
+using (var scope = app.Services.CreateScope())      //todo przetestowaæ
+{
+    var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+    db.Database.Migrate();
+}
+
 var loggerFactory = app.Services.GetService<ILoggerFactory>();
 loggerFactory.AddFile(builder.Configuration["Logging:LogFilePath"].ToString());
 
@@ -73,6 +79,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+app.UseCors(options => options.WithOrigins(builder.Configuration["FrontEndUrl"]).AllowAnyMethod().AllowAnyHeader());
 
 app.UseMiddleware<RateLimitingMiddleware>();
 app.UseMiddleware<WebSocketsMiddleware>();
@@ -89,6 +97,8 @@ app.MapControllers();
 
 app.MapFallbackToFile("/index.html");
 
-app.Run();
+app.Run(builder.Configuration["Kestrel:Endpoints:Https:Url"]);
+//app.Run(builder.Configuration["BackendUrl"]);
+//app.Run();
 
 public partial class Program { }

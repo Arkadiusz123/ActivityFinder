@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
 import * as signalR from '@microsoft/signalr';
 import { AuthenticateService } from './authenticate.service';
+import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
@@ -13,7 +14,7 @@ export class CommentService {
 
   constructor(private http: HttpClient, private authService: AuthenticateService) {
     const token = this.authService.getToken();
-    this.hubConnection = new signalR.HubConnectionBuilder().withUrl(`api/commentHub`,
+    this.hubConnection = new signalR.HubConnectionBuilder().withUrl(`${environment.backendUrl}/commentHub`,
       {
         accessTokenFactory: () => token ?? '',
         skipNegotiation: true,
@@ -28,20 +29,20 @@ export class CommentService {
   }
 
   getMessages(id: number): Observable<Comment[]> {
-    this.http.get<Comment[]>('/api/comment/activity/' + id).subscribe(x => this.commentsSubject.next(x));
+    this.http.get<Comment[]>(`${environment.backendUrl}/comment/activity/` + id).subscribe(x => this.commentsSubject.next(x));
     return this.commentsSubject.asObservable();
   }
 
   createComment(content: string, id: number) {
-    this.http.post('/api/comment/activity/' + id, { content: content }).subscribe();
+    this.http.post(`${environment.backendUrl}/comment/activity/` + id, { content: content }).subscribe();
   }
 
   editComment(comment: Comment) {
-    this.http.put('/api/comment/', comment).subscribe();
+    this.http.put(`${environment.backendUrl}/comment/`, comment).subscribe();
   }
 
   deleteComment(id: number) {
-    this.http.delete('/api/comment/' + id).subscribe();
+    this.http.delete(`${environment.backendUrl}/comment/` + id).subscribe();
   }
 
   joinEvent(eventId: string) {
