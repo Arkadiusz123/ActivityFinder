@@ -6,6 +6,7 @@ import { LoginRegister } from '../interfaces/login-register';
 import Swal from 'sweetalert2';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { jwtDecode } from "jwt-decode";
+import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
@@ -18,7 +19,7 @@ export class AuthenticateService {
   constructor(private http: HttpClient, private router: Router) { }
 
   loginUser(model: LoginRegister) {
-    return this.http.post<any>('/api/authenticate/login', model).pipe(
+    return this.http.post<any>(`${environment.backendUrl}/authenticate/login`, model).pipe(
       tap(response =>
       {
         if (response)
@@ -35,7 +36,7 @@ export class AuthenticateService {
 
   refreshToken() {
     const refreshToken = this.getRefreshToken();
-    return this.http.post<any>('api/authenticate/refresh-token', { token: this.getToken(), refreshToken }).pipe(
+    return this.http.post<any>(`${environment.backendUrl}/authenticate/refresh-token`, { token: this.getToken(), refreshToken }).pipe(
       tap((response: any) => {
         if (response) {
           sessionStorage.setItem(this.tokenKey, response.token);
@@ -45,7 +46,7 @@ export class AuthenticateService {
   }
 
   registerUser(model: LoginRegister) {
-    return this.http.post<any>('/api/authenticate/register', model).subscribe(res =>
+    return this.http.post<any>(`${environment.backendUrl}/authenticate/register`, model).subscribe(res =>
     {
       this.router.navigate(['/']);
       Swal.fire('Poprawnie zarejestrowano');
@@ -53,13 +54,13 @@ export class AuthenticateService {
   }
 
   forgotPassword(email: string) {
-    return this.http.post<any>('/api/authenticate/forgotPassword', { email: email }).subscribe(res => {
+    return this.http.post<any>(`${environment.backendUrl}/authenticate/forgotPassword`, { email: email }).subscribe(res => {
       Swal.fire('Email został wysłany. Jeżeli go nie ma, sprawdź również spam.');
     });
   }
 
   resetPassword(model: PasswordReset) {
-    return this.http.post<any>('/api/authenticate/resetPassword', model).subscribe(res => {
+    return this.http.post<any>(`${environment.backendUrl}/authenticate/resetPassword`, model).subscribe(res => {
       this.router.navigate(['authenticate']);
       Swal.fire('Hasło zostało zmienione. Możesz się zalogować');
     });

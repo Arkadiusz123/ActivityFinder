@@ -401,3 +401,5 @@ FodyWeavers.xsd
 # JetBrains Rider
 *.sln.iml
 /ActivityFinder.Server/appsettings.json
+/ActivityFinder.Server/certs/localhost.pem
+/ActivityFinder.Server/certs/localhost-key.pem

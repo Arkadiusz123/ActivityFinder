@@ -80,6 +80,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+app.UseCors(options => options.WithOrigins(builder.Configuration["FrontEndUrl"]).AllowAnyMethod().AllowAnyHeader());
+
 app.UseMiddleware<RateLimitingMiddleware>();
 app.UseMiddleware<WebSocketsMiddleware>();
 app.UseHttpsRedirection();
@@ -95,6 +97,8 @@ app.MapControllers();
 
 app.MapFallbackToFile("/index.html");
 
-app.Run(builder.Configuration["BackendUrl"]);
+app.Run(builder.Configuration["Kestrel:Endpoints:Https:Url"]);
+//app.Run(builder.Configuration["BackendUrl"]);
+//app.Run();
 
 public partial class Program { }
