@@ -14,13 +14,15 @@ export class CommentService {
 
   constructor(private http: HttpClient, private authService: AuthenticateService) {
     const token = this.authService.getToken();
-    this.hubConnection = new signalR.HubConnectionBuilder().withUrl(`${environment.backendUrl}/commentHub`,
+    this.hubConnection = new signalR.HubConnectionBuilder()
+      .withUrl(`${environment.backendUrl}/commentHub`,
       {
         accessTokenFactory: () => token ?? '',
         skipNegotiation: true,
         transport: signalR.HttpTransportType.WebSockets
       }
-    ).configureLogging(signalR.LogLevel.Information)
+    ).withAutomaticReconnect()
+      .configureLogging(signalR.LogLevel.Information)
       .build();
 
     this.hubConnection.on('ReceiveComment', (comment: Comment) => this.addCommentToSub(comment));
@@ -48,10 +50,16 @@ export class CommentService {
   joinEvent(eventId: string) {
     if (this.hubConnection.state === signalR.HubConnectionState.Connected) {
       this.hubConnection.invoke('JoinEventGroup', eventId);
+      return;
     }
-    else {
-      this.hubConnection.start().then(() => this.hubConnection.invoke('JoinEventGroup', eventId));
-    }        
+    if (this.hubConnection.state !== signalR.HubConnectionState.Disconnected) {
+      this.hubConnection.stop();
+    }
+    this.hubConnection
+      .start()
+      .catch(err => window.location.reload())
+      //.catch(err => setTimeout(() => this.hubConnection.start(), 2000))
+      .then(() => this.hubConnection.invoke('JoinEventGroup', eventId));
   }
 
   leaveEvent(eventId: string) {

@@ -2,6 +2,7 @@
   <mat-sidenav #sidenav [mode]="(isHandset$ | async) ? 'over' : 'side'" [opened]="!(isHandset$ | async)" class="sidenav" *ngIf="isHandset$ | async">
     <mat-toolbar>Menu</mat-toolbar>
     <mat-nav-list>
+      <a mat-list-item routerLink="/">Strona główna</a>
       <a *ngFor="let item of menuTools"
          mat-list-item
          (click)="callRouteAction(item.route, item.clickAction)">{{ item.display }}</a>

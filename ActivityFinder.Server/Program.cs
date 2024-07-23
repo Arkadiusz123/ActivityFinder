@@ -84,7 +84,7 @@ app.UseCors(options => options.WithOrigins(builder.Configuration["FrontEndUrl"])
 
 app.UseMiddleware<RateLimitingMiddleware>();
 app.UseMiddleware<WebSocketsMiddleware>();
-app.UseHttpsRedirection();
+//app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();
 
@@ -97,8 +97,8 @@ app.MapControllers();
 
 app.MapFallbackToFile("/index.html");
 
-app.Run(builder.Configuration["Kestrel:Endpoints:Https:Url"]);
-//app.Run(builder.Configuration["BackendUrl"]);
+//app.Run(builder.Configuration["Kestrel:Endpoints:Https:Url"]);
+app.Run(builder.Configuration["BackendEndUrl"]);
 //app.Run();
 
 public partial class Program { }
