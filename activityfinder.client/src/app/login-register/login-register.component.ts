@@ -30,7 +30,7 @@ export class LoginRegisterComponent implements OnInit {
     this.registerForm = true;
 
     const emailControl = this.form.get('email')!;
-    emailControl.setValidators([Validators.required, Validators.email, Validators.pattern("^[a-z0-9._%+-]+@[a-z0-9.-]+\\.[a-z]{2,4}$") ]);
+    emailControl.setValidators([Validators.required, Validators.email, Validators.pattern("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$") ]);
     emailControl.updateValueAndValidity();
   }
 

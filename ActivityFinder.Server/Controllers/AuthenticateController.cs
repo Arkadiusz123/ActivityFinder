@@ -36,6 +36,10 @@ namespace ActivityFinder.Server.Controllers
         public async Task<IActionResult> Login([FromBody] LoginModel model)
         {
             var user = await _userManager.FindByNameAsync(model.Username);
+
+            if (user == null)
+                user = await _userManager.FindByEmailAsync(model.Username);
+
             if (user != null && await _userManager.CheckPasswordAsync(user, model.Password))
             {
                 var userRoles = await _userManager.GetRolesAsync(user);
@@ -96,7 +100,11 @@ namespace ActivityFinder.Server.Controllers
         {
             var userExists = await _userManager.FindByNameAsync(model.Username);
             if (userExists != null)
-                return BadRequest("Użytkownik istnieje");
+                return BadRequest("Użytkownik o podanej nazwie lub email już istnieje");
+
+            userExists = await _userManager.FindByEmailAsync(model.Email);
+            if (userExists != null)
+                return BadRequest("Użytkownik o podanej nazwie lub email już istnieje");
 
             ApplicationUser user = new()
             {
@@ -157,8 +165,9 @@ namespace ActivityFinder.Server.Controllers
             if (user == null)
                 return BadRequest("Nieprawidłowy email");
 
+            var frontEndUrl = _configuration["FrontEndUrl"];
             var token = await _userManager.GeneratePasswordResetTokenAsync(user);
-            var resetLink = $"{Request.Scheme}://{Request.Host.Value}/reset-password?token={HttpUtility.UrlEncode(token)}&email={HttpUtility.UrlEncode(user.Email)}";
+            var resetLink = $"{frontEndUrl}/reset-password?token={HttpUtility.UrlEncode(token)}&email={HttpUtility.UrlEncode(user.Email)}";
 
             await _emailSender.SendEmailAsync(model.Email, "Reset hasła", $"<a href='{resetLink}'>Otwórz link, aby zmienić hasło</a>");
 

@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, OnDestroy, ChangeDetectionStrategy } from '@angular/core';
+import { Component, OnInit, ViewChild, OnDestroy, ChangeDetectionStrategy, AfterViewInit } from '@angular/core';
 import { MatTableDataSource } from '@angular/material/table';
 import { ActivityListItem } from '../interfaces/activity';
 import { ActivitiesPaginationSettings, ActivitiesService } from '../services/activities.service';
@@ -7,6 +7,7 @@ import { AppTableComponent, ColumnItem } from '../app-table/app-table.component'
 import { MenuItem } from '../layout/app.component';
 import { AuthenticateService } from '../services/authenticate.service';
 import Swal from 'sweetalert2';
+import { FilterService } from '../services/filter.service';
 
 @Component({
   selector: 'app-events-list',
@@ -14,7 +15,7 @@ import Swal from 'sweetalert2';
   styleUrls: ['./events-list.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class EventsListComponent implements OnInit, OnDestroy {
+export class EventsListComponent implements OnInit, OnDestroy, AfterViewInit {
   displayedColumns: ColumnItem[] = [
     { name: 'date', display: 'Data' },
     { name: 'title', display: 'Tytuł' },
@@ -61,10 +62,30 @@ export class EventsListComponent implements OnInit, OnDestroy {
   private leaveSubscription: Subscription | null = null;
   private deleteSubscription: Subscription | null = null;
 
-  constructor(private activitiesService: ActivitiesService, private authService: AuthenticateService) { }
+  constructor(private activitiesService: ActivitiesService, private authService: AuthenticateService, private filterService: FilterService) { }
 
   ngOnInit() {
     this.loggedSubscription = this.authService.isLoggedIn().subscribe(x => this.isLogged = x);
+  }
+
+  ngAfterViewInit() {
+    if (this.filterService.settingsSaved()) {
+      const filters = this.filterService.getFilters();
+      this.addressInput = filters.address;
+      this.selectedState = filters.state;
+      this.selectedStatus = filters.status;
+      this.finished = filters.finished;
+      this.full = filters.full;
+
+      const pagination = this.filterService.getPagination();
+      const sort = this.filterService.getSort();
+
+      this.tableComponent.paginator.pageIndex = pagination.pageIndex;
+      this.tableComponent.paginator.pageSize = pagination.pageSize;
+      this.tableComponent.sort.active = sort.sortActive;
+      this.tableComponent.sort.direction = sort.sortDirection == 'asc' ? 'asc' : 'desc';     
+    }
+    this.loadData();
   }
 
   applyFilter() {
@@ -97,6 +118,8 @@ export class EventsListComponent implements OnInit, OnDestroy {
         this.dataSource.data = response.objects;
         this.tableComponent.paginator.length = response.total;
       });
+
+    this.saveFilters();
   }
 
   reloadElementMenu(element: ActivityListItem) {
@@ -181,6 +204,20 @@ export class EventsListComponent implements OnInit, OnDestroy {
       ...obj,
       usersCount: obj.joinedUsers + (obj.usersLimit ? `/${obj.usersLimit}` : '')
     };
+  }
+
+  saveFilters() {
+    const settings = {} as any;
+    settings.address = this.addressInput;
+    settings.state = this.selectedState;
+    settings.status = this.selectedStatus;
+    settings.finished = this.finished;
+    settings.full = this.full;
+
+    this.filterService.setFilters(settings);
+
+    this.filterService.setPagination(this.tableComponent.paginator.pageIndex, this.tableComponent.paginator.pageSize);
+    this.filterService.setSort(this.tableComponent.sort.active, this.tableComponent.sort.direction);
   }
 
   ngOnDestroy() {

@@ -127,6 +127,7 @@ namespace ActivityFinder.Server.Models
             dbEntity.Description = entity.Description;
             dbEntity.Date = entity.Date;
             dbEntity.OtherInfo = entity.OtherInfo;
+            dbEntity.UsersLimit = entity.UsersLimit;
 
             dbEntity.DbProperties.Edited = DateTime.Now;
         }

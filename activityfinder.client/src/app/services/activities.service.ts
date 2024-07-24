@@ -14,14 +14,14 @@ export class ActivitiesService {
 
   addActivity(activity: Activity) {
     this.http.post<Activity>(`${environment.backendUrl}/activity`, activity).subscribe(res => {
-        this.router.navigate([''])
+      this.router.navigate(['events-list'])
       });
   }
 
   editActivity(activity: Activity, id: number) {
     activity.id = id;
     this.http.put<Activity>(`${environment.backendUrl}/activity`, activity).subscribe(res => {
-      this.router.navigate([''])
+      this.router.navigate(['events-list'])
     });
   }
 
