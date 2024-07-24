@@ -43,9 +43,6 @@ export class EventCommentsComponent implements OnInit, OnDestroy {
   }
 
   setEditMode(id: number, content: string) {
-    if (!this.commentEditInput) {
-      return;
-    }
     this.editModeId = id;
     this.commentEditInput = content;
   }
@@ -56,6 +53,9 @@ export class EventCommentsComponent implements OnInit, OnDestroy {
   }
 
   confirmEdit() {
+    if (!this.commentEditInput) {
+      return;
+    }
     const comment = { id: this.editModeId!, content: this.commentEditInput } as Comment;
     this.cancelEditMode();
     this.commentService.editComment(comment);

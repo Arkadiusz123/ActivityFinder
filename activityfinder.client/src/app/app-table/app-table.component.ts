@@ -47,8 +47,6 @@ export class AppTableComponent implements OnInit, OnDestroy {
 
     this.subscriptions.push(pageSub);
     this.subscriptions.push(subSortPage);
-
-    this.reloadData.emit();
   }
 
   openMenu(element: any) {

@@ -403,3 +403,5 @@ FodyWeavers.xsd
 /ActivityFinder.Server/appsettings.json
 /ActivityFinder.Server/certs/localhost.pem
 /ActivityFinder.Server/certs/localhost-key.pem
+/ActivityFinder.Server/appsettings.Development.json
+/ActivityFinder.Server/appsettings.Production.json
