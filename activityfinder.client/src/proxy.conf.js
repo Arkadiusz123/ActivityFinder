@@ -9,8 +9,8 @@ const PROXY_CONFIG = [
     context: [
       "/api/**",
     ],
-    //target,
-    target: 'http://localhost:5000',
+    target,
+    //target: 'http://localhost:5000',
     secure: false,
     logLevel: 'debug',
     ws: true
