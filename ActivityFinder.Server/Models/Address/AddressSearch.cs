@@ -1,4 +1,5 @@
 ﻿using ActivityFinder.Server.Database;
+using System.Text;
 
 namespace ActivityFinder.Server.Models
 {
@@ -13,6 +14,8 @@ namespace ActivityFinder.Server.Models
         private const string _nominatimOsmUlr = "https://nominatim.openstreetmap.org/";
         private readonly AppHttpClient _httpClient;
         private readonly AppDbContext _context;
+
+        private static List<string> _adresInputRemove = [".", "ul", "ulica"];
 
         public AddressSearch(AppDbContext context)
         {
@@ -41,7 +44,16 @@ namespace ActivityFinder.Server.Models
 
         public async Task<ValueResult<Address>> GetAddressByName(string name)
         {
-            var url = $"{_nominatimOsmUlr}search?format=json&accept-language=pl&addressdetails=1&countrycodes=pl&q={name}";
+            name = (name ?? "").ToLower().Replace(".", "").Replace("ul", "").Replace("ulica", "");
+
+            var nameSb = new StringBuilder((name ?? "").ToLower());
+
+            foreach (var item in _adresInputRemove)
+            {
+                nameSb.Replace(item, "");
+            }
+
+            var url = $"{_nominatimOsmUlr}search?format=json&accept-language=pl&addressdetails=1&countrycodes=pl&q={nameSb.ToString()}";
 
             var addressessOsm = await GetResponse(url);
 
