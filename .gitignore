@@ -405,3 +405,4 @@ FodyWeavers.xsd
 /ActivityFinder.Server/certs/localhost-key.pem
 /ActivityFinder.Server/appsettings.Development.json
 /ActivityFinder.Server/appsettings.Production.json
+/ActivityFinder.Server/appsettings.Development.json
