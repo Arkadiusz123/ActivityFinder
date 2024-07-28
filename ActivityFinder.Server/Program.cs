@@ -59,6 +59,12 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddSignalR();
 
+builder.Logging.ClearProviders();
+builder.Logging.AddConsole();
+builder.Logging.AddDebug();
+builder.Logging.AddFile(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, builder.Configuration["Logging:LogFilePath"].ToString(),
+    $"log.txt"));
+
 var app = builder.Build();
 
 using (var scope = app.Services.CreateScope())
@@ -67,8 +73,8 @@ using (var scope = app.Services.CreateScope())
     db.Database.Migrate();
 }
 
-var loggerFactory = app.Services.GetService<ILoggerFactory>();
-loggerFactory.AddFile(builder.Configuration["Logging:LogFilePath"].ToString());
+//var loggerFactory = app.Services.GetService<ILoggerFactory>();
+//loggerFactory.AddFile(builder.Configuration["Logging:LogFilePath"].ToString());
 
 app.UseDefaultFiles();
 app.UseStaticFiles();
