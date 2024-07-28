@@ -6,12 +6,28 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using Serilog;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 ConfigurationManager configuration = builder.Configuration;
 
 // Add services to the container.
+var logger = new LoggerConfiguration()
+.ReadFrom.Configuration(builder.Configuration)
+.Enrich.FromLogContext()
+.WriteTo.Console()
+.WriteTo.File(
+                configuration["Logging:LogFilePath"].ToString(),  // Œcie¿ka do pliku dziennika
+                rollingInterval: RollingInterval.Day,  // Rotacja dzienników codziennie
+                retainedFileCountLimit: 7,  // Zachowanie 7 plików dziennika
+                fileSizeLimitBytes: 10_000_000  // Limit rozmiaru pliku 10 MB
+            )
+.CreateLogger();
+
+builder.Logging.ClearProviders();
+builder.Logging.AddSerilog(logger);
+
 builder.Services.AddSingleton<SoftDeleteInterceptor>();
 builder.Services.AddDbContext<AppDbContext>((serviceProvider, options) => options
     .UseNpgsql(configuration.GetConnectionString("ConnStr"))
@@ -67,8 +83,8 @@ using (var scope = app.Services.CreateScope())
     db.Database.Migrate();
 }
 
-var loggerFactory = app.Services.GetService<ILoggerFactory>();
-loggerFactory.AddFile(builder.Configuration["Logging:LogFilePath"].ToString());
+//var loggerFactory = app.Services.GetService<ILoggerFactory>();
+//loggerFactory.AddFile(builder.Configuration["Logging:LogFilePath"].ToString());
 
 app.UseDefaultFiles();
 app.UseStaticFiles();
@@ -97,8 +113,16 @@ app.MapControllers();
 
 app.MapFallbackToFile("/index.html");
 
-//app.Run(builder.Configuration["Kestrel:Endpoints:Https:Url"]);
-app.Run(builder.Configuration["BackendEndUrl"]);
-//app.Run();
+try
+{
+    //app.Run(builder.Configuration["Kestrel:Endpoints:Https:Url"]);
+    app.Run(builder.Configuration["BackendEndUrl"]);
+    //app.Run();
+}
+finally
+{
+    Log.CloseAndFlush();
+}
+
 
 public partial class Program { }
