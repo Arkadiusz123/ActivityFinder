@@ -47,7 +47,7 @@ namespace ActivityFinder.Server.Models
         public string? Village { get; set; }
 
         [JsonPropertyName("postcode")]
-        public required string Postcode { get; set; }
+        public string Postcode { get; set; }
 
         [JsonPropertyName("county")]
         public string? County { get; set; }     //(powiat), for cities empty, then save city parameter
