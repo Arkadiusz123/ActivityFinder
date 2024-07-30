@@ -21,7 +21,8 @@ var logger = new LoggerConfiguration()
                 configuration["Logging:LogFilePath"].ToString(),  // Œcie¿ka do pliku dziennika
                 rollingInterval: RollingInterval.Day,  // Rotacja dzienników codziennie
                 retainedFileCountLimit: 7,  // Zachowanie 7 plików dziennika
-                fileSizeLimitBytes: 10_000_000  // Limit rozmiaru pliku 10 MB
+                fileSizeLimitBytes: 10_000_000,  // Limit rozmiaru pliku 10 MB
+                flushToDiskInterval: TimeSpan.FromSeconds(1)
             )
 .CreateLogger();
 
@@ -113,16 +114,13 @@ app.MapControllers();
 
 app.MapFallbackToFile("/index.html");
 
-try
-{
-    //app.Run(builder.Configuration["Kestrel:Endpoints:Https:Url"]);
-    app.Run(builder.Configuration["BackendEndUrl"]);
-    //app.Run();
-}
-finally
-{
-    Log.CloseAndFlush();
-}
+var lifetime = app.Services.GetRequiredService<IHostApplicationLifetime>();
+lifetime.ApplicationStopping.Register(Log.CloseAndFlush);
+
+//app.Run(builder.Configuration["Kestrel:Endpoints:Https:Url"]);
+app.Run(builder.Configuration["BackendEndUrl"]);
+//app.Run();
+
 
 
 public partial class Program { }
